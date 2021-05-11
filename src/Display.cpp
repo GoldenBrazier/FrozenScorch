@@ -4,6 +4,13 @@
 
 Display::Display(int widht, int height, const std::string& name)
 {
+    // GLEW obtains information on the supported extensions from the graphics driver.
+    // Experimental or pre-release drivers, however, might not report every available
+    // extension through the standard mechanism, in which case GLEW will report it is
+    // unsupported. To circumvent this situation, the glewExperimental can be turned
+    // on before calling glewInit().
+    glewExperimental = GL_TRUE;
+
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
