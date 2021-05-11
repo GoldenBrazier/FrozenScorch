@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/local/Cellar/sdl2/2.0.14_1/include/",
+                "/usr/local/Cellar/glew/2.2.0_1/include/"
+            ],
+            "defines": [],
+            "macFrameworkPath": ["/System/Library/Frameworks"],
+            "compilerPath": "/usr/local/bin/gcc-10",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "macos-gcc-x64"
+        }
+    ],
+    "version": 4
+}

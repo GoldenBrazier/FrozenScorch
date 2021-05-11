@@ -1,0 +1,20 @@
+Build:
+    Type: Executable
+
+    Src: 
+        src/**.cpp
+
+    Extensions:
+        cpp:
+            Compiler: clang++
+            Flags: -std=c++2a
+
+    Link:
+        Linker: clang++
+        Flags: -framework, OpenGL, -lSDL2, -lGLEW
+
+
+Commands:
+    Run: ./BeelderBuild/OpenRenderer
+
+Default: Build, Run
