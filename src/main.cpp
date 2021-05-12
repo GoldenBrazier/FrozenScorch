@@ -12,11 +12,13 @@ int main(int argc, char* argv[])
 {
     auto display = Display(800, 600, "OpenRenderer");
     auto shader = Backend::Shader({ "res/basic_shader.vs", "res/basic_shader.fs" },
-        { Backend::Attribute::construct("position", 0), Backend::Uniform::construct("gScale"), Backend::Uniform::construct("gTranslation") });
+        { Backend::Attribute::construct("position", 0), Backend::Uniform::construct("gScale"),
+            Backend::Uniform::construct("gTranslation"), Backend::Uniform::construct("gRotation") });
 
     auto vertexes = std::vector<Vector3f> { Vector3f(-0.5, -0.5, 0), Vector3f(0, 0.5, 0), Vector3f(0.5, -0.5, 0) };
     auto mesh = Mesh(vertexes);
 
+    float rotation = 0;
     float distance = 0;
     float step = 0.05;
 
@@ -26,8 +28,8 @@ int main(int argc, char* argv[])
 
         shader.get_uniform<GL::Float1>("gScale") = 0.55f;
 
-        auto translation = Matrix4f::Translation({ distance, distance / 2, 0 });
-        shader.get_uniform<GL::Matrix4v>("gTranslation") = translation;
+        shader.get_uniform<GL::Matrix4v>("gTranslation") = Matrix4f::Translation({ distance, distance / 2, 0 });
+        shader.get_uniform<GL::Matrix4v>("gRotation") = Matrix4f::RotationAroundZ(rotation);
 
         mesh.draw();
         display.swap_buffers();
@@ -35,6 +37,11 @@ int main(int argc, char* argv[])
         distance += step;
         if (distance >= 1 || distance <= -1) {
             step *= -1;
+        }
+
+        rotation += 0.05f;
+        if (rotation > 3.14 * 2) {
+            rotation = 0;
         }
     }
 

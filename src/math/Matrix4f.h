@@ -1,6 +1,7 @@
 #pragma once
 #include "Vector3f.h"
 #include <array>
+#include <cmath>
 
 class Matrix4f {
 public:
@@ -24,20 +25,13 @@ public:
 
 public:
     static inline Matrix4f Translation(const Vector3f& vec);
+    static inline Matrix4f RotationAroundX(float radians);
+    static inline Matrix4f RotationAroundY(float radians);
+    static inline Matrix4f RotationAroundZ(float radians);
 
 private:
     std::array<float, 16> m_data;
 };
-
-Matrix4f Matrix4f::Translation(const Vector3f& vec)
-{
-    return Matrix4f({
-        1, 0, 0, vec.x(),
-        0, 1, 0, vec.y(),
-        0, 0, 1, vec.z(),
-        0, 0, 0, 1,
-    });
-}
 
 Matrix4f& Matrix4f::operator*=(const Matrix4f& matrix)
 {
@@ -51,4 +45,44 @@ Matrix4f& Matrix4f::operator*=(const Matrix4f& matrix)
         }
     }
     return *this;
+}
+
+Matrix4f Matrix4f::Translation(const Vector3f& vec)
+{
+    return Matrix4f({
+        1, 0, 0, vec.x(),
+        0, 1, 0, vec.y(),
+        0, 0, 1, vec.z(),
+        0, 0, 0, 1,
+    });
+}
+
+Matrix4f Matrix4f::RotationAroundX(float radians)
+{
+    return Matrix4f({
+        1, 0, 0, 0,
+        0, cosf(radians), -sinf(radians), 0,
+        0, sinf(radians), cosf(radians), 0,
+        0, 0, 0, 1,
+    });
+}
+
+Matrix4f Matrix4f::RotationAroundY(float radians)
+{
+    return Matrix4f({
+        cosf(radians), 0, -sinf(radians), 0,
+        0, 1, 0, 0,
+        sinf(radians), 0, cosf(radians), 0,
+        0, 0, 0, 1,
+    });
+}
+
+Matrix4f Matrix4f::RotationAroundZ(float radians)
+{
+    return Matrix4f({
+        cosf(radians), -sinf(radians), 0, 0,
+        sinf(radians), cosf(radians), 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1,
+    });
 }
