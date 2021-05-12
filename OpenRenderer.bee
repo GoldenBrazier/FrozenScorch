@@ -7,7 +7,7 @@ Build:
     Extensions:
         cpp:
             Compiler: clang++
-            Flags: -std=c++2a
+            Flags: -std=c++2a, -Isrc
 
     Link:
         Linker: clang++

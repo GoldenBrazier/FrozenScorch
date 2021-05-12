@@ -1,1 +1,3 @@
 BeelderBuild
+cmake-build-debug/
+.idea

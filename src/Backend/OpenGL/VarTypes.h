@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include <math/Matrix4f.h>
+
 namespace GL {
 
 class VarType {
@@ -51,6 +53,22 @@ public:
     virtual ~Float1() = default;
 
 private:
+};
+
+class Matrix4v : public VarType {
+public:
+    Matrix4v(GLuint id, Type type)
+        : VarType(id, type)
+    {
+    }
+
+    inline Matrix4v& operator=(const Matrix4f& mat)
+    {
+        if (type() == VarType::Type::Uniform) {
+            glUniformMatrix4fv(gl_id(), 1, GL_TRUE, mat.data());
+        }
+        return *this;
+    }
 };
 
 }

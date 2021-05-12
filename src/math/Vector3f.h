@@ -9,6 +9,10 @@ public:
     {
     }
 
+    inline float x() const { return m_x; }
+    inline float y() const { return m_y; }
+    inline float z() const { return m_z; }
+
     inline Vector3f& operator+=(const Vector3f& vector);
     inline Vector3f& operator-=(const Vector3f& vector);
     inline Vector3f& operator*=(float f);
