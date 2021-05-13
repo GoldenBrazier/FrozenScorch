@@ -4,10 +4,9 @@
 
 // };
 
-#include "math/Vector3f.h"
-
 #include <GL/glew.h>
 #include <array>
+#include <math/Vector3f.h>
 #include <vector>
 
 class Mesh {
@@ -21,6 +20,7 @@ private:
         Position,
         NumBuffers,
     };
+
 private:
     std::vector<Math::Vector3f> m_vertices {};
     GLuint m_vertex_array_object;
