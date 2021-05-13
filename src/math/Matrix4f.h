@@ -1,7 +1,7 @@
 #pragma once
-#include <math/Vector3f.h>
 #include <array>
 #include <cmath>
+#include <math/Vector3f.h>
 
 namespace Math {
 
@@ -49,6 +49,7 @@ Matrix4f& Matrix4f::operator*=(const Matrix4f& matrix)
     return *this;
 }
 
+// clang-format off
 Matrix4f Matrix4f::Translation(const Vector3f& vec)
 {
     return Matrix4f({
@@ -88,5 +89,6 @@ Matrix4f Matrix4f::RotationAroundZ(float radians)
         0, 0, 0, 1,
     });
 }
+// clang-format on
 
 }
