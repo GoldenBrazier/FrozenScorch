@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
         { Backend::Attribute::construct("position", 0), Backend::Uniform::construct("gScale"),
             Backend::Uniform::construct("gTranslation"), Backend::Uniform::construct("gRotation") });
 
-    auto vertexes = std::vector<Vector3f> { Vector3f(-0.5, -0.5, 0), Vector3f(0, 0.5, 0), Vector3f(0.5, -0.5, 0) };
+    auto vertexes = std::vector<Math::Vector3f> { Math::Vector3f(-0.5, -0.5, 0), Math::Vector3f(0, 0.5, 0), Math::Vector3f(0.5, -0.5, 0) };
     auto mesh = Mesh(vertexes);
 
     float rotation = 0;
@@ -24,12 +24,11 @@ int main(int argc, char* argv[])
 
     while (!display.closed()) {
         display.clear(0, 0.15f, 0.3f, 1.0f);
+
         shader.set_as_primary();
-
         shader.get_uniform<GL::Float1>("gScale") = 0.55f;
-
-        shader.get_uniform<GL::Matrix4v>("gTranslation") = Matrix4f::Translation({ distance, distance / 2, 0 });
-        shader.get_uniform<GL::Matrix4v>("gRotation") = Matrix4f::RotationAroundZ(rotation);
+        shader.get_uniform<GL::Matrix4v>("gTranslation") = Math::Matrix4f::Translation({ distance, distance / 2, 0 });
+        shader.get_uniform<GL::Matrix4v>("gRotation") = Math::Matrix4f::RotationAroundZ(rotation);
 
         mesh.draw();
         display.swap_buffers();
