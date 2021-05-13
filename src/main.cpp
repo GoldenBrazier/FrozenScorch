@@ -1,11 +1,10 @@
-#include "Backend/OpenGL/VarTypes.h"
-#include "Backend/Var.h"
-#include "Display.h"
-#include "Mesh.h"
-#include "Shader.h"
-#include "math/Matrix4f.h"
-#include "math/Vector3f.h"
-
+#include <Backend/OpenGL/VarTypes.h>
+#include <Backend/Var.h>
+#include <Display.h>
+#include <Mesh.h>
+#include <Shader.h>
+#include <math/Matrix4f.h>
+#include <math/Vector3f.h>
 #include <vector>
 
 int main(int argc, char* argv[])

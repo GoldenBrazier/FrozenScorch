@@ -1,10 +1,9 @@
 #pragma once
 #include <GL/glew.h>
+#include <math/Matrix4f.h>
 #include <memory>
 #include <string>
 #include <vector>
-
-#include <math/Matrix4f.h>
 
 namespace GL {
 

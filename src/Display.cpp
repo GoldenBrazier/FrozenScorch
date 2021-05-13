@@ -1,4 +1,4 @@
-#include "Display.h"
+#include <Display.h>
 #include <GL/glew.h>
 #include <iostream>
 

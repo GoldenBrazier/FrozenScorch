@@ -1,5 +1,5 @@
 #pragma once
-#include "Vector3f.h"
+#include <math/Vector3f.h>
 #include <array>
 #include <cmath>
 

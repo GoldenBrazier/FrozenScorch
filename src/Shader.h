@@ -1,6 +1,6 @@
 #pragma once
-#include "Backend/OpenGL/VarTypes.h"
-#include "Backend/Var.h"
+#include <Backend/OpenGL/VarTypes.h>
+#include <Backend/Var.h>
 #include <GL/glew.h>
 #include <memory>
 #include <string>
