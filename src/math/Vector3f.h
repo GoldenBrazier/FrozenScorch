@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Math {
+
 class Vector3f final {
 public:
     Vector3f(float x, float y, float z)
@@ -55,4 +57,6 @@ Vector3f& Vector3f::operator*=(float f)
 Vector3f Vector3f::cross(const Vector3f& vector)
 {
     return Vector3f(m_x * vector.m_x, m_y * vector.m_y, m_z * vector.m_z);
+}
+
 }

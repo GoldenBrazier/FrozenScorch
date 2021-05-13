@@ -3,6 +3,8 @@
 #include <array>
 #include <cmath>
 
+namespace Math {
+
 class Matrix4f {
 public:
     using DataType = std::array<float, 16>;
@@ -85,4 +87,6 @@ Matrix4f Matrix4f::RotationAroundZ(float radians)
         0, 0, 1, 0,
         0, 0, 0, 1,
     });
+}
+
 }

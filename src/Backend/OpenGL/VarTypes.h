@@ -62,7 +62,7 @@ public:
     {
     }
 
-    inline Matrix4v& operator=(const Matrix4f& mat)
+    inline Matrix4v& operator=(const Math::Matrix4f& mat)
     {
         if (type() == VarType::Type::Uniform) {
             glUniformMatrix4fv(gl_id(), 1, GL_TRUE, mat.data());
