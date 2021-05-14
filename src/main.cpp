@@ -1,10 +1,12 @@
 #include <Backend/OpenGL/VarTypes.h>
 #include <Backend/Var.h>
 #include <Display.h>
-#include <Mesh.h>
-#include <Shader.h>
 #include <Math/Matrix4f.h>
 #include <Math/Vector3f.h>
+#include <Mesh.h>
+#include <Runtime/PNGLoader/PNGLoader.h>
+#include <Shader.h>
+#include <iostream>
 #include <vector>
 
 int main(int argc, char* argv[])
@@ -20,6 +22,9 @@ int main(int argc, char* argv[])
     float rotation = 0;
     float distance = 0;
     float step = 0.05;
+
+    auto raw_img = Runtime::PNGLoader::load<Runtime::ImageType::RGBA>("test.png");
+    auto* ddd = raw_img.data<uint32_t*>();
 
     while (!display.closed()) {
         display.clear(0, 0.15f, 0.3f, 1.0f);

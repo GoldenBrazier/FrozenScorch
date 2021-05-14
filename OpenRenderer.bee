@@ -3,11 +3,12 @@ Build:
 
     Src: 
         src/**.cpp
+        deps/lodepng/*.cpp
 
     Extensions:
         cpp:
             Compiler: clang++
-            Flags: -std=c++2a, -Isrc
+            Flags: -std=c++2a, -Isrc, -Ideps
 
     Link:
         Linker: clang++
