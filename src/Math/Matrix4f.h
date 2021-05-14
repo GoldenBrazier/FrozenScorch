@@ -30,6 +30,7 @@ public:
     static inline Matrix4f RotationAroundX(float radians);
     static inline Matrix4f RotationAroundY(float radians);
     static inline Matrix4f RotationAroundZ(float radians);
+    static inline Matrix4f Scaling(float scale);
 
 private:
     std::array<float, 16> m_data;
@@ -86,6 +87,16 @@ Matrix4f Matrix4f::RotationAroundZ(float radians)
         cosf(radians), -sinf(radians), 0, 0,
         sinf(radians), cosf(radians), 0, 0,
         0, 0, 1, 0,
+        0, 0, 0, 1,
+    });
+}
+
+Matrix4f Matrix4f::Scaling(float scale)
+{
+    return Matrix4f({
+        sinf(scale), 0, 0, 0,
+        0, sinf(scale), 0, 0,
+        0, 0, sinf(scale), 0,
         0, 0, 0, 1,
     });
 }
