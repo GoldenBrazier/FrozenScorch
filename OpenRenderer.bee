@@ -17,5 +17,7 @@ Build:
 
 Commands:
     Run: ./BeelderBuild/OpenRenderer
+    TimeProfile: ./Beelder Build && mkdir -p Profiles/ && xcrun xctrace record --launch BeelderBuild/OpenRenderer --template 'Time Profiler' --time-limit 15s --output Profiles/
+    GamePerf: ./Beelder Build && mkdir -p Profiles/ && xcrun xctrace record --launch BeelderBuild/OpenRenderer --template 'Game Performance' --time-limit 15s --output Profiles/
 
 Default: Build, Run

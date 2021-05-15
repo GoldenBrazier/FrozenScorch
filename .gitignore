@@ -1,3 +1,5 @@
 BeelderBuild
 cmake-build-debug/
 .idea
+.trace
+Profiles/
