@@ -68,12 +68,13 @@ GLuint Shader::get_shader_type(const std::string& path)
 
 void Shader::attach_shader(const std::string& path)
 {
-    m_gl_shaders_id.push_back(create_shader(load_shader(path), get_shader_type(path)));
+    m_gl_shaders_id.push_back(create_shader(path, get_shader_type(path)));
     glAttachShader(m_gl_program_id, m_gl_shaders_id.back());
 }
 
-GLuint Shader::create_shader(const std::string& text, GLenum shader_type)
+GLuint Shader::create_shader(const std::string& path, GLenum shader_type)
 {
+    const std::string& text = load_shader(path);
     auto gl_shader_id = glCreateShader(shader_type);
 
     const GLchar* shaderSourceStrings[] = { text.c_str() };
@@ -82,7 +83,7 @@ GLuint Shader::create_shader(const std::string& text, GLenum shader_type)
     glShaderSource(gl_shader_id, 1, shaderSourceStrings, shaderSourceStringLengths);
     glCompileShader(gl_shader_id);
 
-    check_shader_error(gl_shader_id, GL_COMPILE_STATUS, false, "Error: shader compilation failed: ");
+    check_shader_error(gl_shader_id, GL_COMPILE_STATUS, false, "Error: " + path + " compilation failed");
 
     return gl_shader_id;
 }
@@ -102,7 +103,7 @@ std::string Shader::load_shader(const std::string& filename)
     return output;
 }
 
-void Shader::check_shader_error(GLuint shader, GLuint flag, bool program, const std::string& errorMessage)
+void Shader::check_shader_error(GLuint shader, GLuint flag, bool program, const std::string& error_message)
 {
     GLint success = 0;
     GLchar error[1024] = { 0 };
@@ -118,7 +119,7 @@ void Shader::check_shader_error(GLuint shader, GLuint flag, bool program, const 
         else
             glGetShaderInfoLog(shader, sizeof(error), NULL, error);
 
-        std::cerr << errorMessage << ": '" << error << "'" << std::endl;
+        std::cerr << error_message << ": " << error << std::endl;
         std::abort();
     }
 }
