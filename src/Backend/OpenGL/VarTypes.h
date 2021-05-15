@@ -33,35 +33,35 @@ private:
     Type m_type { Type::None };
 };
 
-class Float1 : public VarType {
+class Float : public VarType {
 public:
-    Float1() = default;
-    Float1(GLuint id, Type type)
+    Float() = default;
+    Float(GLuint id, Type type)
         : VarType(id, type)
     {
     }
 
-    Float1& operator=(float val)
+    virtual ~Float() = default;
+
+    Float& operator=(float val)
     {
         if (type() == VarType::Type::Uniform) {
             glUniform1f(gl_id(), val);
         }
         return *this;
     }
-
-    virtual ~Float1() = default;
-
-private:
 };
 
-class Matrix4v : public VarType {
+class Mat4 : public VarType {
 public:
-    Matrix4v(GLuint id, Type type)
+    Mat4(GLuint id, Type type)
         : VarType(id, type)
     {
     }
 
-    inline Matrix4v& operator=(const Math::Matrix4f& mat)
+    virtual ~Mat4() = default;
+
+    inline Mat4& operator=(const Math::Matrix4f& mat)
     {
         if (type() == VarType::Type::Uniform) {
             glUniformMatrix4fv(gl_id(), 1, GL_TRUE, mat.data());
