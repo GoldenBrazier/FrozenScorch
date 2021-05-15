@@ -28,7 +28,7 @@ private:
     void prepare_program(const std::vector<std::string>& files, const std::vector<std::shared_ptr<Var>>& vars);
     void attach_shader(const std::string& text);
     GLuint get_shader_type(const std::string& path);
-    GLuint create_shader(const std::string& text, GLenum shader_type);
+    GLuint create_shader(const std::string& path, GLenum shader_type);
     std::string load_shader(const std::string& filename);
     void check_shader_error(GLuint shader, GLuint flag, bool program, const std::string& errorMessage);
 
