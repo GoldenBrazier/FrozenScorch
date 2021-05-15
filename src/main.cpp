@@ -32,9 +32,9 @@ int main(int argc, char* argv[])
         display.clear(0, 0.15f, 0.3f, 1.0f);
 
         shader.set_as_primary();
-        shader.get_uniform<GL::Float1>("gScale") = 0.55f;
-        shader.get_uniform<GL::Matrix4v>("gTranslation") = Math::Matrix4f::Translation({ distance, distance / 2, 0 });
-        shader.get_uniform<GL::Matrix4v>("gRotation") = Math::Matrix4f::RotationAroundZ(rotation);
+        shader.get_uniform<GL::Float>("gScale") = 0.55f;
+        shader.get_uniform<GL::Mat4>("gTranslation") = Math::Matrix4f::Translation({ distance, distance / 2, 0 });
+        shader.get_uniform<GL::Mat4>("gRotation") = Math::Matrix4f::RotationAroundZ(rotation);
 
         mesh.draw();
         display.swap_buffers();
