@@ -6,6 +6,7 @@
 #include <Math/Vector3f.h>
 #include <Mesh.h>
 #include <Runtime/PNGLoader/PNGLoader.h>
+#include <Runtime/Utils/DrawLoop.h>
 #include <Shader.h>
 #include <iostream>
 #include <vector>
@@ -27,7 +28,7 @@ int main(int argc, char* argv[])
     auto raw_img = Runtime::PNGLoader::load<Runtime::ImageType::RGBA>("test.png");
     auto* ddd = raw_img.data<uint32_t*>();
 
-    while (!display.closed()) {
+    Runtime::DrawLoop<Runtime::Debug::Off>(60, [&] {
         display.clear(0, 0.15f, 0.3f, 1.0f);
 
         shader.set_as_primary();
@@ -47,7 +48,9 @@ int main(int argc, char* argv[])
         if (rotation > Math::Numbers::pi_v<float> * 2) {
             rotation = 0;
         }
-    }
+
+        return display.closed();
+    });
 
     return EXIT_SUCCESS;
 }
