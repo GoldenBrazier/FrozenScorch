@@ -1,7 +1,7 @@
 #pragma once
 #include <array>
 #include <cmath>
-#include <math/Vector3f.h>
+#include <Math/Vector3f.h>
 
 namespace Math {
 

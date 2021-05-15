@@ -6,7 +6,7 @@
 
 #include <GL/glew.h>
 #include <array>
-#include <math/Vector3f.h>
+#include <Math/Vector3f.h>
 #include <vector>
 
 class Mesh {

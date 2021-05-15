@@ -3,8 +3,8 @@
 #include <Display.h>
 #include <Mesh.h>
 #include <Shader.h>
-#include <math/Matrix4f.h>
-#include <math/Vector3f.h>
+#include <Math/Matrix4f.h>
+#include <Math/Vector3f.h>
 #include <vector>
 
 int main(int argc, char* argv[])

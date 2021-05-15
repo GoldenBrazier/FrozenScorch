@@ -1,6 +1,6 @@
 #pragma once
 #include <GL/glew.h>
-#include <math/Matrix4f.h>
+#include <Math/Matrix4f.h>
 #include <memory>
 #include <string>
 #include <vector>
