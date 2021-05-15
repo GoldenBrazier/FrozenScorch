@@ -1,3 +1,4 @@
+#include <Backend/Metal/Display.h>
 #include <Backend/OpenGL/VarTypes.h>
 #include <Backend/Var.h>
 #include <Display.h>
@@ -5,14 +6,38 @@
 #include <Math/Numbers.h>
 #include <Math/Vector3f.h>
 #include <Mesh.h>
+#include <Runtime/MacOS/Window.h>
 #include <Runtime/PNGLoader/PNGLoader.h>
 #include <Runtime/Utils/DrawLoop.h>
 #include <Shader.h>
 #include <iostream>
 #include <vector>
 
+MTL::CommandQueue cmd_queue;
+MTL::Buffer vertex_buffer;
+MTL::RenderPipelineState render_pipeline_state;
+
+void Render(const Runtime::MacOS::Window& win)
+{
+    auto cmd_buffer = cmd_queue.CommandBuffer();
+    auto renderpass_descriptor = win.renderpass_descriptor();
+
+    if (renderpass_descriptor) {
+        auto rc_encoder = cmd_buffer.RenderCommandEncoder(renderpass_descriptor);
+        rc_encoder.SetRenderPipelineState(render_pipeline_state);
+        rc_encoder.SetVertexBuffer(vertex_buffer, 0, 0);
+        rc_encoder.Draw(MTL::PrimitiveType::Triangle, 0, 3);
+        rc_encoder.EndEncoding();
+        cmd_buffer.Present(win.drawable());
+    }
+
+    cmd_buffer.Commit();
+    cmd_buffer.WaitUntilCompleted();
+}
+
 int main(int argc, char* argv[])
 {
+#ifdef IGNORE
     auto display = Display(800, 600, "OpenRenderer");
     auto shader = Backend::Shader({ "res/basic_shader.vs", "res/basic_shader.fs" },
         { Backend::Attribute::construct("position", 0), Backend::Uniform::construct("gScale"),
@@ -51,6 +76,54 @@ int main(int argc, char* argv[])
 
         return display.closed();
     });
+#endif
+
+    const char shader[] = R"""(
+        #include <metal_stdlib>
+        using namespace metal;
+
+        vertex float4 vert_func(
+            const device packed_float3* vertexArray [[buffer(0)]],
+            unsigned int vID[[vertex_id]])
+        {
+            return float4(vertexArray[vID], 1.0);
+        }
+
+        fragment half4 frag_func()
+        {
+            return half4(1.0, 0.0, 0.0, 1.0);
+        }
+    )""";
+
+    const float vertex_data[] = {
+        0.0f,
+        1.0f,
+        0.0f,
+        -1.0f,
+        -1.0f,
+        0.0f,
+        1.0f,
+        -1.0f,
+        0.0f,
+    };
+
+    auto display = Metal::Display(800, 600, &Render);
+
+    cmd_queue = display.device().NewCommandQueue();
+
+    MTL::Library library = display.device().NewLibrary(shader, MTL::CompileOptions(), nullptr);
+    MTL::Function vert_func = library.NewFunction("vert_func");
+    MTL::Function frag_func = library.NewFunction("frag_func");
+
+    vertex_buffer = display.device().NewBuffer(vertex_data, sizeof(vertex_data), MTL::ResourceOptions::CpuCacheModeDefaultCache);
+
+    MTL::RenderPipelineDescriptor render_pipeline_desc;
+    render_pipeline_desc.SetVertexFunction(vert_func);
+    render_pipeline_desc.SetFragmentFunction(frag_func);
+    render_pipeline_desc.GetColorAttachments()[0].SetPixelFormat(MTL::PixelFormat::BGRA8Unorm);
+    render_pipeline_state = display.device().NewRenderPipelineState(render_pipeline_desc, nullptr);
+
+    display.run();
 
     return EXIT_SUCCESS;
 }
