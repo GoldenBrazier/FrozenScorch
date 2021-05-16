@@ -17,6 +17,7 @@
 
 MTL::CommandQueue cmd_queue;
 MTL::Buffer vertex_buffer;
+MTL::Buffer index_buffer;
 MTL::Buffer vertex_uniform;
 MTL::Buffer frag_buffer;
 MTL::RenderPipelineState render_pipeline_state;
@@ -37,7 +38,7 @@ void Render(const Runtime::MacOS::Window& win)
         rc_encoder.SetVertexBuffer(vertex_buffer, 0, 0);
         rc_encoder.SetVertexBuffer(vertex_uniform, 0, 1);
         rc_encoder.SetFragmentBuffer(frag_buffer, 0, 0);
-        rc_encoder.Draw(MTL::PrimitiveType::Triangle, 0, 3);
+        rc_encoder.DrawIndexed(MTL::PrimitiveType::Triangle, 6, MTL::IndexType::UInt32, index_buffer, 0);
         rc_encoder.EndEncoding();
         cmd_buffer.Present(win.drawable());
     }
@@ -56,13 +57,24 @@ void Render(const Runtime::MacOS::Window& win)
     }
 
     VertUniforms* x = (VertUniforms*)vertex_uniform.GetContents();
-    memcpy(&x->trans, Math::Matrix4f::Translation({ distance, distance/2, 0 }).data(), sizeof(x->trans));
+    memcpy(&x->trans, Math::Matrix4f::Translation({ distance, distance / 2, 0 }).data(), sizeof(x->trans));
     memcpy(&x->rot, Math::Matrix4f::RotationAroundZ(rotation).data(), sizeof(x->rot));
 }
 
 int main(int argc, char* argv[])
 {
-    std::vector<Math::Vector3f> vertexes = { Math::Vector3f(-0.5, -0.5, 0), Math::Vector3f(0, 0.5, 0), Math::Vector3f(0.5, -0.5, 0) };
+    auto vertexes = std::vector<Math::Vector3f> {
+        Math::Vector3f(-0.5, -0.5, 0),
+        Math::Vector3f(0.5, -0.5, 0),
+        Math::Vector3f(0.5, 0.5, 0),
+        Math::Vector3f(-0.5, 0.5, 0),
+    };
+
+    auto indexes = std::array<uint32_t, 6> {
+         0, 1, 2,
+         2, 3, 0,
+     };
+     
 #ifdef IGNORE
     auto display = Display(800, 600, "OpenRenderer");
     auto shader = Backend::Shader({ "res/basic_shader.vs", "res/basic_shader.fs" },
@@ -118,6 +130,7 @@ int main(int argc, char* argv[])
     MTL::Function frag_func = library.NewFunction("frag_func");
 
     vertex_buffer = display.device().NewBuffer(vertexes.data(), vertexes.size() * sizeof(float) * 3, MTL::ResourceOptions::CpuCacheModeDefaultCache);
+    index_buffer = display.device().NewBuffer(indexes.data(), indexes.size() * sizeof(uint32_t), MTL::ResourceOptions::CpuCacheModeDefaultCache);
     vertex_uniform = display.device().NewBuffer(&verts, sizeof(verts), MTL::ResourceOptions::CpuCacheModeDefaultCache);
     frag_buffer = display.device().NewBuffer(&frags, sizeof(frags), MTL::ResourceOptions::CpuCacheModeDefaultCache);
 
