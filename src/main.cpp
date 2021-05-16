@@ -10,6 +10,7 @@
 #include <Runtime/PNGLoader/PNGLoader.h>
 #include <Runtime/Utils/DrawLoop.h>
 #include <Runtime/Utils/FS.h>
+#include <Runtime/Utils/SizeOfData.h>
 #include <Shader.h>
 #include <iostream>
 #include <shaders/Metal/ShaderData.h>
@@ -57,8 +58,8 @@ void Render(const Runtime::MacOS::Window& win)
     }
 
     VertUniforms* x = (VertUniforms*)vertex_uniform.GetContents();
-    memcpy(&x->trans, Math::Matrix4f::Translation({ distance, distance / 2, 0 }).data(), sizeof(x->trans));
-    memcpy(&x->rot, Math::Matrix4f::RotationAroundZ(rotation).data(), sizeof(x->rot));
+    memcpy(&x->trans, Math::Matrix4f::Translation({ distance, distance / 2, 0 }).data(), sizeof_data(x->trans));
+    memcpy(&x->rot, Math::Matrix4f::RotationAroundZ(rotation).data(), sizeof_data(x->rot));
 }
 
 int main(int argc, char* argv[])
@@ -115,12 +116,12 @@ int main(int argc, char* argv[])
 
     FragmentUniforms frags = { 0.55f };
     VertUniforms verts = {};
-    memcpy(&verts, Math::Matrix4f::Translation({ distance, distance / 2, 0 }).data(), sizeof(verts));
+    memcpy(&verts, Math::Matrix4f::Translation({ distance, distance / 2, 0 }).data(), sizeof_data(verts));
 
     auto display = Metal::Display(800, 600, &Render);
     cmd_queue = display.device().NewCommandQueue();
 
-    ns::Error error_buffer;
+    NS::Error error_buffer;
     MTL::Library library = display.device().NewLibrary(metal_shader.c_str(), MTL::CompileOptions(), &error_buffer);
     if (!library.GetPtr()) {
         std::cout << error_buffer.GetLocalizedDescription().GetCStr() << std::endl;
@@ -129,10 +130,10 @@ int main(int argc, char* argv[])
     MTL::Function vert_func = library.NewFunction("vert_func");
     MTL::Function frag_func = library.NewFunction("frag_func");
 
-    vertex_buffer = display.device().NewBuffer(vertexes.data(), vertexes.size() * sizeof(float) * 3, MTL::ResourceOptions::CpuCacheModeDefaultCache);
-    index_buffer = display.device().NewBuffer(indexes.data(), indexes.size() * sizeof(uint32_t), MTL::ResourceOptions::CpuCacheModeDefaultCache);
-    vertex_uniform = display.device().NewBuffer(&verts, sizeof(verts), MTL::ResourceOptions::CpuCacheModeDefaultCache);
-    frag_buffer = display.device().NewBuffer(&frags, sizeof(frags), MTL::ResourceOptions::CpuCacheModeDefaultCache);
+    vertex_buffer = display.device().NewBuffer(vertexes.data(), sizeof_data(vertexes), MTL::ResourceOptions::CpuCacheModeDefaultCache);
+    index_buffer = display.device().NewBuffer(indexes.data(), sizeof_data(indexes), MTL::ResourceOptions::CpuCacheModeDefaultCache);
+    vertex_uniform = display.device().NewBuffer(&verts, sizeof_data(verts), MTL::ResourceOptions::CpuCacheModeDefaultCache);
+    frag_buffer = display.device().NewBuffer(&frags, sizeof_data(frags), MTL::ResourceOptions::CpuCacheModeDefaultCache);
 
     // Mapping:
     FragmentUniforms* x = (FragmentUniforms*)frag_buffer.GetContents();
