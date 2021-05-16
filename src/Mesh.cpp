@@ -1,5 +1,6 @@
 #include <GL/glew.h>
 #include <Mesh.h>
+#include <Runtime/Utils/SizeOfData.h>
 
 #include <iostream>
 
@@ -10,7 +11,7 @@ Mesh::Mesh(const std::vector<Math::Vector3f>& vertices)
     glBindVertexArray(m_vertex_array_object);
     glGenBuffers(NumBuffers, m_vertex_arry_buffers);
     glBindBuffer(GL_ARRAY_BUFFER, m_vertex_arry_buffers[Position]);
-    glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(vertices[0]), m_vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof_data(m_vertices), m_vertices.data(), GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
     glBindVertexArray(0);
