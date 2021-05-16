@@ -9,6 +9,7 @@
 #include <Runtime/MacOS/Window.h>
 #include <Runtime/PNGLoader/PNGLoader.h>
 #include <Runtime/Utils/DrawLoop.h>
+#include <Runtime/Utils/FS.h>
 #include <Shader.h>
 #include <iostream>
 #include <vector>
@@ -16,6 +17,7 @@
 MTL::CommandQueue cmd_queue;
 MTL::Buffer vertex_buffer;
 MTL::RenderPipelineState render_pipeline_state;
+std::string metal_shader;
 
 void Render(const Runtime::MacOS::Window& win)
 {
@@ -78,22 +80,7 @@ int main(int argc, char* argv[])
     });
 #endif
 
-    const char shader[] = R"""(
-        #include <metal_stdlib>
-        using namespace metal;
-
-        vertex float4 vert_func(
-            const device packed_float3* vertexArray [[buffer(0)]],
-            unsigned int vID[[vertex_id]])
-        {
-            return float4(vertexArray[vID], 1.0);
-        }
-
-        fragment half4 frag_func()
-        {
-            return half4(1.0, 0.0, 0.0, 1.0);
-        }
-    )""";
+    metal_shader = Runtime::FS::load_shader("res/basic.metal");
 
     const float vertex_data[] = {
         0.0f,
@@ -108,10 +95,14 @@ int main(int argc, char* argv[])
     };
 
     auto display = Metal::Display(800, 600, &Render);
-
     cmd_queue = display.device().NewCommandQueue();
 
-    MTL::Library library = display.device().NewLibrary(shader, MTL::CompileOptions(), nullptr);
+    ns::Error error_buffer;
+    MTL::Library library = display.device().NewLibrary(metal_shader.c_str(), MTL::CompileOptions(), &error_buffer);
+    if (!library.GetPtr()) {
+        std::cout << error_buffer.GetLocalizedDescription().GetCStr() << std::endl;
+        return 0;
+    }
     MTL::Function vert_func = library.NewFunction("vert_func");
     MTL::Function frag_func = library.NewFunction("frag_func");
 

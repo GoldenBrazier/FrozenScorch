@@ -1,3 +1,4 @@
+#include <Runtime/Utils/FS.h>
 #include <Shader.h>
 #include <fstream>
 #include <iostream>
@@ -90,17 +91,7 @@ GLuint Shader::create_shader(const std::string& path, GLenum shader_type)
 
 std::string Shader::load_shader(const std::string& filename)
 {
-    auto file = std::ifstream(filename);
-
-    std::string output;
-    std::string line;
-
-    while (getline(file, line)) {
-        output.append(line);
-        output.append("\n");
-    }
-
-    return output;
+    return Runtime::FS::load_shader(filename);
 }
 
 void Shader::check_shader_error(GLuint shader, GLuint flag, bool program, const std::string& error_message)
