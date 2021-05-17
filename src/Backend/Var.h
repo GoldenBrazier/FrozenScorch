@@ -1,15 +1,8 @@
 #pragma once
+#include <Utils.h>
 #include <memory>
 #include <string>
 #include <vector>
-
-#define CONSTRUCTIBLE(class_name)                                                        \
-public:                                                                                  \
-    template <class... Args>                                                             \
-    static inline std::shared_ptr<class_name> construct(Args&&... args)                  \
-    {                                                                                    \
-        return std::shared_ptr<class_name>(new class_name(std::forward<Args>(args)...)); \
-    }
 
 namespace Backend {
 
@@ -58,17 +51,20 @@ public:
     virtual ~Attribute() = default;
 
     size_t index() const { return m_index; }
+    size_t dims() const { return m_dims; }
 
 protected:
     Attribute() = default;
-    Attribute(const std::string& name, size_t index)
+    Attribute(const std::string& name, size_t index, size_t dims)
         : Var(name, Var::Type::Attribute)
         , m_index(index)
+        , m_dims(dims)
     {
     }
 
 private:
     size_t m_index;
+    size_t m_dims;
 };
 
 class Uniform : public Var {

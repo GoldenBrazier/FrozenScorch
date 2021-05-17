@@ -52,6 +52,21 @@ public:
     }
 };
 
+class Vec3 : public VarType {
+public:
+    Vec3() = default;
+    Vec3(GLuint id, Type type)
+        : VarType(id, type)
+    {
+    }
+
+    Vec3& operator=(const Vec3& val); // TODO: Implement me!
+
+    virtual ~Vec3() = default;
+
+private:
+};
+
 class Mat4 : public VarType {
 public:
     Mat4(GLuint id, Type type)
