@@ -5,7 +5,7 @@
 
 class Display {
 public:
-    Display(int widht, int height, const std::string& name);
+    Display(int width, int height, const std::string& name);
     ~Display();
 
     void swap_buffers();
@@ -17,5 +17,4 @@ public:
 private:
     bool m_closed {};
     SDL_Window* m_window;
-    SDL_GLContext m_gl_context;
 };
