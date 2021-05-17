@@ -1,8 +1,10 @@
+#include <Context.h>
 #include <Display.h>
 #include <GL/glew.h>
+#include <cassert>
 #include <iostream>
 
-Display::Display(int widht, int height, const std::string& name)
+Display::Display(int width, int height, const std::string& name)
 {
     // GLEW obtains information on the supported extensions from the graphics driver.
     // Experimental or pre-release drivers, however, might not report every available
@@ -19,8 +21,8 @@ Display::Display(int widht, int height, const std::string& name)
     SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, SDL_TRUE);
 
-    m_window = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, widht, height, SDL_WINDOW_OPENGL);
-    m_gl_context = SDL_GL_CreateContext(m_window);
+    m_window = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL);
+    Context.set_context<GE::BackendType::OpenGL>(GL::Context::construct(SDL_GL_CreateContext(m_window)));
 
     auto status = glewInit();
     if (status != GLEW_OK) {
@@ -31,7 +33,9 @@ Display::Display(int widht, int height, const std::string& name)
 
 Display::~Display()
 {
-    SDL_GL_DeleteContext(m_gl_context);
+    auto* gl_context = Context.context<GE::BackendType::OpenGL>();
+    assert(gl_context);
+    SDL_GL_DeleteContext(gl_context->sdl_glcontext());
     SDL_DestroyWindow(m_window);
     SDL_Quit();
 }
