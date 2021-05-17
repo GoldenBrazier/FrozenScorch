@@ -1,8 +1,9 @@
-#include <Context.h>
-#include <Display.h>
 #include <GL/glew.h>
+#include <GraphicsAPI/OpenGL/Display.h>
 #include <cassert>
 #include <iostream>
+
+namespace GL {
 
 Display::Display(int width, int height, const std::string& name)
 {
@@ -22,20 +23,18 @@ Display::Display(int width, int height, const std::string& name)
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, SDL_TRUE);
 
     m_window = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL);
-    Context.set_context<GE::BackendType::OpenGL>(GL::Context::construct(SDL_GL_CreateContext(m_window)));
+    m_gl_context = SDL_GL_CreateContext(m_window);
 
     auto status = glewInit();
     if (status != GLEW_OK) {
         std::cerr << "glew initialization failed" << std::endl;
-        exit(1);
+        std::abort();
     }
 }
 
 Display::~Display()
 {
-    auto* gl_context = Context.context<GE::BackendType::OpenGL>();
-    assert(gl_context);
-    SDL_GL_DeleteContext(gl_context->sdl_glcontext());
+    SDL_GL_DeleteContext(m_gl_context);
     SDL_DestroyWindow(m_window);
     SDL_Quit();
 }
@@ -51,8 +50,10 @@ void Display::swap_buffers()
     }
 }
 
-void Display::clear(float r, float g, float b, float a)
-{
-    glClearColor(0, 0.15f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+// void Display::clear(float r, float g, float b, float a)
+// {
+//     glClearColor(0, 0.15f, 0.3f, 1.0f);
+//     glClear(GL_COLOR_BUFFER_BIT);
+// }
+
 }

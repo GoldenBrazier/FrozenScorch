@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace Backend {
+namespace Generic {
 
 class Var {
     friend class Attribute;
@@ -51,20 +51,17 @@ public:
     virtual ~Attribute() = default;
 
     size_t index() const { return m_index; }
-    size_t dims() const { return m_dims; }
 
 protected:
     Attribute() = default;
-    Attribute(const std::string& name, size_t index, size_t dims)
+    Attribute(const std::string& name, size_t index)
         : Var(name, Var::Type::Attribute)
         , m_index(index)
-        , m_dims(dims)
     {
     }
 
 private:
     size_t m_index;
-    size_t m_dims;
 };
 
 class Uniform : public Var {

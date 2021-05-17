@@ -1,15 +1,11 @@
-#include <Backend/OpenGL/VarTypes.h>
-#include <Backend/Var.h>
-#include <Display.h>
+#include <GraphicsAPI/Generic/Constructors.h>
+#include <GraphicsAPI/Var.h>
 #include <Math/Matrix4f.h>
 #include <Math/Numbers.h>
 #include <Math/Vector3f.h>
 #include <Mesh.h>
 #include <Runtime/PNGLoader/PNGLoader.h>
 #include <Runtime/Utils/DrawLoop.h>
-#include <Shader.h>
-#include <iostream>
-#include <Shader.h>
 #include <VertexArray.h>
 #include <VertexBuffer.h>
 #include <array>
@@ -19,13 +15,14 @@
 
 int main(int argc, char* argv[])
 {
-    auto display = Display(800, 600, "OpenRenderer");
+    auto display = Constructors::Display::construct(800, 600, "OpenRenderer");
 
-    auto position = Backend::Attribute::construct("position", 0, 3);
+    std::pair<std::string, int> position = { "position", 0 };
 
-    auto shader = Backend::Shader({ "res/basic_shader.vs", "res/basic_shader.fs" },
-        { position, Backend::Uniform::construct("gScale"),
-            Backend::Uniform::construct("gTranslation"), Backend::Uniform::construct("gRotation") });
+    auto shader = Constructors::Shader::construct(
+        std::vector<std::string> { "res/basic_shader.vs", "res/basic_shader.fs" },
+        std::vector<std::pair<std::string, int>> { { "position", 0 } },
+        std::vector<std::string> { "gScale", "gTranslation", "gRotation" });
 
     // ---------- initail data to render ----------
 
@@ -43,14 +40,14 @@ int main(int argc, char* argv[])
 
     auto va = VertexArray::construct();
     auto vb = va->construct_vertex_buffer(vertexes.data(), vertexes.size() * sizeof(Math::Vector3f));
-    
-    vb->register_attribute<GL::Vec3>(position, false, 0, 0);
+
+    vb->register_attribute<GL::VarTypes::Vec3>(position.second, false, 0, 0);
     va->set_index_buffer(IndexBuffer::construct(indexes.data(), indexes.size()));
 
     auto mesh = Mesh(va);
 
     // --------------------------------------------
-    
+
     float rotation = 0;
     float distance = 0;
     float step = 0.05;
@@ -59,15 +56,19 @@ int main(int argc, char* argv[])
     auto* ddd = raw_img.data<uint32_t*>();
 
     Runtime::DrawLoop<Runtime::Debug::Off>(60, [&] {
-        display.clear(0, 0.15f, 0.3f, 1.0f);
+        // TODO: Should move to rendered:
+        // display.clear(0, 0.15f, 0.3f, 1.0f);
+        glClearColor(0, 0.15f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-        shader.set_as_primary();
-        shader.get_uniform<GL::Float>("gScale") = 0.55f;
-        shader.get_uniform<GL::Mat4>("gTranslation") = Math::Matrix4f::Translation({ distance, distance / 2, 0 });
-        shader.get_uniform<GL::Mat4>("gRotation") = Math::Matrix4f::RotationAroundZ(rotation);
+
+        shader->bind();
+        shader->set_uniform("gScale", 0.55f);
+        shader->set_uniform("gTranslation", Math::Matrix4f::Translation({ distance, distance / 2, 0 }));
+        shader->set_uniform("gRotation", Math::Matrix4f::RotationAroundZ(rotation));
 
         mesh.draw();
-        display.swap_buffers();
+        display->swap_buffers();
 
         distance += step;
         if (distance >= 1 || distance <= -1) {
@@ -79,7 +80,7 @@ int main(int argc, char* argv[])
             rotation = 0;
         }
 
-        return display.closed();
+        return display->closed();
     });
 
     return EXIT_SUCCESS;
