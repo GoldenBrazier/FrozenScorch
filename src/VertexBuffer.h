@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Backend/OpenGL/Utils.h>
-#include <Backend/Var.h>
 #include <GL/glew.h>
+#include <GraphicsAPI/OpenGL/VarTypes.h>
+#include <GraphicsAPI/Var.h>
 #include <Utils.h>
 #include <VertexArray.h>
 #include <memory>
@@ -17,14 +17,13 @@ public:
     ~VertexBuffer();
 
 public:
-    template <typename T>
-    inline void register_attribute(const std::shared_ptr<Backend::Attribute>& var, bool do_transpose, int stride, std::size_t offset)
+    template <GL::VarTypes T>
+    inline void register_attribute(int index, bool do_transpose, int stride, std::size_t offset)
     {
-        auto gl_type = GL::GetType<T>();
-        auto gl_dims = GL::GetDims<T>();
+        auto gl_type = GL::get_type<T>();
+        auto gl_dims = GL::get_dims<T>();
 
         m_vertex_array->bind();
-        auto index = var->index();
 
         glBindBuffer(GL_ARRAY_BUFFER, m_id);
         glEnableVertexAttribArray(index);

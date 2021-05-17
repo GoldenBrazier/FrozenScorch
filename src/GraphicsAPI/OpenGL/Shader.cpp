@@ -1,16 +1,17 @@
-#include <Shader.h>
+#include <GraphicsAPI/OpenGL/Shader.h>
 #include <fstream>
 #include <iostream>
 #include <string>
 
-namespace Backend {
+namespace GL {
 
-Shader::Shader(const std::vector<std::string>& files, const std::vector<std::shared_ptr<Var>>& vars)
+Shader::Shader(const std::vector<std::string>& files, const std::vector<std::pair<std::string, int>>& attributes, const std::vector<std::string>& uniforms)
+    : Generic::Shader()
 {
-    prepare_program(files, vars);
+    prepare_program(files, attributes, uniforms);
 }
 
-void Shader::prepare_program(const std::vector<std::string>& file_paths, const std::vector<std::shared_ptr<Var>>& vars)
+void Shader::prepare_program(const std::vector<std::string>& file_paths, const std::vector<std::pair<std::string, int>>& attributes, const std::vector<std::string>& uniforms)
 {
     m_gl_program_id = glCreateProgram();
 
@@ -18,21 +19,19 @@ void Shader::prepare_program(const std::vector<std::string>& file_paths, const s
         attach_shader(path);
     }
 
-    for (auto var : vars) {
-        if (var->is_attribute()) {
-            auto attribute = std::dynamic_pointer_cast<Attribute>(var);
-            glBindAttribLocation(m_gl_program_id, attribute->index(), attribute->name().c_str());
-        }
+    for (auto& attr : attributes) {
+        glBindAttribLocation(m_gl_program_id, attr.second, attr.first.c_str());
     }
 
     glLinkProgram(m_gl_program_id);
     check_shader_error(m_gl_program_id, GL_LINK_STATUS, true, "Error linking shader program");
 
-    for (auto var : vars) {
-        if (var->is_uniform()) {
-            auto uniform = std::dynamic_pointer_cast<Uniform>(var);
-            register_uniform_var(uniform);
-        }
+    for (auto& attr : attributes) {
+        glBindAttribLocation(m_gl_program_id, attr.second, attr.first.c_str());
+    }
+
+    for (auto unfs : uniforms) {
+        register_uniform_var(unfs);
     }
 
     glValidateProgram(m_gl_program_id);
@@ -124,15 +123,15 @@ void Shader::check_shader_error(GLuint shader, GLuint flag, bool program, const 
     }
 }
 
-void Shader::register_uniform_var(std::shared_ptr<Uniform> uniform)
+void Shader::register_uniform_var(const std::string& uniform_name)
 {
     // TODO(nikita): Add check for repeating names.
-    auto m_gl_var_id = glGetUniformLocation(m_gl_program_id, uniform->name().c_str());
+    auto m_gl_var_id = glGetUniformLocation(m_gl_program_id, uniform_name.c_str());
     if (m_gl_var_id == 0xFFFFFFFF) {
         std::cerr << "Can't find unifrom var";
         std::abort();
     }
-    m_uniform_vars[uniform->name()] = m_gl_var_id;
+    m_uniform_vars[uniform_name] = m_gl_var_id;
 }
 
 }

@@ -2,7 +2,12 @@ Build:
     Type: Executable
 
     Src: 
-        src/**.cpp
+        src/*.cpp
+        src/*/*.cpp
+        src/*/*/*.cpp
+        src/*/*/*/*.cpp
+        src/*/*/*/*/*.cpp
+        src/*/*/*/*/*/*.cpp
         deps/lodepng/*.cpp
 
     Extensions:
