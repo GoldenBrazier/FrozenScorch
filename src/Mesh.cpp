@@ -1,32 +1,13 @@
 #include <GL/glew.h>
 #include <Mesh.h>
-#include <Runtime/Utils/SizeOfData.h>
+#include <VertexBuffer.h>
 
 #include <iostream>
 
-Mesh::Mesh(const std::vector<Math::Vector3f>& vertices)
-    : m_vertices(vertices)
-{
-    glGenVertexArrays(1, &m_vertex_array_object);
-    glBindVertexArray(m_vertex_array_object);
-    glGenBuffers(NumBuffers, m_vertex_arry_buffers);
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertex_arry_buffers[Position]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof_data(m_vertices), m_vertices.data(), GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-    glBindVertexArray(0);
-}
-
-Mesh::~Mesh()
-{
-    glDeleteVertexArrays(1, &m_vertex_array_object);
-}
-
 void Mesh::draw()
 {
-    glBindVertexArray(m_vertex_array_object);
+    m_vertex_array->bind();
+    m_vertex_array->index_buffer()->bind();
 
-    glDrawArrays(GL_TRIANGLES, 0, m_vertices.size());
-
-    glBindVertexArray(0);
+    glDrawElements(GL_TRIANGLES, m_vertex_array->index_buffer()->count(), GL_UNSIGNED_INT, nullptr);
 }

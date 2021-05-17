@@ -9,18 +9,48 @@
 #include <Runtime/Utils/DrawLoop.h>
 #include <Shader.h>
 #include <iostream>
+#include <Shader.h>
+#include <VertexArray.h>
+#include <VertexBuffer.h>
+#include <array>
+#include <iostream>
+#include <memory>
 #include <vector>
 
 int main(int argc, char* argv[])
 {
     auto display = Display(800, 600, "OpenRenderer");
+
+    auto position = Backend::Attribute::construct("position", 0, 3);
+
     auto shader = Backend::Shader({ "res/basic_shader.vs", "res/basic_shader.fs" },
-        { Backend::Attribute::construct("position", 0), Backend::Uniform::construct("gScale"),
+        { position, Backend::Uniform::construct("gScale"),
             Backend::Uniform::construct("gTranslation"), Backend::Uniform::construct("gRotation") });
 
-    auto vertexes = std::vector<Math::Vector3f> { Math::Vector3f(-0.5, -0.5, 0), Math::Vector3f(0, 0.5, 0), Math::Vector3f(0.5, -0.5, 0) };
-    auto mesh = Mesh(vertexes);
+    // ---------- initail data to render ----------
 
+    auto vertexes = std::array<Math::Vector3f, 4> {
+        Math::Vector3f(-0.5, -0.5, 0),
+        Math::Vector3f(0.5, -0.5, 0),
+        Math::Vector3f(0.5, 0.5, 0),
+        Math::Vector3f(-0.5, 0.5, 0),
+    };
+
+    auto indexes = std::array<uint32_t, 6> {
+        0, 1, 2,
+        2, 3, 0,
+    };
+
+    auto va = VertexArray::construct();
+    auto vb = va->construct_vertex_buffer(vertexes.data(), vertexes.size() * sizeof(Math::Vector3f));
+    
+    vb->register_attribute<GL::Vec3>(position, false, 0, 0);
+    va->set_index_buffer(IndexBuffer::construct(indexes.data(), indexes.size()));
+
+    auto mesh = Mesh(va);
+
+    // --------------------------------------------
+    
     float rotation = 0;
     float distance = 0;
     float step = 0.05;
