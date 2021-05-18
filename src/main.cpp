@@ -1,5 +1,5 @@
 #include <GraphicsAPI/Generic/Constructors.h>
-#include <GraphicsAPI/Var.h>
+#include <GraphicsAPI/Generic/Var.h>
 #include <Math/Matrix4f.h>
 #include <Math/Numbers.h>
 #include <Math/Vector3f.h>

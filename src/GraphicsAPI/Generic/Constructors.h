@@ -1,5 +1,4 @@
 #pragma once
-
 #include <GraphicsAPI/Generic/Display.h>
 #include <GraphicsAPI/Generic/IndexBuffer.h>
 #include <GraphicsAPI/Generic/Shader.h>

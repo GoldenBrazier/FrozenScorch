@@ -1,10 +1,9 @@
 #pragma once
-
 #include <GL/glew.h>
+#include <GraphicsAPI/Generic/Var.h>
 #include <GraphicsAPI/OpenGL/VarTypes.h>
 #include <GraphicsAPI/OpenGL/VertexArray.h>
 #include <GraphicsAPI/OpenGL/VertexBuffer.h>
-#include <GraphicsAPI/Var.h>
 #include <Utils.h>
 #include <memory>
 #include <string>

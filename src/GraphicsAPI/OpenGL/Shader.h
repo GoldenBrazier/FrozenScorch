@@ -1,7 +1,7 @@
 #pragma once
 #include <GL/glew.h>
 #include <GraphicsAPI/Generic/Shader.h>
-#include <GraphicsAPI/Var.h>
+#include <GraphicsAPI/Generic/Var.h>
 #include <iostream>
 #include <memory>
 #include <string>
