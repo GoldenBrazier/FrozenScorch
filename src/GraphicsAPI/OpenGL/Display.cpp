@@ -1,4 +1,5 @@
 #include <GL/glew.h>
+#include <GraphicsAPI/Generic/Context.h>
 #include <GraphicsAPI/OpenGL/Display.h>
 #include <cassert>
 #include <iostream>
@@ -23,7 +24,7 @@ Display::Display(int width, int height, const std::string& name)
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, SDL_TRUE);
 
     m_window = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL);
-    m_gl_context = SDL_GL_CreateContext(m_window);
+    Ctx.set_opengl_context(GL::Context::construct(SDL_GL_CreateContext(m_window)));
 
     auto status = glewInit();
     if (status != GLEW_OK) {
@@ -34,7 +35,7 @@ Display::Display(int width, int height, const std::string& name)
 
 Display::~Display()
 {
-    SDL_GL_DeleteContext(m_gl_context);
+    SDL_GL_DeleteContext(Ctx.opengl_context()->sdl_glcontext());
     SDL_DestroyWindow(m_window);
     SDL_Quit();
 }

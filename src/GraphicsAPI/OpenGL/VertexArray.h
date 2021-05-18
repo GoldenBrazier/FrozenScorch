@@ -1,5 +1,4 @@
 #pragma once
-
 #include <GL/glew.h>
 #include <GraphicsAPI/Generic/VertexArray.h>
 #include <GraphicsAPI/OpenGL/IndexBuffer.h>
