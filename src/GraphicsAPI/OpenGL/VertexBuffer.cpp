@@ -3,6 +3,8 @@
 #include <memory>
 #include <stdint.h>
 
+namespace GL {
+
 VertexBuffer::VertexBuffer(const void* data, uint32_t size, VertexArray* va)
     : m_vertex_array(va)
 {
@@ -19,4 +21,6 @@ VertexBuffer::~VertexBuffer()
 void VertexBuffer::bind()
 {
     glBindBuffer(GL_ARRAY_BUFFER, m_id);
+}
+
 }

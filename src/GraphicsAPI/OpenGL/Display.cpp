@@ -50,10 +50,4 @@ void Display::swap_buffers()
     }
 }
 
-// void Display::clear(float r, float g, float b, float a)
-// {
-//     glClearColor(0, 0.15f, 0.3f, 1.0f);
-//     glClear(GL_COLOR_BUFFER_BIT);
-// }
-
 }

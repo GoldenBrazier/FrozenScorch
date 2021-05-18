@@ -2,14 +2,17 @@
 
 #include <GL/glew.h>
 #include <GraphicsAPI/OpenGL/VarTypes.h>
+#include <GraphicsAPI/OpenGL/VertexArray.h>
+#include <GraphicsAPI/OpenGL/VertexBuffer.h>
 #include <GraphicsAPI/Var.h>
 #include <Utils.h>
-#include <VertexArray.h>
 #include <memory>
 #include <string>
 #include <vector>
 
-class VertexBuffer final {
+namespace GL {
+
+class VertexBuffer : public Generic::VertexBuffer {
     friend class VertexArray;
     CONSTRUCTIBLE(VertexBuffer);
 
@@ -17,11 +20,10 @@ public:
     ~VertexBuffer();
 
 public:
-    template <GL::VarTypes T>
-    inline void register_attribute(int index, bool do_transpose, int stride, std::size_t offset)
+    void register_attribute_vec3(int index, bool do_transpose, int stride, size_t offset) override
     {
-        auto gl_type = GL::get_type<T>();
-        auto gl_dims = GL::get_dims<T>();
+        auto gl_type = GL::get_type<GL::VarTypes::Vec3>();
+        auto gl_dims = GL::get_dims<GL::VarTypes::Vec3>();
 
         m_vertex_array->bind();
 
@@ -30,12 +32,13 @@ public:
         glVertexAttribPointer(index, gl_dims, gl_type, do_transpose, stride, (void*)offset);
     }
 
-    void bind();
+    void bind() override;
 
 private:
     VertexBuffer(const void* data, uint32_t size, VertexArray* va);
 
-private:
     uint32_t m_id;
     VertexArray* m_vertex_array;
 };
+
+}
