@@ -6,8 +6,6 @@
 #include <Mesh.h>
 #include <Runtime/PNGLoader/PNGLoader.h>
 #include <Runtime/Utils/DrawLoop.h>
-#include <VertexArray.h>
-#include <VertexBuffer.h>
 #include <array>
 #include <iostream>
 #include <memory>
@@ -38,11 +36,10 @@ int main(int argc, char* argv[])
         2, 3, 0,
     };
 
-    auto va = VertexArray::construct();
+    auto va = Constructors::VertexArray::construct();
     auto vb = va->construct_vertex_buffer(vertexes.data(), vertexes.size() * sizeof(Math::Vector3f));
-
-    vb->register_attribute<GL::VarTypes::Vec3>(position.second, false, 0, 0);
-    va->set_index_buffer(IndexBuffer::construct(indexes.data(), indexes.size()));
+    vb->register_attribute_vec3(position.second, false, 0, 0);
+    va->construct_index_buffer(indexes.data(), indexes.size());
 
     auto mesh = Mesh(va);
 

@@ -1,8 +1,10 @@
-#include "IndexBuffer.h"
 #include <GL/glew.h>
+#include <GraphicsAPI/OpenGL/IndexBuffer.h>
 #include <cstdint>
 
-IndexBuffer::IndexBuffer(const void* data, uint32_t count)
+namespace GL {
+
+IndexBuffer::IndexBuffer(const void* data, size_t count)
     : m_count(count)
 {
     glGenBuffers(1, &m_id);
@@ -18,4 +20,6 @@ IndexBuffer::~IndexBuffer()
 void IndexBuffer::bind()
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id);
+}
+
 }
