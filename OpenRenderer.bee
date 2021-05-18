@@ -8,16 +8,37 @@ Build:
         src/*/*/*/*.cpp
         src/*/*/*/*/*.cpp
         src/*/*/*/*/*/*.cpp
-        deps/lodepng/*.cpp
+
+        src/*.mm
+        src/*/*.mm
+        src/*/*/*.mm
+        src/*/*/*/*.mm
+        src/*/*/*/*/*.mm
+        src/*/*/*/*/*/*.mm
+        
+        deps/*.cpp
+        deps/*/*.cpp
+        deps/*/*/*.cpp
+        deps/*/*/*/*.cpp
+        deps/*/*/*/*/*.cpp
+        deps/*/*/*/*/*/*.cpp
+
+        deps/*.mm
+        deps/*/*.mm
+        deps/*/*/*.mm
 
     Extensions:
+        mm:
+            Compiler: clang++
+            Flags: -std=c++2a, -Isrc, -Ires, -Ideps, -x, objective-c++, -mmacosx-version-min=10.12
+
         cpp:
             Compiler: clang++
-            Flags: -std=c++2a, -Isrc, -Ideps
+            Flags: -std=c++2a, -Isrc, -Ires, -Ideps
 
     Link:
         Linker: clang++
-        Flags: -framework, OpenGL, -lSDL2, -lGLEW
+        Flags: -framework, OpenGL, -lSDL2, -lGLEW, -framework, Metal, -framework, MetalKit, -framework, Cocoa, -framework, CoreFoundation, -fobjc-link-runtime
 
 
 Commands:
