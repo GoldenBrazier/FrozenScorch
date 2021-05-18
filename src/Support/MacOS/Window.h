@@ -5,7 +5,7 @@ namespace Support::MacOS {
 
 class Window {
 public:
-    Window(const MTL::Device& device, void (*render)(const Window&), size_t width, size_t height);
+    Window(const MTL::Device& device, void (*render)(), size_t width, size_t height);
 
     size_t width() const;
     size_t height() const;

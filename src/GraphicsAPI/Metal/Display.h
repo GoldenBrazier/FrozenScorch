@@ -1,21 +1,17 @@
 #pragma once
 #include <GraphicsAPI/Generic/Display.h>
-#include <SDL2/SDL.h>
+#include <mtlpp/mtlpp.hpp>
 #include <string>
 
-namespace GL {
+namespace Metal {
 
 class Display : public Generic::Display {
 public:
     Display(size_t width, size_t height, const std::string& name);
     ~Display();
 
-    void swap_buffers() override;
-    bool closed() const override { return m_closed; }
-
-private:
-    bool m_closed {};
-    SDL_Window* m_window;
+    void swap_buffers() override {};
+    bool closed() const override { return false; }
 };
 
 }

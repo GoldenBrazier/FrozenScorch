@@ -3,7 +3,7 @@
 #import <MetalKit/MetalKit.h>
 
 @interface WindowViewController : NSViewController<MTKViewDelegate> {
-    @public void (*m_render)(const Support::MacOS::Window&);
+    @public void (*m_render)();
     @public const Support::MacOS::Window* m_window;
 }
 
@@ -17,13 +17,13 @@
 
 -(void)drawInMTKView:(nonnull MTKView *)view
 {
-    (*m_render)(*m_window);
+    (*m_render)();
 }
 @end
 
 namespace Support::MacOS {
 
-Window::Window(const mtlpp::Device& device, void (*render)(const Window&), size_t width, size_t height)
+Window::Window(const mtlpp::Device& device, void (*render)(), size_t width, size_t height)
 {
     NSRect frame = NSMakeRect(0, 0, width, height);
     NSWindow* window = [[NSWindow alloc] initWithContentRect:frame
