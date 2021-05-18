@@ -6,7 +6,7 @@
 
 namespace GL {
 
-Display::Display(int width, int height, const std::string& name)
+Display::Display(size_t width, size_t height, const std::string& name)
 {
     // GLEW obtains information on the supported extensions from the graphics driver.
     // Experimental or pre-release drivers, however, might not report every available

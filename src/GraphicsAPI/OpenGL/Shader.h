@@ -16,6 +16,9 @@ public:
     Shader(const std::vector<std::string>& files, const std::vector<std::pair<std::string, int>>& attributes, const std::vector<std::string>& uniforms);
     ~Shader();
 
+    // Metal Constructor, which won't be called
+    Shader(const std::string& file, const std::string& vert_func, const std::string& frag_func, const std::vector<std::pair<std::string, int>>& uniforms, size_t uniforms_size) { std::abort(); }
+
     inline void compile() const override { }
     inline void bind() const override { glUseProgram(m_gl_program_id); }
 
