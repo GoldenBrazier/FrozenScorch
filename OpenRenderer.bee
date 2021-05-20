@@ -30,11 +30,11 @@ Build:
     Extensions:
         mm:
             Compiler: clang++
-            Flags: -std=c++2a, -Isrc, -Ires, -Ideps, -x, objective-c++, -mmacosx-version-min=10.12
+            Flags: -std=c++2a, -Isrc, -Ires, -Ideps, -x, objective-c++, -mmacosx-version-min=10.12, -ggdb
 
         cpp:
             Compiler: clang++
-            Flags: -std=c++2a, -Isrc, -Ires, -Ideps
+            Flags: -std=c++2a, -Isrc, -Ires, -Ideps, -ggdb
 
     Link:
         Linker: clang++
