@@ -4,6 +4,7 @@
 #include <Math/Numbers.h>
 #include <Math/Vector3f.h>
 #include <Mesh.h>
+#include <Renderer/Renderer.h>
 #include <Runtime/PNGLoader/PNGLoader.h>
 #include <Runtime/Utils/DrawLoop.h>
 #include <Runtime/Utils/SizeOfData.h>
@@ -14,7 +15,6 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include <Renderer/Renderer.h>
 
 float rotation = 0;
 float distance = 0;
@@ -29,14 +29,14 @@ void main_loop_callback()
     renderer->set_clear_color(0, 0.15f, 0.3f, 1.0f);
 
     renderer->begin();
-        renderer->clear();
+    renderer->clear();
 
-        shader->bind();
-        shader->set_uniform("gScale", 0.55f);
-        shader->set_uniform("gTranslation", Math::Matrix4f::Translation({ distance, distance / 2, 0 }));
-        shader->set_uniform("gRotation", Math::Matrix4f::RotationAroundZ(rotation));
+    shader->bind();
+    shader->set_uniform("gScale", 0.55f);
+    shader->set_uniform("gTranslation", Math::Matrix4f::Translation({ distance, distance / 2, 0 }));
+    shader->set_uniform("gRotation", Math::Matrix4f::RotationAroundZ(rotation));
 
-        renderer->draw_indexed(vertex_array);
+    renderer->draw_indexed(vertex_array);
     renderer->end();
 
     display->swap_buffers();
@@ -58,12 +58,13 @@ void main_loop_callback()
 
 int main(int argc, char* argv[])
 {
+    Ctx.set_grahics_api_type(Generic::GraphicsAPIType::Metal);
     display = Constructors::Display::construct(800, 600, "OpenRenderer");
     renderer = Constructors::Renderer::construct();
 
     std::pair<std::string, int> position = { "position", 0 };
 
-    if (false) {
+    if (Ctx.graphics_api_type() == Generic::GraphicsAPIType::Metal) {
         shader = Constructors::Shader::construct(
             "res/basic.metal",
             "vert_func",
