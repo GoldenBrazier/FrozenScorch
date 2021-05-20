@@ -19,8 +19,8 @@ vertex VertexOut vert_func(
 {
     float3 in = vertex_array[v_id];
     VertexOut out;
-    out.position = float4(float4(in, 1.0) * uniforms.rot) * uniforms.trans;
-    out.color = float4(in.x, in.y, 1.0, 1.0);
+    out.position = float4(float4(in * uniforms.scale, 1.0) * uniforms.rot) * uniforms.trans;
+    out.color = float4(clamp(in, 0, 1), 1.0);
     return out;
 }
 

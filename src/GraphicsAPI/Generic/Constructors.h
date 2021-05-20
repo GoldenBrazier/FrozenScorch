@@ -17,8 +17,8 @@
 #include <GraphicsAPI/OpenGL/Shader.h>
 #include <GraphicsAPI/OpenGL/VertexArray.h>
 #include <GraphicsAPI/OpenGL/VertexBuffer.h>
-#include <Renderer/OpenGL/Renderer.h>
 #include <Renderer/Metal/Renderer.h>
+#include <Renderer/OpenGL/Renderer.h>
 #include <cassert>
 
 // #define METAL true
@@ -28,7 +28,7 @@
     template <class... Args>                                                                                 \
     inline std::shared_ptr<Generic::class_name> construct(Args&&... args)                                    \
     {                                                                                                        \
-        if (false) {                                                                                         \
+        if (Ctx.graphics_api_type() == Generic::GraphicsAPIType::Metal) {                                    \
             return std::shared_ptr<Generic::class_name>(new Metal::class_name(std::forward<Args>(args)...)); \
         } else {                                                                                             \
             return std::shared_ptr<Generic::class_name>(new GL::class_name(std::forward<Args>(args)...));    \
