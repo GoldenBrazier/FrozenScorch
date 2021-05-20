@@ -1,22 +1,23 @@
 #pragma once
+
 #include <GraphicsAPI/Generic/IndexBuffer.h>
 #include <Utils.h>
-#include <cstdint>
+#include <mtlpp/mtlpp.hpp>
 
-namespace GL {
+namespace Metal {
 
 class IndexBuffer : public Generic::IndexBuffer {
     CONSTRUCTIBLE(IndexBuffer)
 public:
     IndexBuffer(const void* data, size_t count);
-    ~IndexBuffer();
 
-    void bind();
-    inline size_t count() const override { return m_count; }
+public:
+    inline size_t count() const { return m_count; }
+    inline MTL::Buffer& buffer() { return m_buffer; }
 
 private:
-    uint32_t m_id;
     size_t m_count;
+    MTL::Buffer m_buffer;
 };
 
 }
