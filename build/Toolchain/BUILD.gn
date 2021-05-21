@@ -1,0 +1,72 @@
+llvm_ar = "$llvm_bin_path/llvm-ar"
+llvm_cc = "clang"
+llvm_cxx = "clang++"
+llvm_objc = "clang"
+llvm_objcxx = "clang++"
+llvm_ld = "clang++"
+llvm_asm = "clang"
+
+toolchain("llvm") {
+  tool("cc") {
+    depfile = "{{output}}.d"
+    command = "$llvm_cc -MMD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_c}} -c {{source}} -o {{output}}"
+    depsformat = "gcc"
+    description = "CC {{output}}"
+    outputs =
+        [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+  }
+  tool("cxx") {
+    depfile = "{{output}}.d"
+    command = "$llvm_cxx -MMD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_cc}} -c {{source}} -o {{output}}"
+    depsformat = "gcc"
+    description = "CXX {{output}}"
+    outputs =
+        [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+  }
+  tool("objc") {
+    depfile = "{{output}}.d"
+    command = "$llvm_objc -MMD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_cc}} -c {{source}} -o {{output}}"
+    depsformat = "gcc"
+    description = "CXX {{output}}"
+    outputs =
+        [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+  }
+  tool("objcxx") {
+    depfile = "{{output}}.d"
+    command = "$llvm_objcxx -MMD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_cc}} -c {{source}} -o {{output}}"
+    depsformat = "gcc"
+    description = "CXX {{output}}"
+    outputs =
+        [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+  }
+  tool("asm") {
+    depfile = "{{output}}.d"
+    command =
+        "$llvm_asm {{source}} -o {{output}} {{asmflags}}"
+    depsformat = "gcc"
+    description = "ASM {{output}}"
+    outputs =
+        [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+  }
+  tool("alink") {
+    command = "rm -f {{output}} && $llvm_ar rcs {{output}} {{inputs}}"
+    description = "AR {{output}}"
+    outputs = [ "{{root_out_dir}}/{{target_output_name}}{{output_extension}}" ]
+    default_output_extension = ".a"
+    output_prefix = ""
+  }
+  tool("link") {
+    outputs = [ "{{root_out_dir}}/{{target_output_name}}{{output_extension}}" ]
+    command =
+        "$llvm_ld {{inputs}} -o {{output}} {{ldflags}} {{solibs}} {{libs}}"
+    description = "LINK {{output}}"
+  }
+  tool("stamp") {
+    command = "touch {{output}}"
+    description = "STAMP {{output}}"
+  }
+  tool("copy") {
+    command = "ln -f {{source}} {{output}} 2>/dev/null || (rm -rf {{output}} && cp -af {{source}} {{output}})"
+    description = "COPY {{source}} {{output}}"
+  }
+}
