@@ -7,8 +7,8 @@ namespace GL {
 
 class MainLoop : public Generic::MainLoop {
 public:
-    explicit MainLoop(std::function<void(void)> callback)
-        : m_callback(callback)
+    explicit MainLoop(void (*draw_callback)(), void (*key_down_callback)(int, int), void (*mouse_move_callback)(float, float), void (*mouse_down_callback)(int, int))
+        : m_callback(draw_callback)
     {
     }
 

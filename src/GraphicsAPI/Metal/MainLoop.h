@@ -7,10 +7,13 @@ namespace Metal {
 
 class MainLoop : public Generic::MainLoop {
 public:
-    explicit MainLoop(void (*callback)())
-        : m_callback(callback)
+    explicit MainLoop(void (*draw_callback)(), void (*key_down_callback)(int, int), void (*mouse_move_callback)(float, float), void (*mouse_down_callback)(int, int))
+        : m_callback(draw_callback)
     {
-        Ctx.metal_context()->set_window(new Support::MacOS::Window(Ctx.metal_context()->device(), callback, 800, 600));
+        Ctx.metal_context()->window().set_draw_callback(draw_callback);
+        Ctx.metal_context()->window().set_key_down_callback(key_down_callback);
+        Ctx.metal_context()->window().set_mouse_move_callback(mouse_move_callback);
+        Ctx.metal_context()->window().set_mouse_down_callback(mouse_down_callback);
     }
 
     inline void run() override

@@ -8,6 +8,7 @@ namespace Metal {
 Display::Display(size_t width, size_t height, const std::string& name)
 {
     Ctx.set_metal_context(Metal::Context::construct(MTL::Device::CreateSystemDefaultDevice()));
+    Ctx.metal_context()->set_window(new Support::MacOS::Window(Ctx.metal_context()->device(), width, height));
 }
 
 Display::~Display()

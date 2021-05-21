@@ -21,6 +21,8 @@ executable_macos("OpenRenderer") {
     "//deps",
   ]
 
+  cflags = [ "-ggdb" ]
+
   cflags_cc = [ "-std=c++2a" ]
 
   cflags_objcc = [

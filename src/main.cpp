@@ -24,6 +24,26 @@ std::shared_ptr<Generic::Display> display;
 std::shared_ptr<Generic::Renderer> renderer;
 std::shared_ptr<Generic::VertexArray> vertex_array;
 
+void key_callback(int a, int b) 
+{
+    std::cout << (char)a << " " << b << std::endl;
+}
+
+void mouse_move_callback(float a, float b) 
+{
+    std::cout << a << " " << b << std::endl;
+}
+
+void mouse_down_callback(int a, int b) 
+{
+    std::cout << a << " " << b << std::endl;
+}
+
+void event_callback(void* event) 
+{
+    std::cout << "Got event" << std::endl;
+}
+
 void main_loop_callback()
 {
     renderer->set_clear_color(0, 0.15f, 0.3f, 1.0f);
@@ -96,7 +116,7 @@ int main(int argc, char* argv[])
         2, 3, 0,
     };
 
-    auto main_loop = Constructors::MainLoop::construct(main_loop_callback);
+    auto main_loop = Constructors::MainLoop::construct(main_loop_callback, key_callback, mouse_move_callback, mouse_down_callback);
 
     vertex_array = Constructors::VertexArray::construct();
     auto vb = vertex_array->construct_vertex_buffer(vertexes.data(), vertexes.size() * sizeof(Math::Vector3f));
