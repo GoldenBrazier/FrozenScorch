@@ -8,10 +8,14 @@ namespace Metal {
 class Display : public Generic::Display {
 public:
     Display(size_t width, size_t height, const std::string& name);
-    ~Display();
 
     void swap_buffers() override {};
     bool closed() const override { return false; }
+
+    static void draw_cycle_callback();
+    static void key_callback(int a, int b);
+    static void mouse_move_callback(float a, float b);
+    static void mouse_down_callback(int a, int b);
 };
 
 }

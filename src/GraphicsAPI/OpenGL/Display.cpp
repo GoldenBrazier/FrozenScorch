@@ -1,3 +1,6 @@
+#include <Application/Application.h>
+#include <Application/Events/MouseEvent.h>
+#include <Application/Events/WindowEvent.h>
 #include <GL/glew.h>
 #include <GraphicsAPI/Generic/Context.h>
 #include <GraphicsAPI/OpenGL/Display.h>
@@ -43,10 +46,31 @@ Display::~Display()
 void Display::swap_buffers()
 {
     SDL_GL_SwapWindow(m_window);
-    SDL_Event windowEvent;
-    while (SDL_PollEvent(&windowEvent)) {
-        if (windowEvent.type == SDL_QUIT) {
-            m_closed = true;
+    SDL_Event event;
+    
+    while (SDL_PollEvent(&event)) {
+
+        switch (event.type) {
+        case SDL_QUIT: {
+            Display::GetApplicationPointer()->on_event(WindowCloseEvent());
+            break;
+        }
+        case SDL_KEYUP: {
+            // TODO: call Display::GetApplicationPointer()->on_event();
+            break;
+        }
+        case SDL_KEYDOWN: {
+            // TODO: call Display::GetApplicationPointer()->on_event();
+            break;
+        }
+
+        case SDL_MOUSEMOTION: {
+            Display::GetApplicationPointer()->on_event(MouseMoveEvent(event.motion.x, event.motion.y));
+            break;
+        }
+
+        default:
+            break;
         }
     }
 }
