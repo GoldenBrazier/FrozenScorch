@@ -26,22 +26,22 @@ std::shared_ptr<Generic::VertexArray> vertex_array;
 
 void key_callback(int a, int b) 
 {
-    std::cout << (char)a << " " << b << std::endl;
+    // std::cout << (char)a << " " << b << std::endl;
 }
 
 void mouse_move_callback(float a, float b) 
 {
-    std::cout << a << " " << b << std::endl;
+    // std::cout << a << " " << b << std::endl;
 }
 
 void mouse_down_callback(int a, int b) 
 {
-    std::cout << a << " " << b << std::endl;
+    // std::cout << a << " " << b << std::endl;
 }
 
 void event_callback(void* event) 
 {
-    std::cout << "Got event" << std::endl;
+    // std::cout << "Got event" << std::endl;
 }
 
 void main_loop_callback()
@@ -55,6 +55,7 @@ void main_loop_callback()
     shader->set_uniform("gScale", 0.55f);
     shader->set_uniform("gTranslation", Math::Matrix4f::Translation({ distance, distance / 2, 0 }));
     shader->set_uniform("gRotation", Math::Matrix4f::RotationAroundZ(rotation));
+    shader->set_uniform("gPerspective", Math::Matrix4f::Perspective(800, 600, 1, 6, 90));
 
     renderer->draw_indexed(vertex_array);
     renderer->end();
@@ -93,22 +94,23 @@ int main(int argc, char* argv[])
                 { "gScale", offsetof(BasicShader::Uniforms, scale) },
                 { "gRotation", offsetof(BasicShader::Uniforms, rot) },
                 { "gTranslation", offsetof(BasicShader::Uniforms, trans) },
+                { "gPerspective", offsetof(BasicShader::Uniforms, perspective) },
             },
             sizeof(BasicShader::Uniforms));
     } else {
         shader = Constructors::Shader::construct(
             std::vector<std::string> { "res/basic_shader.vs", "res/basic_shader.fs" },
             std::vector<std::pair<std::string, int>> { { "position", 0 } },
-            std::vector<std::string> { "gScale", "gTranslation", "gRotation" });
+            std::vector<std::string> { "gScale", "gTranslation", "gRotation", "gPerspective" });
     }
 
     // ---------- initail data to render ----------
 
     auto vertexes = std::array<Math::Vector3f, 4> {
-        Math::Vector3f(-0.5, -0.5, 0),
-        Math::Vector3f(0.5, -0.5, 0),
-        Math::Vector3f(0.5, 0.5, 0),
-        Math::Vector3f(-0.5, 0.5, 0),
+        Math::Vector3f(-0.5, -0.5, 4),
+        Math::Vector3f(0.5, -0.5, 4),
+        Math::Vector3f(0.5, 0.5, 4),
+        Math::Vector3f(-0.5, 0.5, 4),
     };
 
     auto indexes = std::array<uint32_t, 6> {

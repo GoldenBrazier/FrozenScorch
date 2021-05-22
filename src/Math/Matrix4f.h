@@ -1,7 +1,8 @@
 #pragma once
+#include <Math/Trigonometry.h>
+#include <Math/Vector3f.h>
 #include <array>
 #include <cmath>
-#include <Math/Vector3f.h>
 
 namespace Math {
 
@@ -31,6 +32,7 @@ public:
     static inline Matrix4f RotationAroundY(float radians);
     static inline Matrix4f RotationAroundZ(float radians);
     static inline Matrix4f Scaling(float scale);
+    static inline Matrix4f Perspective(float width, float height, float zNear, float zFar, float angle);
 
 private:
     std::array<float, 16> m_data;
@@ -98,6 +100,18 @@ Matrix4f Matrix4f::Scaling(float scale)
         0, sinf(scale), 0, 0,
         0, 0, sinf(scale), 0,
         0, 0, 0, 1,
+    });
+}
+
+Matrix4f Matrix4f::Perspective(float width, float height, float near_z, float far_z, float view_angle)
+{
+    float view_angle_rect_tan = tanf(deg_to_rad(view_angle / 2.0f));
+    float display_aspect_ratio = width / height;
+    return Matrix4f({
+        (1.0f / (view_angle_rect_tan * display_aspect_ratio)), 0, 0, 0,
+        0, (1.0f / view_angle_rect_tan), 0, 0,
+        0, 0, ((-near_z - far_z) / (near_z - far_z)), (2.0f * far_z * near_z / (near_z - far_z)),
+        0, 0, 1.0f, 0,
     });
 }
 // clang-format on
