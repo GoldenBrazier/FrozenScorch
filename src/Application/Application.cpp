@@ -2,11 +2,12 @@
 #include <GraphicsAPI/Generic/Constructors.h>
 #include <GraphicsAPI/Generic/Context.h>
 #include <GraphicsAPI/Generic/Display.h>
+#include <GraphicsAPI/Generic/Context.h>
 
 Application::Application()
 {
     m_display = Constructors::Display::construct(800, 600, "OpenRenderer");
-    Generic::Display::SetApplicationPointer(this);
+    Ctx.set_application(this);
 }
 
 void Application::run()

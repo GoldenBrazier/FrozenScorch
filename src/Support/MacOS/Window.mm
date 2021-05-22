@@ -1,4 +1,5 @@
 #import <Support/MacOS/Window.h>
+#import <Support/MacOS/KeyCodes.h>
 #import <Cocoa/Cocoa.h>
 #import <MetalKit/MetalKit.h>
 
@@ -39,8 +40,33 @@
 
 - (void)keyDown:(NSEvent*)theEvent
 {
-    if (m_mouse_move_callback) {
-        m_key_down_callback((int)[theEvent.characters characterAtIndex:0], theEvent.keyCode);
+    if (m_key_down_callback) {
+        (*m_key_down_callback)((int)[theEvent.characters characterAtIndex:0], theEvent.keyCode);
+    }
+}
+
+
+- (void)flagsChanged:(NSEvent *)theEvent
+{
+    NSUInteger flags = [theEvent modifierFlags];
+    if (flags & NSEventModifierFlagShift) {
+        (*m_key_down_callback)((int)' ', KEY_SHIFT);
+    }
+
+    if (flags & NSEventModifierFlagCommand) {
+        (*m_key_down_callback)((int)' ', KEY_COMMAND);
+    }
+
+    if (flags & NSEventModifierFlagControl) {
+        (*m_key_down_callback)((int)' ', KEY_CONTROL);
+    }
+    
+    if (flags & NSEventModifierFlagOption) {
+        (*m_key_down_callback)((int)' ', KEY_OPTION);
+    }
+    
+    if (flags & NSEventModifierFlagCapsLock) {
+        (*m_key_down_callback)((int)' ', KEY_CAPSLOCK);
     }
 }
 
@@ -48,7 +74,7 @@
 {
     NSPoint mouseDownPos = [theEvent locationInWindow];
     if (m_mouse_move_callback) {
-        m_mouse_move_callback(mouseDownPos.x, mouseDownPos.y);
+        (*m_mouse_move_callback)(mouseDownPos.x, mouseDownPos.y);
     }
     // NSLog(@"mouseMoved %f %f", mouseDownPos.x, mouseDownPos.y);
     // CGDisplayHideCursor(CGMainDisplayID());
@@ -106,7 +132,6 @@ Window::Window(const mtlpp::Device& device, size_t width, size_t height)
     [window center];
     [window orderFrontRegardless];
     [window makeFirstResponder:view];
-    [NSCursor hide];
 
     m_view = NS::Handle{ (__bridge void*)view };
     m_view_controller = NS::Handle{ (__bridge void*)viewController };

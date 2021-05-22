@@ -1,4 +1,5 @@
 #pragma once
+#include <Application/Application.h>
 #include <GraphicsAPI/Metal/Context.h>
 #include <GraphicsAPI/OpenGL/Context.h>
 #include <memory>
@@ -24,10 +25,14 @@ public:
     inline void set_grahics_api_type(GraphicsAPIType api) { m_graphics_api_type = api; }
     inline GraphicsAPIType graphics_api_type() const { return m_graphics_api_type; }
 
+    inline void set_application(Application* app) { m_application = app; }
+    inline Application* application() { return m_application; }
+
 private:
     GraphicsAPIType m_graphics_api_type;
     std::shared_ptr<GL::Context> m_opengl_context { nullptr };
     std::shared_ptr<Metal::Context> m_metal_context { nullptr };
+    Application* m_application { nullptr };
 };
 
 }

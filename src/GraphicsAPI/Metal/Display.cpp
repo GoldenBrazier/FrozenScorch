@@ -20,24 +20,24 @@ Display::Display(size_t width, size_t height, const std::string& name)
 
 void Display::draw_cycle_callback()
 {
-    Display::GetApplicationPointer()->draw_cycle();
+    Ctx.application()->draw_cycle();
 }
 
 void Display::key_callback(int a, int b)
 {
-    auto application = Display::GetApplicationPointer();
+    auto application = Ctx.application();
     // TODO: construct an event and call application->on_event();
 }
 
 void Display::mouse_move_callback(float a, float b)
 {
-    auto application = Display::GetApplicationPointer();
+    auto application = Ctx.application();
     // TODO: construct an event and call application->on_event();
 }
 
 void Display::mouse_down_callback(int a, int b)
 {
-    auto application = Display::GetApplicationPointer();
+    auto application = Ctx.application();
     // TODO: construct an event and call application->on_event();
 }
 

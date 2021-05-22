@@ -52,20 +52,20 @@ void Display::swap_buffers()
 
         switch (event.type) {
         case SDL_QUIT: {
-            Display::GetApplicationPointer()->on_event(WindowCloseEvent());
+            Ctx.application()->on_event(WindowCloseEvent());
             break;
         }
         case SDL_KEYUP: {
-            // TODO: call Display::GetApplicationPointer()->on_event();
+            // TODO: call Ctx.application()->on_event();
             break;
         }
         case SDL_KEYDOWN: {
-            // TODO: call Display::GetApplicationPointer()->on_event();
+            // TODO: call Ctx.application()->on_event();
             break;
         }
 
         case SDL_MOUSEMOTION: {
-            Display::GetApplicationPointer()->on_event(MouseMoveEvent(event.motion.x, event.motion.y));
+            Ctx.application()->on_event(MouseMoveEvent(event.motion.x, event.motion.y));
             break;
         }
 

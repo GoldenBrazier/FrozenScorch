@@ -59,6 +59,7 @@ public:
             0, 1, 2,
             2, 3, 0,
         };
+        // clang-format on
 
         vertex_array = Constructors::VertexArray::construct();
         auto vb = vertex_array->construct_vertex_buffer(vertexes.data(), vertexes.size() * sizeof(Math::Vector3f));
@@ -114,7 +115,7 @@ private:
 
 int main(int argc, char* argv[])
 {
-    Ctx.set_grahics_api_type(Generic::GraphicsAPIType::OpenGL);
+    Ctx.set_grahics_api_type(Generic::GraphicsAPIType::Metal);
 
     ExampleApplication example;
     example.run();
