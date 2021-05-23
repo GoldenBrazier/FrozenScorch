@@ -13,7 +13,7 @@ public:
     bool closed() const override { return false; }
 
     static void draw_cycle_callback();
-    static void key_callback(int a, int b);
+    static void key_down_callback(int a, int b);
     static void mouse_move_callback(float a, float b);
     static void mouse_down_callback(int a, int b);
 };

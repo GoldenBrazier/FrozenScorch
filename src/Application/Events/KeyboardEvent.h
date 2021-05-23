@@ -1,21 +1,20 @@
 #pragma once
 
 #include "Event.h"
-
-enum class Key {};
+#include <Application/KeyCodes.h>
 
 template <EventType T>
 class KeyboardEvent : public Event {
 public:
-    KeyboardEvent(Key key)
+    KeyboardEvent(OpenRenderer::KeyCode key)
         : Event(T)
     {
     }
 
-    Key key() const { return m_key; }
+    OpenRenderer::KeyCode key() const { return m_key; }
 
 private:
-    Key m_key;
+    OpenRenderer::KeyCode m_key;
 };
 
 using KeyboardPressedEvent = KeyboardEvent<EventType::KeyboardPressed>;

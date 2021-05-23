@@ -50,23 +50,23 @@
 {
     NSUInteger flags = [theEvent modifierFlags];
     if (flags & NSEventModifierFlagShift) {
-        (*m_key_down_callback)((int)' ', KEY_SHIFT);
+        (*m_key_down_callback)((int)' ', (int)Support::MacOS::KeyCode::KEY_SHIFT);
     }
 
     if (flags & NSEventModifierFlagCommand) {
-        (*m_key_down_callback)((int)' ', KEY_COMMAND);
+        (*m_key_down_callback)((int)' ', (int)Support::MacOS::KeyCode::KEY_COMMAND);
     }
 
     if (flags & NSEventModifierFlagControl) {
-        (*m_key_down_callback)((int)' ', KEY_CONTROL);
+        (*m_key_down_callback)((int)' ', (int)Support::MacOS::KeyCode::KEY_CONTROL);
     }
     
     if (flags & NSEventModifierFlagOption) {
-        (*m_key_down_callback)((int)' ', KEY_OPTION);
+        (*m_key_down_callback)((int)' ', (int)Support::MacOS::KeyCode::KEY_OPTION);
     }
     
     if (flags & NSEventModifierFlagCapsLock) {
-        (*m_key_down_callback)((int)' ', KEY_CAPSLOCK);
+        (*m_key_down_callback)((int)' ', (int)Support::MacOS::KeyCode::KEY_CAPSLOCK);
     }
 }
 

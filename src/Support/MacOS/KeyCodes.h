@@ -1,67 +1,68 @@
 #pragma once
 
-#define KEY_A 0
-#define KEY_S 1
-#define KEY_D 2
-#define KEY_F 3
-#define KEY_H 4
-#define KEY_G 5
-#define KEY_Z 6
-#define KEY_X 7
-#define KEY_C 8
-#define KEY_V 9
+namespace Support::MacOS {
 
-#define KEY_B 11
-#define KEY_Q 12
-#define KEY_W 13
-#define KEY_E 14
-#define KEY_R 15
-#define KEY_Y 16
-#define KEY_T 17
-#define KEY_1 18
-#define KEY_2 19
-#define KEY_3 20
-#define KEY_4 21
-#define KEY_6 22
-#define KEY_5 23
-#define KEY_EQUALS 24
-#define KEY_9 25
-#define KEY_7 26
-#define KEY_MINUS 27
-#define KEY_8 28
-#define KEY_0 29
-#define KEY_RIGHTBRACKET 30
-#define KEY_O 31
-#define KEY_U 32
-#define KEY_LEFTBRACKET 33
-#define KEY_I 34
-#define KEY_P 35
-#define KEY_RETURN 36
-#define KEY_L 37
-#define KEY_J 38
-#define KEY_APOSTROPHE 39
-#define KEY_K 40
-#define KEY_SEMICOLON 41
-#define KEY_FRONTSLASH 42
-#define KEY_COMMA 43
-#define KEY_BACKSLASH 44
-#define KEY_N 45
-#define KEY_M 46
-#define KEY_PERIOD 47
-#define KEY_TAB 48
+enum KeyCode {
+    KEY_A = 0,
+    KEY_S = 1,
+    KEY_D = 2,
+    KEY_F = 3,
+    KEY_H = 4,
+    KEY_G = 5,
+    KEY_Z = 6,
+    KEY_X = 7,
+    KEY_C = 8,
+    KEY_V = 9,
+    KEY_B = 11,
+    KEY_Q = 12,
+    KEY_W = 13,
+    KEY_E = 14,
+    KEY_R = 15,
+    KEY_Y = 16,
+    KEY_T = 17,
+    KEY_1 = 18,
+    KEY_2 = 19,
+    KEY_3 = 20,
+    KEY_4 = 21,
+    KEY_6 = 22,
+    KEY_5 = 23,
+    KEY_EQUALS = 24,
+    KEY_9 = 25,
+    KEY_7 = 26,
+    KEY_MINUS = 27,
+    KEY_8 = 28,
+    KEY_0 = 29,
+    KEY_RIGHTBRACKET = 30,
+    KEY_O = 31,
+    KEY_U = 32,
+    KEY_LEFTBRACKET = 33,
+    KEY_I = 34,
+    KEY_P = 35,
+    KEY_RETURN = 36,
+    KEY_L = 37,
+    KEY_J = 38,
+    KEY_APOSTROPHE = 39,
+    KEY_K = 40,
+    KEY_SEMICOLON = 41,
+    KEY_FRONTSLASH = 42,
+    KEY_COMMA = 43,
+    KEY_BACKSLASH = 44,
+    KEY_N = 45,
+    KEY_M = 46,
+    KEY_PERIOD = 47,
+    KEY_TAB = 48,
+    KEY_BACKAPOSTROPHE = 50,
+    KEY_DELETE = 51,
+    KEY_ESCAPE = 53,
+    KEY_COMMAND = 55,
+    KEY_SHIFT = 56,
+    KEY_CAPSLOCK = 57,
+    KEY_OPTION = 58,
+    KEY_CONTROL = 59,
+    KEY_UP = 126,
+    KEY_DOWN = 125,
+    KEY_LEFT = 123,
+    KEY_RIGHT = 124
+};
 
-#define KEY_BACKAPOSTROPHE 50
-#define KEY_DELETE 51
-
-#define KEY_ESCAPE 53
-
-#define KEY_COMMAND 55
-#define KEY_SHIFT 56
-#define KEY_CAPSLOCK 57
-#define KEY_OPTION 58
-#define KEY_CONTROL 59
-
-#define KEY_UP 126
-#define KEY_DOWN 125
-#define KEY_LEFT 123
-#define KEY_RIGHT 124
+}

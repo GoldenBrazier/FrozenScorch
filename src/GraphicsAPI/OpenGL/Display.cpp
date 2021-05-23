@@ -1,4 +1,5 @@
 #include <Application/Application.h>
+#include <Application/Events/KeyboardEvent.h>
 #include <Application/Events/MouseEvent.h>
 #include <Application/Events/WindowEvent.h>
 #include <GL/glew.h>
@@ -47,7 +48,7 @@ void Display::swap_buffers()
 {
     SDL_GL_SwapWindow(m_window);
     SDL_Event event;
-    
+
     while (SDL_PollEvent(&event)) {
 
         switch (event.type) {
@@ -56,11 +57,11 @@ void Display::swap_buffers()
             break;
         }
         case SDL_KEYUP: {
-            // TODO: call Ctx.application()->on_event();
+            Ctx.application()->on_event(KeyboardReleasedEvent(OpenRenderer::keycode_from_sdl(event.key.keysym.scancode)));
             break;
         }
         case SDL_KEYDOWN: {
-            // TODO: call Ctx.application()->on_event();
+            Ctx.application()->on_event(KeyboardPressedEvent(OpenRenderer::keycode_from_sdl(event.key.keysym.scancode)));
             break;
         }
 
