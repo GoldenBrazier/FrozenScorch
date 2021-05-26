@@ -14,6 +14,7 @@ public:
     virtual inline void bind() const = 0;
 
     virtual void set_uniform(const std::string& var_name, float fl) = 0;
+    virtual void set_uniform(const std::string& var_name, int val) = 0;
     virtual void set_uniform(const std::string& var_name, const Math::Vector3f& vec3) = 0;
     virtual void set_uniform(const std::string& var_name, const Math::Matrix4f& mat4) = 0;
 };

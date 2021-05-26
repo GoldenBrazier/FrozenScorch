@@ -9,6 +9,7 @@ namespace GL {
 
 enum VarTypes {
     Float,
+    Vec2,
     Vec3,
     Mat4,
 };
@@ -17,6 +18,8 @@ template <GL::VarTypes T>
 constexpr uint32_t get_type()
 {
     if constexpr (T == GL::VarTypes::Float) {
+        return GL_FLOAT;
+    } else if constexpr (T == GL::VarTypes::Vec2) {
         return GL_FLOAT;
     } else if constexpr (T == GL::VarTypes::Vec3) {
         return GL_FLOAT;
@@ -31,6 +34,8 @@ constexpr uint32_t get_dims()
 {
     if constexpr (T == GL::VarTypes::Float) {
         return 1;
+    } else if constexpr (T == GL::VarTypes::Vec2) {
+        return 2;
     } else if constexpr (T == GL::VarTypes::Vec3) {
         return 3;
     } else {

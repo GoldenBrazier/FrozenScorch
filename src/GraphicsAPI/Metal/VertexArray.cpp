@@ -1,6 +1,6 @@
 #include "VertexArray.h"
-#include <GraphicsAPI/Generic/Context.h>
 #include "VertexBuffer.h"
+#include <GraphicsAPI/Generic/Context.h>
 
 namespace Metal {
 

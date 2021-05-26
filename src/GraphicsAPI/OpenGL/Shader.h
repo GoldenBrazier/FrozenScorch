@@ -23,6 +23,7 @@ public:
     inline void bind() const override { glUseProgram(m_gl_program_id); }
 
     inline void set_uniform(const std::string& var_name, float fl) override;
+    inline void set_uniform(const std::string& var_name, int val) override;
     inline void set_uniform(const std::string& var_name, const Math::Vector3f& vec3) override;
     inline void set_uniform(const std::string& var_name, const Math::Matrix4f& mat4) override;
 
@@ -47,6 +48,14 @@ void Shader::set_uniform(const std::string& var_name, float fl)
         return;
     }
     glUniform1f(m_uniform_vars[var_name], fl);
+}
+
+void Shader::set_uniform(const std::string& var_name, int val)
+{
+    if (m_uniform_vars.find(var_name) == m_uniform_vars.end()) {
+        return;
+    }
+    glUniform1i(m_uniform_vars[var_name], val);
 }
 
 void Shader::set_uniform(const std::string& var_name, const Math::Vector3f& vec3)

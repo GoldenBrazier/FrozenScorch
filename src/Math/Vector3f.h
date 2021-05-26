@@ -1,8 +1,9 @@
 #pragma once
+#include <Utils.h>
 
 namespace Math {
 
-class Vector3f final {
+class PACKED Vector3f final {
 public:
     Vector3f(float x, float y, float z)
         : m_x(x)

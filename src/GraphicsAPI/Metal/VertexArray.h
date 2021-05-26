@@ -22,6 +22,8 @@ public:
     }
 
 private:
+    void adapt_opengl_texture_data_to_metal();
+
     std::shared_ptr<Metal::Renderer> m_renderer {};
     std::shared_ptr<Metal::VertexBuffer> m_vertex_buffer {};
     std::shared_ptr<Metal::IndexBuffer> m_index_buffer {};

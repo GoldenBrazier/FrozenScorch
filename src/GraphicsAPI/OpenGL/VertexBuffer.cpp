@@ -31,6 +31,18 @@ void VertexBuffer::register_attribute_vec3(int index, int stride, size_t offset)
     glVertexAttribPointer(index, gl_dims, gl_type, false, stride, (void*)offset);
 }
 
+void VertexBuffer::register_attribute_vec2(int index, int stride, size_t offset)
+{
+    auto gl_type = GL::get_type<GL::VarTypes::Vec2>();
+    auto gl_dims = GL::get_dims<GL::VarTypes::Vec2>();
+
+    m_vertex_array->bind();
+
+    glBindBuffer(GL_ARRAY_BUFFER, m_id);
+    glEnableVertexAttribArray(index);
+    glVertexAttribPointer(index, gl_dims, gl_type, false, stride, (void*)offset);
+}
+
 void VertexBuffer::bind()
 {
     glBindBuffer(GL_ARRAY_BUFFER, m_id);
