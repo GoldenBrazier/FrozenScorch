@@ -11,6 +11,7 @@ public:
     using DataType = std::array<float, 16>;
 
 public:
+    Matrix4f() = default;
     explicit Matrix4f(const DataType& data)
         : m_data(data)
     {
@@ -21,10 +22,12 @@ public:
     inline const float* data() const { return m_data.data(); }
 
 public:
-    inline float* operator[](std::size_t row) { return m_data.data() + row * 4 * sizeof(float); }
+    inline float* operator[](std::size_t row) { return m_data.data() + row * 4; }
     inline const float* operator[](std::size_t row) const { return m_data.data() + row * 4; }
 
     inline Matrix4f& operator*=(const Matrix4f& mat);
+
+    friend Matrix4f operator*(const Matrix4f& l, const Matrix4f& r);
 
 public:
     static inline Matrix4f Translation(const Vector3f& vec);
@@ -33,9 +36,10 @@ public:
     static inline Matrix4f RotationAroundZ(float radians);
     static inline Matrix4f Scaling(float scale);
     static inline Matrix4f Perspective(float width, float height, float zNear, float zFar, float angle);
+    static inline Matrix4f LookAt(const Vector3f& position, const Vector3f& target, const Vector3f& up);
 
 private:
-    std::array<float, 16> m_data;
+    std::array<float, 16> m_data {};
 };
 
 Matrix4f& Matrix4f::operator*=(const Matrix4f& matrix)
@@ -114,6 +118,22 @@ Matrix4f Matrix4f::Perspective(float width, float height, float near_z, float fa
         0, 0, 1.0f, 0,
     });
 }
+
+ Matrix4f Matrix4f::LookAt(const Vector3f& position, const Vector3f& target, const Vector3f& up)
+{
+    // or target - position
+    auto z = (target - position).normilize();
+    auto x = z.cross_product(up).normilize();
+    auto y = x.cross_product(z);
+
+    return Matrix4f({
+        x.x(), x.y(), x.z(), -x.dot_product(position),
+        y.x(), y.y(), y.z(), -y.dot_product(position),
+        z.x(), z.y(), z.z(), -z.dot_product(position),
+        0, 0, 0, 1,
+    });
+}
+
 // clang-format on
 
 }
