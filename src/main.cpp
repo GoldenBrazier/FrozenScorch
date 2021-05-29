@@ -1,5 +1,8 @@
 #include <Application/Application.h>
 #include <Application/Camera.h>
+#include <Application/Events/KeyboardEvent.h>
+#include <Application/Events/MouseEvent.h>
+#include <Application/KeyCodes.h>
 #include <GraphicsAPI/Generic/Constructors.h>
 #include <GraphicsAPI/Generic/Var.h>
 #include <GraphicsAPI/Generic/Vertex.h>
@@ -18,9 +21,6 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include <Application/Events/KeyboardEvent.h>
-#include <Application/Events/MouseEvent.h>
-#include <Application/KeyCodes.h>
 
 class ExampleApplication : public Application {
 public:
@@ -53,17 +53,25 @@ public:
 
         // ---------- initail data to render ----------
 
-        auto vertexes = std::array<Generic::Vertex, 4> {
-            Generic::Vertex { Math::Vector3f(-0.5, -0.5, 2), Math::Vector2f(-0.5, -0.5) },
-            Generic::Vertex { Math::Vector3f(0.5, -0.5, 2), Math::Vector2f(0.5, -0.5) },
-            Generic::Vertex { Math::Vector3f(0.5, 0.5, 2), Math::Vector2f(0.5, 0.5) },
-            Generic::Vertex { Math::Vector3f(-0.5, 0.5, 2), Math::Vector2f(-0.5, 0.5) },
+        auto vertexes = std::array<Generic::Vertex, 8> {
+            Generic::Vertex { Math::Vector3f(-1, -1, -1), Math::Vector2f(0.5, 0.5) },
+            Generic::Vertex { Math::Vector3f(1, -1, -1), Math::Vector2f(0.5, 0.5) },
+            Generic::Vertex { Math::Vector3f(1, 1, -1), Math::Vector2f(0.5, 0.5) },
+            Generic::Vertex { Math::Vector3f(-1, 1, -1), Math::Vector2f(0.5, 0.5) },
+            Generic::Vertex { Math::Vector3f(-1, -1, 1), Math::Vector2f(0.5, 0.5) },
+            Generic::Vertex { Math::Vector3f(1, -1, 1), Math::Vector2f(0.5, 0.5) },
+            Generic::Vertex { Math::Vector3f(1, 1, 1), Math::Vector2f(0.5, 0.5) },
+            Generic::Vertex { Math::Vector3f(-1, 1, 1), Math::Vector2f(0.5, 0.5) },
         };
 
         // clang-format off
-        auto indexes = std::array<uint32_t, 6> {
-            0, 1, 2,
-            2, 3, 0,
+        auto indexes = std::array<uint32_t, 6 * 6> {
+            0, 1, 3, 3, 1, 2,
+            1, 5, 2, 2, 5, 6,
+            5, 4, 6, 6, 4, 7,
+            4, 0, 7, 7, 0, 3,
+            3, 2, 7, 7, 2, 6,
+            4, 5, 0, 0, 5, 1
         };
         // clang-format on
 
@@ -78,6 +86,19 @@ public:
 
     void draw_cycle() override
     {
+        if (w) {
+            m_camera.move_forward();
+        }
+        if (a) {
+            m_camera.move_left();
+        }
+        if (s) {
+            m_camera.move_backward();
+        }
+        if (d) {
+            m_camera.move_right();
+        }
+
         renderer->set_clear_color(0, 0.15f, 0.3f, 1.0f);
 
         renderer->begin();
@@ -89,21 +110,21 @@ public:
         shader->set_uniform("g_scale", 1.0f);
         shader->set_uniform("g_translation", Math::Matrix4f::Translation({ distance, distance / 2, 0 }));
         shader->set_uniform("g_rotation", Math::Matrix4f::RotationAroundZ(rotation));
-        shader->set_uniform("g_perspective", Math::Matrix4f::Perspective(800, 600, 1, 6, 90));
+        shader->set_uniform("g_perspective", Math::Matrix4f::Perspective(800, 600, 0.01f, 1000.0f, 90));
         shader->set_uniform("g_viewMatrix", m_camera.view_matrix());
 
         renderer->draw_indexed(vertex_array);
         renderer->end();
 
-        distance += step;
-        if (distance >= 1 || distance <= -1) {
-            step *= -1;
-        }
-
-        rotation += 0.05f;
-        if (rotation > Math::Numbers::pi_v<float> * 2) {
-            rotation = 0;
-        }
+//        distance += step;
+//        if (distance >= 1 || distance <= -1) {
+//            step *= -1;
+//        }
+//
+//        rotation += 0.05f;
+//        if (rotation > Math::Numbers::pi_v<float> * 2) {
+//            rotation = 0;
+//        }
     }
 
     void on_event(const Event& event) override
@@ -116,16 +137,32 @@ public:
         if (event.type() == EventType::KeyboardPressed) {
             auto& keyboard_event = (KeyboardPressedEvent&)(event);
             if (keyboard_event.key() == OpenRenderer::KEYCODE_W) {
-                m_camera.move_forward();
+                w = true;
             }
             if (keyboard_event.key() == OpenRenderer::KEYCODE_S) {
-                m_camera.move_backward();
+               s = true;
             }
             if (keyboard_event.key() == OpenRenderer::KEYCODE_A) {
-                m_camera.move_left();
+                a = true;
             }
             if (keyboard_event.key() == OpenRenderer::KEYCODE_D) {
-                m_camera.move_right();
+                d = true;
+            }
+        }
+
+        if (event.type() == EventType::KeyboardReleased) {
+            auto& keyboard_event = (KeyboardPressedEvent&)(event);
+            if (keyboard_event.key() == OpenRenderer::KEYCODE_W) {
+                w = false;
+            }
+            if (keyboard_event.key() == OpenRenderer::KEYCODE_S) {
+                s = false;
+            }
+            if (keyboard_event.key() == OpenRenderer::KEYCODE_A) {
+                a = false;
+            }
+            if (keyboard_event.key() == OpenRenderer::KEYCODE_D) {
+                d = false;
             }
         }
 
@@ -133,21 +170,8 @@ public:
             auto& mouse_event = (MouseMoveEvent&)(event);
             std::cout << mouse_event.x() << " " << mouse_event.y() << "\n";
 
-            if(!mouse_ready) {
-                last_x = mouse_event.x();
-                last_y = mouse_event.y();
-                mouse_ready = true;
-                return;
-            }
-
-            int dist_x = last_x - mouse_event.x();
-            int dist_y = last_y - mouse_event.y();
-
-            last_x = mouse_event.x();
-            last_y = mouse_event.y();
-
-            float horizontal_turn = 3.14f * dist_x / 800;
-            float vertical_turn = 3.14f * dist_y / 800;
+            float horizontal_turn = -3.14f * mouse_event.x() / 800;
+            float vertical_turn = -3.14f * mouse_event.y() / 600;
 
             m_camera.turn_horizontally(horizontal_turn);
             m_camera.turn_vertically(vertical_turn);
@@ -163,9 +187,11 @@ private:
     std::shared_ptr<Generic::VertexArray> vertex_array;
     std::shared_ptr<Generic::Texture> texture;
 
-    int last_x {};
-    int last_y {};
-    bool mouse_ready {};
+
+    bool w;
+    bool a;
+    bool s;
+    bool d;
 
     float rotation = 0;
     float distance = 0;

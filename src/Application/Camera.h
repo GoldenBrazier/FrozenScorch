@@ -10,28 +10,28 @@ public:
 public:
     inline const Math::Matrix4f& view_matrix() const { return m_view_matrix; }
 
-    inline void move_forward(float step_size = 1)
+    inline void move_forward(float step_size = 0.15f)
     {
         m_position += (m_target * step_size);
         recalculate_view_matrix();
     }
 
-    inline void move_backward(float step_size = 1)
+    inline void move_backward(float step_size = 0.15f)
     {
         m_position -= (m_target * step_size);
         recalculate_view_matrix();
     }
 
-    inline void move_left(float step_size = 1)
+    inline void move_left(float step_size = 0.15f)
     {
-        auto left = m_target.cross_product(m_up).normilize() * step_size;
+        auto left = m_up.cross_product(m_target).normilize() * step_size;
         m_position += left;
         recalculate_view_matrix();
     }
 
-    inline void move_right(float step_size = 1)
+    inline void move_right(float step_size = 0.15f)
     {
-        auto right = m_up.cross_product(m_target).normilize() * step_size;
+        auto right = m_target.cross_product(m_up).normilize() * step_size;
         m_position += right;
         recalculate_view_matrix();
     }
