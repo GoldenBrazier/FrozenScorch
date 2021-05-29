@@ -8,6 +8,7 @@ class KeyboardEvent : public Event {
 public:
     KeyboardEvent(OpenRenderer::KeyCode key)
         : Event(T)
+        , m_key(key)
     {
     }
 

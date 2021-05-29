@@ -1,4 +1,5 @@
 #include <Application/Application.h>
+#include <Application/Camera.h>
 #include <GraphicsAPI/Generic/Constructors.h>
 #include <GraphicsAPI/Generic/Var.h>
 #include <GraphicsAPI/Generic/Vertex.h>
@@ -17,6 +18,9 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <Application/Events/KeyboardEvent.h>
+#include <Application/Events/MouseEvent.h>
+#include <Application/KeyCodes.h>
 
 class ExampleApplication : public Application {
 public:
@@ -44,7 +48,7 @@ public:
             shader = Constructors::Shader::construct(
                 std::vector<std::string> { "res/basic_shader.vs", "res/basic_shader.fs" },
                 std::vector<std::pair<std::string, int>> { position, tex_coords },
-                std::vector<std::string> { "g_sampler", "g_scale", "g_translation", "g_rotation", "g_perspective" });
+                std::vector<std::string> { "g_sampler", "g_scale", "g_translation", "g_rotation", "g_perspective", "g_viewMatrix" });
         }
 
         // ---------- initail data to render ----------
@@ -86,6 +90,7 @@ public:
         shader->set_uniform("g_translation", Math::Matrix4f::Translation({ distance, distance / 2, 0 }));
         shader->set_uniform("g_rotation", Math::Matrix4f::RotationAroundZ(rotation));
         shader->set_uniform("g_perspective", Math::Matrix4f::Perspective(800, 600, 1, 6, 90));
+        shader->set_uniform("g_viewMatrix", m_camera.view_matrix());
 
         renderer->draw_indexed(vertex_array);
         renderer->end();
@@ -103,18 +108,64 @@ public:
 
     void on_event(const Event& event) override
     {
+        // Camera camera({ 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 });
         if (event.type() == EventType::WindowClose) {
             shutdown();
         }
-        // std::cout << "application recieved an event\n";
+
+        if (event.type() == EventType::KeyboardPressed) {
+            auto& keyboard_event = (KeyboardPressedEvent&)(event);
+            if (keyboard_event.key() == OpenRenderer::KEYCODE_W) {
+                m_camera.move_forward();
+            }
+            if (keyboard_event.key() == OpenRenderer::KEYCODE_S) {
+                m_camera.move_backward();
+            }
+            if (keyboard_event.key() == OpenRenderer::KEYCODE_A) {
+                m_camera.move_left();
+            }
+            if (keyboard_event.key() == OpenRenderer::KEYCODE_D) {
+                m_camera.move_right();
+            }
+        }
+
+        if (event.type() == EventType::MouseMove) {
+            auto& mouse_event = (MouseMoveEvent&)(event);
+            std::cout << mouse_event.x() << " " << mouse_event.y() << "\n";
+
+            if(!mouse_ready) {
+                last_x = mouse_event.x();
+                last_y = mouse_event.y();
+                mouse_ready = true;
+                return;
+            }
+
+            int dist_x = last_x - mouse_event.x();
+            int dist_y = last_y - mouse_event.y();
+
+            last_x = mouse_event.x();
+            last_y = mouse_event.y();
+
+            float horizontal_turn = 3.14f * dist_x / 800;
+            float vertical_turn = 3.14f * dist_y / 800;
+
+            m_camera.turn_horizontally(horizontal_turn);
+            m_camera.turn_vertically(vertical_turn);
+        }
     }
 
 private:
+    Camera m_camera { Camera({ 0, 0, 0 }, { 0, 1, 0 }) };
+
     std::shared_ptr<Generic::Shader> shader;
     std::shared_ptr<Generic::Display> display;
     std::shared_ptr<Generic::Renderer> renderer;
     std::shared_ptr<Generic::VertexArray> vertex_array;
     std::shared_ptr<Generic::Texture> texture;
+
+    int last_x {};
+    int last_y {};
+    bool mouse_ready {};
 
     float rotation = 0;
     float distance = 0;
@@ -123,7 +174,7 @@ private:
 
 int main(int argc, char* argv[])
 {
-    Ctx.set_grahics_api_type(Generic::GraphicsAPIType::Metal);
+    Ctx.set_grahics_api_type(Generic::GraphicsAPIType::OpenGL);
 
     ExampleApplication example;
     example.run();

@@ -22,19 +22,19 @@ private:
 
 class MouseMoveEvent : public Event {
 public:
-    MouseMoveEvent(uint32_t x, uint32_t y)
+    MouseMoveEvent(int x, int y)
         : Event(EventType::MouseMove)
         , m_x(x)
         , m_y(y)
     {
     }
 
-    uint32_t x() const { return m_x; }
-    uint32_t y() const { return m_y; }
+    int x() const { return m_x; }
+    int y() const { return m_y; }
 
 private:
-    uint32_t m_x;
-    uint32_t m_y;
+    int m_x;
+    int m_y;
 };
 
 enum class MouseCode {};
