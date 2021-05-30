@@ -136,6 +136,9 @@ Window::Window(const mtlpp::Device& device, size_t width, size_t height)
     view.delegate = viewController;
     view.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
 
+    view.depthStencilPixelFormat = MTLPixelFormatDepth32Float;
+    view.clearDepth = 1.0;
+
     [window.contentView addSubview:view];
     [window center];
     [window orderFrontRegardless];

@@ -36,6 +36,9 @@ Display::Display(size_t width, size_t height, const std::string& name)
         std::cerr << "glew initialization failed" << std::endl;
         std::abort();
     }
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
 }
 
 Display::~Display()

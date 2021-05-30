@@ -24,6 +24,7 @@ public:
     {
         auto rc_encoder = Ctx.metal_context()->render_encoder();
         rc_encoder->SetRenderPipelineState(m_render_pipeline_state);
+        rc_encoder->SetDepthStencilState(m_depth_state);
         rc_encoder->SetVertexBuffer(m_uniform_buffer, 0, 1);
     }
 
@@ -39,9 +40,11 @@ private:
 
 private:
     MTL::RenderPipelineState m_render_pipeline_state;
+    MTL::DepthStencilState m_depth_state;
     std::unordered_map<std::string, size_t> m_uniform_vars;
     MTL::Buffer m_uniform_buffer;
     MTL::RenderPipelineDescriptor m_render_pipeline_desc;
+    MTL::DepthStencilDescriptor m_depth_desc;
     MTL::Function m_vert_func;
     MTL::Function m_frag_func;
 };

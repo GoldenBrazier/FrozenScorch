@@ -35,7 +35,12 @@ void Shader::prepare_program(const std::string& file, const std::string& vert_fu
 
     m_uniform_buffer = metal_device.NewBuffer(uniforms_size, MTL::ResourceOptions::CpuCacheModeDefaultCache);
     m_render_pipeline_desc.GetColorAttachments()[0].SetPixelFormat(MTL::PixelFormat::BGRA8Unorm);
+    m_render_pipeline_desc.SetDepthAttachmentPixelFormat(MTL::PixelFormat::Depth32Float);
     m_render_pipeline_state = metal_device.NewRenderPipelineState(m_render_pipeline_desc, nullptr);
+
+    m_depth_desc.SetDepthCompareFunction(MTL::CompareFunction::LessEqual);
+    m_depth_desc.SetDepthWriteEnabled(true);
+    m_depth_state = metal_device.NewDepthStencilState(m_depth_desc);
 
     for (auto& uni : uniforms) {
         register_uniform_var(uni);
