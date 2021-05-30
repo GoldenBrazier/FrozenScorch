@@ -13,7 +13,8 @@ public:
     MTL::RenderPassDescriptor renderpass_descriptor() const;
     
     void set_draw_callback(void (*drawcallback)());
-    void set_key_down_callback(void (*mouse_key_callback)(int, int));
+    void set_key_up_callback(void (*key_callback)(int, int));
+    void set_key_down_callback(void (*key_callback)(int, int));
     void set_mouse_down_callback(void (*mouse_down_callback)(int, int));
     void set_mouse_move_callback(void (*mouse_move_callback)(float, float));
 

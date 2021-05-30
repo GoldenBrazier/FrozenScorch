@@ -12,6 +12,7 @@
 @end
 
 @interface MainView : MTKView { 
+    @public void (*m_key_up_callback)(int, int);
     @public void (*m_key_down_callback)(int, int);
     @public void (*m_mouse_down_callback)(int, int);
     @public void (*m_mouse_move_callback)(float, float);
@@ -35,6 +36,13 @@
 {
     if (m_mouse_down_callback) {
         (*m_mouse_down_callback)([NSEvent pressedMouseButtons], theEvent.buttonNumber);
+    }
+}
+
+- (void)keyUp:(NSEvent*)theEvent
+{
+    if (m_key_up_callback) {
+        (*m_key_up_callback)((int)[theEvent.characters characterAtIndex:0], theEvent.keyCode);
     }
 }
 
@@ -143,10 +151,16 @@ void Window::set_draw_callback(void (*drawcallback)())
     view_controller->m_render = drawcallback;
 }
 
-void Window::set_key_down_callback(void (*mouse_key_callback)(int, int))
+void Window::set_key_up_callback(void (*key_callback)(int, int))
 {
     MainView* cur_view = (__bridge MainView*)m_view.GetPtr();
-    cur_view->m_key_down_callback = mouse_key_callback;
+    cur_view->m_key_up_callback = key_callback;
+}
+
+void Window::set_key_down_callback(void (*key_callback)(int, int))
+{
+    MainView* cur_view = (__bridge MainView*)m_view.GetPtr();
+    cur_view->m_key_down_callback = key_callback;
 }
 
 void Window::set_mouse_down_callback(void (*mouse_down_callback)(int, int))

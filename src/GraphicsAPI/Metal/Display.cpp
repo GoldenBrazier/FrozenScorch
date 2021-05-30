@@ -15,6 +15,7 @@ Display::Display(size_t width, size_t height, const std::string& name)
     Ctx.metal_context()->set_window(new Support::MacOS::Window(Ctx.metal_context()->device(), width, height));
 
     Ctx.metal_context()->window().set_draw_callback(draw_cycle_callback);
+    Ctx.metal_context()->window().set_key_up_callback(key_up_callback);
     Ctx.metal_context()->window().set_key_down_callback(key_down_callback);
     Ctx.metal_context()->window().set_mouse_move_callback(mouse_move_callback);
     Ctx.metal_context()->window().set_mouse_down_callback(mouse_down_callback);
@@ -25,10 +26,16 @@ void Display::draw_cycle_callback()
     Ctx.application()->draw_cycle();
 }
 
-void Display::key_down_callback(int symbol, int keycode)
+void Display::key_up_callback(int symbol, int keycode)
 {
     auto application = Ctx.application();
     Ctx.application()->on_event(KeyboardReleasedEvent(OpenRenderer::keycode_from_cocoa(keycode)));
+}
+
+void Display::key_down_callback(int symbol, int keycode)
+{
+    auto application = Ctx.application();
+    Ctx.application()->on_event(KeyboardPressedEvent(OpenRenderer::keycode_from_cocoa(keycode)));
 }
 
 void Display::mouse_move_callback(float x, float y)
