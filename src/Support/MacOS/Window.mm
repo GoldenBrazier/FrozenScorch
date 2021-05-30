@@ -15,7 +15,7 @@
     @public void (*m_key_up_callback)(int, int);
     @public void (*m_key_down_callback)(int, int);
     @public void (*m_mouse_down_callback)(int, int);
-    @public void (*m_mouse_move_callback)(float, float);
+    @public void (*m_mouse_move_callback)(int, int);
 }
 
 @end
@@ -80,19 +80,11 @@
 
 - (void)mouseMoved:(NSEvent*)theEvent
 {
-    NSPoint mouseDownPos = [theEvent locationInWindow];
+    int x, y;
+    CGGetLastMouseDelta(&x, &y);
     if (m_mouse_move_callback) {
-        (*m_mouse_move_callback)(mouseDownPos.x, mouseDownPos.y);
+        (*m_mouse_move_callback)(x, y);
     }
-    // NSLog(@"mouseMoved %f %f", mouseDownPos.x, mouseDownPos.y);
-    // CGDisplayHideCursor(CGMainDisplayID());
-    // CGDisplayMoveCursorToPoint(CGMainDisplayID(), original);
-}
-
-- (void)updateTrackingAreas {
-    NSTrackingAreaOptions options = (NSTrackingActiveAlways | NSTrackingInVisibleRect | NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved);
-    NSTrackingArea *area = [[NSTrackingArea alloc] initWithRect:[self bounds] options:options owner:self userInfo:nil];
-    [self addTrackingArea:area];
 }
 
 @end
@@ -135,6 +127,7 @@ Window::Window(const mtlpp::Device& device, size_t width, size_t height)
     view.device = (__bridge id<MTLDevice>)device.GetPtr();
     view.delegate = viewController;
     view.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+    window.acceptsMouseMovedEvents = YES;
 
     view.depthStencilPixelFormat = MTLPixelFormatDepth32Float;
     view.clearDepth = 1.0;
@@ -146,6 +139,9 @@ Window::Window(const mtlpp::Device& device, size_t width, size_t height)
 
     m_view = NS::Handle{ (__bridge void*)view };
     m_view_controller = NS::Handle{ (__bridge void*)viewController };
+
+    CGAssociateMouseAndMouseCursorPosition(0);
+    CGDisplayHideCursor(CGMainDisplayID());
 }
 
 void Window::set_draw_callback(void (*drawcallback)()) 
@@ -172,7 +168,7 @@ void Window::set_mouse_down_callback(void (*mouse_down_callback)(int, int))
     cur_view->m_mouse_down_callback = mouse_down_callback;
 }
 
-void Window::set_mouse_move_callback(void (*mouse_move_callback)(float, float))
+void Window::set_mouse_move_callback(void (*mouse_move_callback)(int, int))
 {
     MainView* cur_view = (__bridge MainView*)m_view.GetPtr();
     cur_view->m_mouse_move_callback = mouse_move_callback;

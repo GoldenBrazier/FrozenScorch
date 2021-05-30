@@ -7,7 +7,7 @@ namespace Metal {
 
 class MainLoop : public Generic::MainLoop {
 public:
-    explicit MainLoop(void (*draw_callback)(), void (*key_down_callback)(int, int), void (*mouse_move_callback)(float, float), void (*mouse_down_callback)(int, int))
+    explicit MainLoop(void (*draw_callback)(), void (*key_down_callback)(int, int), void (*mouse_move_callback)(int, int), void (*mouse_down_callback)(int, int))
         : m_callback(draw_callback)
     {
         Ctx.metal_context()->window().set_draw_callback(draw_callback);

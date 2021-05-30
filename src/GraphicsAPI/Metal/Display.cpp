@@ -38,10 +38,10 @@ void Display::key_down_callback(int symbol, int keycode)
     Ctx.application()->on_event(KeyboardPressedEvent(OpenRenderer::keycode_from_cocoa(keycode)));
 }
 
-void Display::mouse_move_callback(float x, float y)
+void Display::mouse_move_callback(int x, int y)
 {
     auto application = Ctx.application();
-    Ctx.application()->on_event(MouseMoveEvent((int)x, (int)y));
+    Ctx.application()->on_event(MouseMoveEvent(x, y));
 }
 
 void Display::mouse_down_callback(int a, int b)
