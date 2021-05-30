@@ -10,6 +10,7 @@
 #include <Math/Numbers.h>
 #include <Math/Vector3f.h>
 #include <Mesh.h>
+#include <Parsers/ObjParser.h>
 #include <Renderer/Renderer.h>
 #include <Runtime/PNGLoader/PNGLoader.h>
 #include <Runtime/Utils/DrawLoop.h>
@@ -54,35 +55,16 @@ public:
 
         // ---------- initail data to render ----------
 
-        auto vertexes = std::array<Generic::Vertex, 8> {
-            Generic::Vertex { Math::Vector3f(-1, -1, -1), Math::Vector2f(0.5, 0.5) },
-            Generic::Vertex { Math::Vector3f(1, -1, -1), Math::Vector2f(0.5, 0.5) },
-            Generic::Vertex { Math::Vector3f(1, 1, -1), Math::Vector2f(0.5, 0.5) },
-            Generic::Vertex { Math::Vector3f(-1, 1, -1), Math::Vector2f(0.5, 0.5) },
-            Generic::Vertex { Math::Vector3f(-1, -1, 1), Math::Vector2f(0.5, 0.5) },
-            Generic::Vertex { Math::Vector3f(1, -1, 1), Math::Vector2f(0.5, 0.5) },
-            Generic::Vertex { Math::Vector3f(1, 1, 1), Math::Vector2f(0.5, 0.5) },
-            Generic::Vertex { Math::Vector3f(-1, 1, 1), Math::Vector2f(0.5, 0.5) },
-        };
+        auto parser = ObjParser("res/models/water_tower/water_tower.obj");
+        parser.parse();
 
-        // clang-format off
-        auto indexes = std::array<uint32_t, 6 * 6> {
-            0, 1, 3, 3, 1, 2,
-            1, 5, 2, 2, 5, 6,
-            5, 4, 6, 6, 4, 7,
-            4, 0, 7, 7, 0, 3,
-            3, 2, 7, 7, 2, 6,
-            4, 5, 0, 0, 5, 1
-        };
-        // clang-format on
-
-        texture = Constructors::Texture::construct(Runtime::PNGLoader::load_rgba("res/texture.png"), Generic::Texture::Types::TEXTURE_2D);
+        texture = Constructors::Texture::construct(Runtime::PNGLoader::load_rgba("res/models/water_tower/water_tower.png"), Generic::Texture::Types::TEXTURE_2D);
 
         vertex_array = Constructors::VertexArray::construct();
-        auto vb = vertex_array->construct_vertex_buffer(vertexes.data(), vertexes.size() * sizeof(Generic::Vertex));
+        auto vb = vertex_array->construct_vertex_buffer(parser.vertexes().data(), parser.vertexes().size() * sizeof(Generic::Vertex));
         vb->register_attribute_vec3(position.second, sizeof(Generic::Vertex), 0);
         vb->register_attribute_vec2(tex_coords.second, sizeof(Generic::Vertex), sizeof(Math::Vector3f));
-        vertex_array->construct_index_buffer(indexes.data(), indexes.size());
+        vertex_array->construct_index_buffer(parser.indeces().data(), parser.indeces().size());
     }
 
     void draw_cycle() override
@@ -141,7 +123,7 @@ public:
                 w = true;
             }
             if (keyboard_event.key() == OpenRenderer::KEYCODE_S) {
-               s = true;
+                s = true;
             }
             if (keyboard_event.key() == OpenRenderer::KEYCODE_A) {
                 a = true;
@@ -188,7 +170,6 @@ private:
     std::shared_ptr<Generic::VertexArray> vertex_array;
     std::shared_ptr<Generic::Texture> texture;
 
-
     bool w;
     bool a;
     bool s;
@@ -201,7 +182,7 @@ private:
 
 int main(int argc, char* argv[])
 {
-    Ctx.set_grahics_api_type(Generic::GraphicsAPIType::OpenGL);
+    Ctx.set_grahics_api_type(Generic::GraphicsAPIType::Metal);
 
     ExampleApplication example;
     example.run();
