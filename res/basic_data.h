@@ -9,6 +9,7 @@ struct Uniforms {
     float4x4 rot;
     float4x4 trans;
     float4x4 perspective;
+    float4x4 view_matrix;
 };
 
 }

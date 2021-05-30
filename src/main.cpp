@@ -42,6 +42,7 @@ public:
                     { "g_rotation", offsetof(BasicShader::Uniforms, rot) },
                     { "g_translation", offsetof(BasicShader::Uniforms, trans) },
                     { "g_perspective", offsetof(BasicShader::Uniforms, perspective) },
+                    { "g_viewMatrix", offsetof(BasicShader::Uniforms, view_matrix) },
                 },
                 sizeof(BasicShader::Uniforms));
         } else {

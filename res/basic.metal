@@ -11,6 +11,7 @@ struct Uniforms {
     float4x4 rot;
     float4x4 trans;
     float4x4 perspective;
+    float4x4 view_matrix;
 };
 
 struct VertexStageOutput {
@@ -31,14 +32,10 @@ vertex VertexStageOutput vert_func(
         0.0, 0.0, 0.5, 0.5,
         0.0, 0.0, 0.0, 1.0);
 
-    // Metal and OpenGL has diffrent normalized texture coordinates.
-    // Metal has (0, 0) to (1, 1), while OpenGL (-1, -1) to (1, 1).
-    float2 tex_coords_adj = float2(0.5, 0.5);
-
-    stage_output.tex_coords = (vertex_array[v_id].tex_coords + 1) * tex_coords_adj;
+    stage_output.tex_coords = vertex_array[v_id].tex_coords;
 
     float3 in = vertex_array[v_id].position;
-    float4x4 perspective = uniforms.perspective * perspective_adj;
+    float4x4 perspective = uniforms.view_matrix * uniforms.perspective * perspective_adj;
     float4x4 trans = uniforms.rot * uniforms.trans * perspective;
     stage_output.position = float4(in * uniforms.scale, 1.0) * (trans);
     return stage_output;
