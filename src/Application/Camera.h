@@ -9,6 +9,7 @@ public:
 
 public:
     inline const Math::Matrix4f& view_matrix() const { return m_view_matrix; }
+    inline const Math::Vector3f& position() const { return m_position; }
 
     inline void move_forward(float step_size = 0.15f)
     {

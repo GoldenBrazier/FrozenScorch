@@ -60,6 +60,10 @@ void Shader::set_uniform(const std::string& var_name, int val)
 
 void Shader::set_uniform(const std::string& var_name, const Math::Vector3f& vec3)
 {
+    if (m_uniform_vars.find(var_name) == m_uniform_vars.end()) {
+        return;
+    }
+    glUniform3f(m_uniform_vars[var_name], vec3.x(), vec3.y(), vec3.z());
 }
 
 void Shader::set_uniform(const std::string& var_name, const Math::Matrix4f& mat4)

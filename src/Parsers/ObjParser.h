@@ -12,6 +12,7 @@
 // which potentially could be faster than std::map.
 using int3 = std::tuple<int, int, int>;
 using float2 = std::tuple<float, float>;
+using float3 = std::tuple<float, float, float>;
 using float4 = std::tuple<float, float, float, float>;
 
 class ObjParser final {
@@ -50,19 +51,21 @@ private:
 
     inline void interpret_line(std::string& line)
     {
-        // FIXME: VNs are ignored for now.
         if (starts_with(line, "v ")) {
             interpret_v_line(line);
         } else if (starts_with(line, "vt ")) {
             interpret_vt_line(line);
         } else if (starts_with(line, "f ")) {
             interpret_f_line(line);
+        } else if (starts_with(line, "vn ")) {
+            interpret_vn_line(line);
         }
     }
 
     void interpret_v_line(std::string& line);
     void interpret_vt_line(std::string& line);
     void interpret_f_line(std::string& line);
+    void interpret_vn_line(std::string& line);
 
     void paste_vertex_to_va(int3 a);
     inline void paste_face_to_va(int3 a, int3 b, int3 c)
@@ -75,6 +78,7 @@ private:
     std::string m_filename;
     std::vector<float4> m_tmp_vertex_storage;
     std::vector<float2> m_tmp_texture_storage;
+    std::vector<float3> m_tmp_normals_storage;
     std::vector<Generic::Vertex> m_vertices;
     std::vector<uint32_t> m_index;
     std::map<int3, int> m_vertex_to_index;

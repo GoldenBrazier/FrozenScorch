@@ -10,6 +10,7 @@ namespace Generic {
 struct PACKED Vertex {
     Math::Vector3f position;
     Math::Vector2f tex_coord;
+    Math::Vector3f normal;
 };
 
 }

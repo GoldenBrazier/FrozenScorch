@@ -32,6 +32,7 @@ public:
 
         std::pair<std::string, int> position = { "position", 0 };
         std::pair<std::string, int> tex_coords = { "tex_coords", 1 };
+        std::pair<std::string, int> normal = { "normal", 2 };
 
         if (Ctx.graphics_api_type() == Generic::GraphicsAPIType::Metal) {
             shader = Constructors::Shader::construct(
@@ -49,8 +50,8 @@ public:
         } else {
             shader = Constructors::Shader::construct(
                 std::vector<std::string> { "res/basic_shader.vs", "res/basic_shader.fs" },
-                std::vector<std::pair<std::string, int>> { position, tex_coords },
-                std::vector<std::string> { "g_sampler", "g_scale", "g_translation", "g_rotation", "g_perspective", "g_viewMatrix" });
+                std::vector<std::pair<std::string, int>> { position, tex_coords, normal },
+                std::vector<std::string> { "g_sampler", "g_scale", "g_translation", "g_rotation", "g_perspective", "g_viewMatrix", "g_ambient_brightness", "g_light_position", "g_light_color" });
         }
 
         // ---------- initail data to render ----------
@@ -62,8 +63,10 @@ public:
 
         vertex_array = Constructors::VertexArray::construct();
         auto vb = vertex_array->construct_vertex_buffer(parser.vertexes().data(), parser.vertexes().size() * sizeof(Generic::Vertex));
+
         vb->register_attribute_vec3(position.second, sizeof(Generic::Vertex), 0);
         vb->register_attribute_vec2(tex_coords.second, sizeof(Generic::Vertex), sizeof(Math::Vector3f));
+        vb->register_attribute_vec3(normal.second, sizeof(Generic::Vertex), sizeof(Math::Vector3f) + sizeof(Math::Vector2f));
         vertex_array->construct_index_buffer(parser.indeces().data(), parser.indeces().size());
     }
 
@@ -90,11 +93,14 @@ public:
         texture->bind(0);
         shader->bind();
         shader->set_uniform("g_sampler", (int)0);
+        shader->set_uniform("g_light_color", Math::Vector3f(1, 1, 1));
         shader->set_uniform("g_scale", 1.0f);
         shader->set_uniform("g_translation", Math::Matrix4f::Translation({ distance, distance / 2, 0 }));
         shader->set_uniform("g_rotation", Math::Matrix4f::RotationAroundZ(rotation));
         shader->set_uniform("g_perspective", Math::Matrix4f::Perspective(800, 600, 0.01f, 1000.0f, 90));
         shader->set_uniform("g_viewMatrix", m_camera.view_matrix());
+        shader->set_uniform("g_ambient_brightness", 0.3f);
+        shader->set_uniform("g_light_position", m_camera.position());
 
         renderer->draw_indexed(vertex_array);
         renderer->end();
@@ -182,7 +188,7 @@ private:
 
 int main(int argc, char* argv[])
 {
-    Ctx.set_grahics_api_type(Generic::GraphicsAPIType::Metal);
+    Ctx.set_grahics_api_type(Generic::GraphicsAPIType::OpenGL);
 
     ExampleApplication example;
     example.run();
