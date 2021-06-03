@@ -51,7 +51,10 @@ public:
             shader = Constructors::Shader::construct(
                 std::vector<std::string> { "res/basic_shader.vs", "res/basic_shader.fs" },
                 std::vector<std::pair<std::string, int>> { position, tex_coords, normal },
-                std::vector<std::string> { "g_sampler", "g_scale", "g_translation", "g_rotation", "g_perspective", "g_viewMatrix", "g_ambient_brightness", "g_light_position", "g_light_color" });
+                std::vector<std::string> {
+                    "g_sampler", "g_scale", "g_translation", "g_rotation",
+                    "g_perspective", "g_viewMatrix", "g_ambient_brightness",
+                    "g_light_position", "g_light_color", "g_camera_position" });
         }
 
         // ---------- initail data to render ----------
@@ -101,6 +104,7 @@ public:
         shader->set_uniform("g_viewMatrix", m_camera.view_matrix());
         shader->set_uniform("g_ambient_brightness", 0.3f);
         shader->set_uniform("g_light_position", m_camera.position());
+        shader->set_uniform("g_camera_position", m_camera.position());
 
         renderer->draw_indexed(vertex_array);
         renderer->end();
