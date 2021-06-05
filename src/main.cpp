@@ -21,7 +21,10 @@
 #include <cstddef>
 #include <iostream>
 #include <memory>
+#include <sstream>
 #include <vector>
+
+#define NR_POINT_LIGHTS 4
 
 class ExampleApplication : public Application {
 public:
@@ -48,21 +51,38 @@ public:
                 },
                 sizeof(BasicShader::Uniforms));
         } else {
+            auto uniforms = std::vector<std::string> {
+                "g_sampler", "g_scale", "g_translation", "g_rotation",
+                "g_perspective", "g_viewMatrix", "g_ambient_brightness",
+                "g_camera_position",
+            };
+
+            for (int i = 0; i < NR_POINT_LIGHTS; i++) {
+                std::ostringstream light_position;
+                std::ostringstream light_color;
+                std::ostringstream light_attenuation;
+
+                light_position << "g_light_position[" << i << "]";
+                light_color << "g_light_color[" << i << "]";
+                light_attenuation << "g_light_attenuation[" << i << "]";
+
+                uniforms.push_back(light_position.str());
+                uniforms.push_back(light_color.str());
+                uniforms.push_back(light_attenuation.str());
+            }
+
             shader = Constructors::Shader::construct(
                 std::vector<std::string> { "res/basic_shader.vs", "res/basic_shader.fs" },
                 std::vector<std::pair<std::string, int>> { position, tex_coords, normal },
-                std::vector<std::string> {
-                    "g_sampler", "g_scale", "g_translation", "g_rotation",
-                    "g_perspective", "g_viewMatrix", "g_ambient_brightness",
-                    "g_light_position", "g_light_color", "g_camera_position" });
+                uniforms);
         }
 
         // ---------- initail data to render ----------
 
-        auto parser = ObjParser("res/models/water_tower/water_tower.obj");
+        auto parser = ObjParser("res/models/crate/crate.obj");
         parser.parse();
 
-        texture = Constructors::Texture::construct(Runtime::PNGLoader::load_rgba("res/models/water_tower/water_tower.png"), Generic::Texture::Types::TEXTURE_2D);
+        texture = Constructors::Texture::construct(Runtime::PNGLoader::load_rgba("res/models/crate/crate.png"), Generic::Texture::Types::TEXTURE_2D);
 
         vertex_array = Constructors::VertexArray::construct();
         auto vb = vertex_array->construct_vertex_buffer(parser.vertexes().data(), parser.vertexes().size() * sizeof(Generic::Vertex));
@@ -102,22 +122,33 @@ public:
         shader->set_uniform("g_rotation", Math::Matrix4f::RotationAroundZ(rotation));
         shader->set_uniform("g_perspective", Math::Matrix4f::Perspective(800, 600, 0.01f, 1000.0f, 90));
         shader->set_uniform("g_viewMatrix", m_camera.view_matrix());
-        shader->set_uniform("g_ambient_brightness", 0.3f);
-        shader->set_uniform("g_light_position", m_camera.position());
         shader->set_uniform("g_camera_position", m_camera.position());
+        shader->set_uniform("g_ambient_brightness", 0.3f);
+
+        shader->set_uniform("g_light_position[0]", m_camera.position());
+        shader->set_uniform("g_light_color[0]", {0,0,1});
+        shader->set_uniform("g_light_attenuation[0]", {1,0.09,0.032});
+
+        shader->set_uniform("g_light_position[1]", {0, 7, 0});
+        shader->set_uniform("g_light_color[1]", {1,0,0});
+        shader->set_uniform("g_light_attenuation[1]", {1,0,0});
+
+        shader->set_uniform("g_light_position[2]", {7, 0, 0});
+        shader->set_uniform("g_light_color[2]", {0,1,0});
+        shader->set_uniform("g_light_attenuation[2]", {1,0,0});
 
         renderer->draw_indexed(vertex_array);
         renderer->end();
 
-//        distance += step;
-//        if (distance >= 1 || distance <= -1) {
-//            step *= -1;
-//        }
-//
-//        rotation += 0.05f;
-//        if (rotation > Math::Numbers::pi_v<float> * 2) {
-//            rotation = 0;
-//        }
+        //        distance += step;
+        //        if (distance >= 1 || distance <= -1) {
+        //            step *= -1;
+        //        }
+        //
+        //        rotation += 0.05f;
+        //        if (rotation > Math::Numbers::pi_v<float> * 2) {
+        //            rotation = 0;
+        //        }
     }
 
     void on_event(const Event& event) override

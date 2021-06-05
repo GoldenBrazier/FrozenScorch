@@ -30,7 +30,7 @@ void Shader::prepare_program(const std::vector<std::string>& file_paths, const s
         glBindAttribLocation(m_gl_program_id, attr.second, attr.first.c_str());
     }
 
-    for (auto unfs : uniforms) {
+    for (auto& unfs : uniforms) {
         register_uniform_var(unfs);
     }
 
@@ -128,7 +128,7 @@ void Shader::register_uniform_var(const std::string& uniform_name)
     // TODO(nikita): Add check for repeating names.
     auto m_gl_var_id = glGetUniformLocation(m_gl_program_id, uniform_name.c_str());
     if (m_gl_var_id == 0xFFFFFFFF) {
-        std::cerr << "Can't find unifrom var";
+        std::cerr << "Can't find unifrom " << uniform_name;
         std::abort();
     }
     m_uniform_vars[uniform_name] = m_gl_var_id;
