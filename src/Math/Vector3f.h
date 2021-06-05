@@ -38,6 +38,8 @@ public:
 
     inline float length() const;
 
+    inline const void* data() const { return &m_x; }
+
 private:
     float m_x {};
     float m_y {};
