@@ -5,13 +5,13 @@
 
 namespace GL {
 
-Shader::Shader(const std::vector<std::string>& files, const std::vector<std::pair<std::string, int>>& attributes, const std::vector<std::string>& uniforms)
+Shader::Shader(const std::vector<std::string>& files, const std::vector<std::pair<std::string, int>>& attributes, const Generic::UniformList& uniforms)
     : Generic::Shader()
 {
     prepare_program(files, attributes, uniforms);
 }
 
-void Shader::prepare_program(const std::vector<std::string>& file_paths, const std::vector<std::pair<std::string, int>>& attributes, const std::vector<std::string>& uniforms)
+void Shader::prepare_program(const std::vector<std::string>& file_paths, const std::vector<std::pair<std::string, int>>& attributes, const Generic::UniformList& uniforms)
 {
     m_gl_program_id = glCreateProgram();
 
@@ -31,7 +31,7 @@ void Shader::prepare_program(const std::vector<std::string>& file_paths, const s
     }
 
     for (auto& unfs : uniforms) {
-        register_uniform_var(unfs);
+        register_uniform_var(unfs.name());
     }
 
     glValidateProgram(m_gl_program_id);

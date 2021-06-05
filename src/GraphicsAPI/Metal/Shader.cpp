@@ -6,13 +6,13 @@
 
 namespace Metal {
 
-Shader::Shader(const std::string& file, const std::string& vert_func, const std::string& frag_func, const std::vector<std::pair<std::string, int>>& uniforms, size_t uniforms_size)
+Shader::Shader(const std::string& file, const std::string& vert_func, const std::string& frag_func, const Generic::UniformList& uniforms, size_t uniforms_size)
     : Generic::Shader()
 {
     prepare_program(file, vert_func, frag_func, uniforms, uniforms_size);
 }
 
-void Shader::prepare_program(const std::string& file, const std::string& vert_func_name, const std::string& frag_func_name, const std::vector<std::pair<std::string, int>>& uniforms, size_t uniforms_size)
+void Shader::prepare_program(const std::string& file, const std::string& vert_func_name, const std::string& frag_func_name, const Generic::UniformList& uniforms, size_t uniforms_size)
 {
     NS::Error error_buffer;
     auto& metal_device = Ctx.metal_context()->device();
@@ -67,10 +67,10 @@ std::string Shader::load_shader(const std::string& filename)
     return output;
 }
 
-void Shader::register_uniform_var(const std::pair<std::string, int>& uniform)
+void Shader::register_uniform_var(const Generic::Uniform& uniform)
 {
     // TODO(nikita): Add check for repeating names.
-    m_uniform_vars[uniform.first] = uniform.second;
+    m_uniform_vars[uniform.name()] = uniform.metal_offset();
 }
 
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <GraphicsAPI/Generic/Shader.h>
+#include <GraphicsAPI/Generic/Uniform.h>
 #include <GraphicsAPI/Generic/Var.h>
 #include <iostream>
 #include <memory>
@@ -13,11 +14,11 @@ namespace Metal {
 
 class Shader : public Generic::Shader {
 public:
-    Shader(const std::string& file, const std::string& vert_func, const std::string& frag_func, const std::vector<std::pair<std::string, int>>& uniforms, size_t uniforms_size);
+    Shader(const std::string& file, const std::string& vert_func, const std::string& frag_func, const Generic::UniformList& uniforms, size_t uniforms_size);
     ~Shader();
 
     // OpenGL Constructor, which won't be called
-    Shader(const std::vector<std::string>& files, const std::vector<std::pair<std::string, int>>& attributes, const std::vector<std::string>& uniforms) { std::abort(); }
+    Shader(const std::vector<std::string>& files, const std::vector<std::pair<std::string, int>>& attributes, const Generic::UniformList& uniforms) { std::abort(); }
 
     inline void compile() const override { }
     inline void bind() const override
@@ -35,9 +36,9 @@ public:
     inline void set_uniform(const std::string& var_name, const Math::Matrix4f& mat4) override;
 
 private:
-    void prepare_program(const std::string& file, const std::string& vert_func, const std::string& frag_func, const std::vector<std::pair<std::string, int>>& uniforms, size_t uniforms_size);
+    void prepare_program(const std::string& file, const std::string& vert_func, const std::string& frag_func, const Generic::UniformList& uniforms, size_t uniforms_size);
     std::string load_shader(const std::string& filename);
-    void register_uniform_var(const std::pair<std::string, int>& uniform);
+    void register_uniform_var(const Generic::Uniform& uniform);
 
 private:
     MTL::RenderPipelineState m_render_pipeline_state;
