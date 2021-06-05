@@ -26,6 +26,7 @@ public:
         rc_encoder->SetRenderPipelineState(m_render_pipeline_state);
         rc_encoder->SetDepthStencilState(m_depth_state);
         rc_encoder->SetVertexBuffer(m_uniform_buffer, 0, 1);
+        rc_encoder->SetFragmentBuffer(m_uniform_buffer, 0, 1);
     }
 
     inline void set_uniform(const std::string& var_name, float fl) override;
@@ -69,6 +70,11 @@ void Shader::set_uniform(const std::string& var_name, int val)
 
 void Shader::set_uniform(const std::string& var_name, const Math::Vector3f& vec3)
 {
+    if (m_uniform_vars.find(var_name) == m_uniform_vars.end()) {
+        return;
+    }
+    char* ptr = ((char*)m_uniform_buffer.GetContents() + m_uniform_vars[var_name]);
+    memcpy(ptr, vec3.data(), sizeof(Math::Vector3f));
 }
 
 void Shader::set_uniform(const std::string& var_name, const Math::Matrix4f& mat4)

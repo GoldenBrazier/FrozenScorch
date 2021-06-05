@@ -48,6 +48,9 @@ public:
                     { "g_translation", offsetof(BasicShader::Uniforms, trans) },
                     { "g_perspective", offsetof(BasicShader::Uniforms, perspective) },
                     { "g_viewMatrix", offsetof(BasicShader::Uniforms, view_matrix) },
+                    { "g_ambient_brightness", offsetof(BasicShader::Uniforms, ambient_brightness) },
+                    { "g_light_position", offsetof(BasicShader::Uniforms, light_position) },
+                    { "g_light_color", offsetof(BasicShader::Uniforms, light_color) },
                 },
                 sizeof(BasicShader::Uniforms));
         } else {
