@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #include <GraphicsAPI/Generic/Shader.h>
 #include <GraphicsAPI/Generic/Var.h>
+#include <GraphicsAPI/Generic/Uniform.h>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -13,11 +14,11 @@ namespace GL {
 
 class Shader : public Generic::Shader {
 public:
-    Shader(const std::vector<std::string>& files, const std::vector<std::pair<std::string, int>>& attributes, const std::vector<std::string>& uniforms);
+    Shader(const std::vector<std::string>& files, const std::vector<std::pair<std::string, int>>& attributes, const Generic::UniformList& uniforms);
     ~Shader();
 
     // Metal Constructor, which won't be called
-    Shader(const std::string& file, const std::string& vert_func, const std::string& frag_func, const std::vector<std::pair<std::string, int>>& uniforms, size_t uniforms_size) { std::abort(); }
+    Shader(const std::string& file, const std::string& vert_func, const std::string& frag_func, const Generic::UniformList& uniforms, size_t uniforms_size) { std::abort(); }
 
     inline void compile() const override { }
     inline void bind() const override { glUseProgram(m_gl_program_id); }
@@ -28,7 +29,7 @@ public:
     inline void set_uniform(const std::string& var_name, const Math::Matrix4f& mat4) override;
 
 private:
-    void prepare_program(const std::vector<std::string>& file_paths, const std::vector<std::pair<std::string, int>>& attributes, const std::vector<std::string>& uniforms);
+    void prepare_program(const std::vector<std::string>& file_paths, const std::vector<std::pair<std::string, int>>& attributes, const Generic::UniformList& uniforms);
     void attach_shader(const std::string& text);
     GLuint get_shader_type(const std::string& path);
     GLuint create_shader(const std::string& path, GLenum shader_type);

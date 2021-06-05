@@ -4,6 +4,7 @@
 #include <Application/Events/MouseEvent.h>
 #include <Application/KeyCodes.h>
 #include <GraphicsAPI/Generic/Constructors.h>
+#include <GraphicsAPI/Generic/Uniform.h>
 #include <GraphicsAPI/Generic/Var.h>
 #include <GraphicsAPI/Generic/Vertex.h>
 #include <Math/Matrix4f.h>
@@ -37,47 +38,51 @@ public:
         std::pair<std::string, int> tex_coords = { "tex_coords", 1 };
         std::pair<std::string, int> normal = { "normal", 2 };
 
+        auto uniform_builder = Generic::UniformBuilder();
+        uniform_builder.add_var("g_scale", offsetof(BasicShader::Uniforms, scale));
+        uniform_builder.add_var("g_rotation", offsetof(BasicShader::Uniforms, rot));
+        uniform_builder.add_var("g_translation", offsetof(BasicShader::Uniforms, trans));
+        uniform_builder.add_var("g_perspective", offsetof(BasicShader::Uniforms, perspective));
+        uniform_builder.add_var("g_viewMatrix", offsetof(BasicShader::Uniforms, view_matrix));
+        uniform_builder.add_var("g_ambient_brightness", offsetof(BasicShader::Uniforms, ambient_brightness));
+        uniform_builder.add_array<NR_POINT_LIGHTS, sizeof(Math::Vector3f)>("g_light_position");
+        uniform_builder.add_array<NR_POINT_LIGHTS, sizeof(Math::Vector3f)>("g_light_color");
+        uniform_builder.add_array<NR_POINT_LIGHTS, sizeof(Math::Vector3f)>("g_light_attenuation");
+
         if (Ctx.graphics_api_type() == Generic::GraphicsAPIType::Metal) {
             shader = Constructors::Shader::construct(
                 "res/basic.metal",
                 "vert_func",
                 "frag_func",
-                std::vector<std::pair<std::string, int>> {
-                    { "g_scale", offsetof(BasicShader::Uniforms, scale) },
-                    { "g_rotation", offsetof(BasicShader::Uniforms, rot) },
-                    { "g_translation", offsetof(BasicShader::Uniforms, trans) },
-                    { "g_perspective", offsetof(BasicShader::Uniforms, perspective) },
-                    { "g_viewMatrix", offsetof(BasicShader::Uniforms, view_matrix) },
-                    { "g_ambient_brightness", offsetof(BasicShader::Uniforms, ambient_brightness) },
-                    { "g_light_position", offsetof(BasicShader::Uniforms, light_position) },
-                    { "g_light_color", offsetof(BasicShader::Uniforms, light_color) },
-                },
+                uniform_builder.data(),
                 sizeof(BasicShader::Uniforms));
         } else {
-            auto uniforms = std::vector<std::string> {
-                "g_sampler", "g_scale", "g_translation", "g_rotation",
-                "g_perspective", "g_viewMatrix", "g_ambient_brightness",
-                "g_camera_position",
-            };
-
-            for (int i = 0; i < NR_POINT_LIGHTS; i++) {
-                std::ostringstream light_position;
-                std::ostringstream light_color;
-                std::ostringstream light_attenuation;
-
-                light_position << "g_light_position[" << i << "]";
-                light_color << "g_light_color[" << i << "]";
-                light_attenuation << "g_light_attenuation[" << i << "]";
-
-                uniforms.push_back(light_position.str());
-                uniforms.push_back(light_color.str());
-                uniforms.push_back(light_attenuation.str());
-            }
+            uniform_builder.add_var("g_sampler");
+            uniform_builder.add_var("g_camera_position");
+//            auto uniforms = std::vector<std::string> {
+//                "g_sampler", "g_scale", "g_translation", "g_rotation",
+//                "g_perspective", "g_viewMatrix", "g_ambient_brightness",
+//                "g_camera_position",
+//            };
+//
+//            for (int i = 0; i < NR_POINT_LIGHTS; i++) {
+//                std::ostringstream light_position;
+//                std::ostringstream light_color;
+//                std::ostringstream light_attenuation;
+//
+//                light_position << "g_light_position[" << i << "]";
+//                light_color << "g_light_color[" << i << "]";
+//                light_attenuation << "g_light_attenuation[" << i << "]";
+//
+//                uniforms.push_back(light_position.str());
+//                uniforms.push_back(light_color.str());
+//                uniforms.push_back(light_attenuation.str());
+//            }
 
             shader = Constructors::Shader::construct(
                 std::vector<std::string> { "res/basic_shader.vs", "res/basic_shader.fs" },
                 std::vector<std::pair<std::string, int>> { position, tex_coords, normal },
-                uniforms);
+                uniform_builder.data());
         }
 
         // ---------- initail data to render ----------
@@ -197,8 +202,8 @@ public:
             auto& mouse_event = (MouseMoveEvent&)(event);
             std::cout << mouse_event.x() << " " << mouse_event.y() << "\n";
 
-            float horizontal_turn = -3.14f * mouse_event.x() / 800;
-            float vertical_turn = -3.14f * mouse_event.y() / 600;
+            float horizontal_turn = -Math::Numbers::pi_v<float> * mouse_event.x() / 800;
+            float vertical_turn = -Math::Numbers::pi_v<float> * mouse_event.y() / 600;
 
             m_camera.turn_horizontally(horizontal_turn);
             m_camera.turn_vertically(vertical_turn);

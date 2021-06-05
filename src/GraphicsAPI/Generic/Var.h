@@ -64,18 +64,4 @@ private:
     size_t m_index;
 };
 
-class Uniform : public Var {
-    CONSTRUCTIBLE(Uniform)
-
-public:
-    virtual ~Uniform() = default;
-
-protected:
-    Uniform() = default;
-    Uniform(const std::string& name)
-        : Var(name, Var::Type::Uniform)
-    {
-    }
-};
-
 }
