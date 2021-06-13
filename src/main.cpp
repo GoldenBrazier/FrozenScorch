@@ -45,9 +45,10 @@ public:
         uniform_builder.add_var("g_perspective", offsetof(BasicShader::Uniforms, perspective));
         uniform_builder.add_var("g_viewMatrix", offsetof(BasicShader::Uniforms, view_matrix));
         uniform_builder.add_var("g_ambient_brightness", offsetof(BasicShader::Uniforms, ambient_brightness));
-        uniform_builder.add_array<NR_POINT_LIGHTS, sizeof(Math::Vector3f)>("g_light_position");
-        uniform_builder.add_array<NR_POINT_LIGHTS, sizeof(Math::Vector3f)>("g_light_color");
-        uniform_builder.add_array<NR_POINT_LIGHTS, sizeof(Math::Vector3f)>("g_light_attenuation");
+        uniform_builder.add_var("g_camera_position", offsetof(BasicShader::Uniforms, camera_position));
+        uniform_builder.add_array<NR_POINT_LIGHTS, sizeof(Math::Vector3f)>("g_light_position", offsetof(BasicShader::Uniforms, light_position));
+        uniform_builder.add_array<NR_POINT_LIGHTS, sizeof(Math::Vector3f)>("g_light_color", offsetof(BasicShader::Uniforms, light_color));
+        uniform_builder.add_array<NR_POINT_LIGHTS, sizeof(Math::Vector3f)>("g_light_attenuation", offsetof(BasicShader::Uniforms, light_attenuation));
 
         if (Ctx.graphics_api_type() == Generic::GraphicsAPIType::Metal) {
             shader = Constructors::Shader::construct(
@@ -58,8 +59,7 @@ public:
                 sizeof(BasicShader::Uniforms));
         } else {
             uniform_builder.add_var("g_sampler");
-            uniform_builder.add_var("g_camera_position");
-//            auto uniforms = std::vector<std::string> {
+//              auto uniforms = std::vector<std::string> {
 //                "g_sampler", "g_scale", "g_translation", "g_rotation",
 //                "g_perspective", "g_viewMatrix", "g_ambient_brightness",
 //                "g_camera_position",
@@ -133,17 +133,17 @@ public:
         shader->set_uniform("g_camera_position", m_camera.position());
         shader->set_uniform("g_ambient_brightness", 0.3f);
 
-        shader->set_uniform("g_light_position[0]", m_camera.position());
-        shader->set_uniform("g_light_color[0]", {0,0,1});
-        shader->set_uniform("g_light_attenuation[0]", {1,0.09,0.032});
+        shader->set_uniform("g_light_position", 0, m_camera.position());
+        shader->set_uniform("g_light_color", 0, {0,0,1});
+        shader->set_uniform("g_light_attenuation", 0, {1,0.09,0.032});
 
-        shader->set_uniform("g_light_position[1]", {0, 7, 0});
-        shader->set_uniform("g_light_color[1]", {1,0,0});
-        shader->set_uniform("g_light_attenuation[1]", {1,0,0});
+        shader->set_uniform("g_light_position", 1, {0, 7, 0});
+        shader->set_uniform("g_light_color", 1, {1,0,0});
+        shader->set_uniform("g_light_attenuation", 1,{1,0,0});
 
-        shader->set_uniform("g_light_position[2]", {7, 0, 0});
-        shader->set_uniform("g_light_color[2]", {0,1,0});
-        shader->set_uniform("g_light_attenuation[2]", {1,0,0});
+        shader->set_uniform("g_light_position", 2, {7, 0, 0});
+        shader->set_uniform("g_light_color", 2, {0,1,0});
+        shader->set_uniform("g_light_attenuation", 2, {1,0,0});
 
         renderer->draw_indexed(vertex_array);
         renderer->end();
@@ -231,7 +231,7 @@ private:
 
 int main(int argc, char* argv[])
 {
-    Ctx.set_grahics_api_type(Generic::GraphicsAPIType::OpenGL);
+    Ctx.set_grahics_api_type(Generic::GraphicsAPIType::Metal);
 
     ExampleApplication example;
     example.run();

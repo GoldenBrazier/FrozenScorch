@@ -28,6 +28,11 @@ public:
     inline void set_uniform(const std::string& var_name, const Math::Vector3f& vec3) override;
     inline void set_uniform(const std::string& var_name, const Math::Matrix4f& mat4) override;
 
+    inline void set_uniform(const std::string& var_name, size_t index, float fl) override;
+    inline void set_uniform(const std::string& var_name, size_t index, int val) override;
+    inline void set_uniform(const std::string& var_name, size_t index, const Math::Vector3f& vec3) override;
+    inline void set_uniform(const std::string& var_name, size_t index, const Math::Matrix4f& mat4) override;
+
 private:
     void prepare_program(const std::vector<std::string>& file_paths, const std::vector<std::pair<std::string, int>>& attributes, const Generic::UniformList& uniforms);
     void attach_shader(const std::string& text);
@@ -36,6 +41,8 @@ private:
     std::string load_shader(const std::string& filename);
     void check_shader_error(GLuint shader, GLuint flag, bool program, const std::string& errorMessage);
     void register_uniform_var(const std::string& uniform_name);
+
+    std::string array_access_name(const std::string& name, size_t index) { return name + "[" + std::to_string(index) + "]"; }
 
 private:
     GLuint m_gl_program_id;
@@ -73,6 +80,26 @@ void Shader::set_uniform(const std::string& var_name, const Math::Matrix4f& mat4
         return;
     }
     glUniformMatrix4fv(m_uniform_vars[var_name], 1, GL_TRUE, mat4.data());
+}
+
+void Shader::set_uniform(const std::string& var_name, size_t index, float fl)
+{
+    set_uniform(array_access_name(var_name, index), fl);
+}
+
+void Shader::set_uniform(const std::string& var_name, size_t index, int val)
+{
+    set_uniform(array_access_name(var_name, index), val);
+}
+
+void Shader::set_uniform(const std::string& var_name, size_t index, const Math::Vector3f& vec3)
+{
+    set_uniform(array_access_name(var_name, index), vec3);
+}
+
+void Shader::set_uniform(const std::string& var_name, size_t index, const Math::Matrix4f& mat4)
+{
+    set_uniform(array_access_name(var_name, index), mat4);
 }
 
 }

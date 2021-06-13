@@ -35,10 +35,17 @@ public:
     inline void set_uniform(const std::string& var_name, const Math::Vector3f& vec3) override;
     inline void set_uniform(const std::string& var_name, const Math::Matrix4f& mat4) override;
 
+    inline void set_uniform(const std::string& var_name, size_t index, float fl) override;
+    inline void set_uniform(const std::string& var_name, size_t index, int val) override;
+    inline void set_uniform(const std::string& var_name, size_t index, const Math::Vector3f& vec3) override;
+    inline void set_uniform(const std::string& var_name, size_t index, const Math::Matrix4f& mat4) override;
+
 private:
     void prepare_program(const std::string& file, const std::string& vert_func, const std::string& frag_func, const Generic::UniformList& uniforms, size_t uniforms_size);
     std::string load_shader(const std::string& filename);
     void register_uniform_var(const Generic::Uniform& uniform);
+
+    std::string array_access_name(const std::string& name, size_t index) { return name + "[" + std::to_string(index) + "]"; }
 
 private:
     MTL::RenderPipelineState m_render_pipeline_state;
@@ -85,6 +92,27 @@ void Shader::set_uniform(const std::string& var_name, const Math::Matrix4f& mat4
     }
     char* ptr = ((char*)m_uniform_buffer.GetContents() + m_uniform_vars[var_name]);
     memcpy(ptr, mat4.data(), sizeof(Math::Matrix4f));
+}
+
+//TODO: It's possible to validate all array accesses, but currently we don't.
+void Shader::set_uniform(const std::string& var_name, size_t index, float fl)
+{
+    set_uniform(array_access_name(var_name, index), fl);
+}
+
+void Shader::set_uniform(const std::string& var_name, size_t index, int val)
+{
+    set_uniform(array_access_name(var_name, index), val);
+}
+
+void Shader::set_uniform(const std::string& var_name, size_t index, const Math::Vector3f& vec3)
+{
+    set_uniform(array_access_name(var_name, index), vec3);
+}
+
+void Shader::set_uniform(const std::string& var_name, size_t index, const Math::Matrix4f& mat4)
+{
+    set_uniform(array_access_name(var_name, index), mat4);
 }
 
 }
