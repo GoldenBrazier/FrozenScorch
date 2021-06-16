@@ -11,6 +11,7 @@
 #include <Math/Numbers.h>
 #include <Math/Vector3f.h>
 #include <Mesh.h>
+#include <Model.h>
 #include <Parsers/ObjParser.h>
 #include <Renderer/Renderer.h>
 #include <Runtime/PNGLoader/PNGLoader.h>
@@ -59,25 +60,6 @@ public:
                 sizeof(BasicShader::Uniforms));
         } else {
             uniform_builder.add_var("g_sampler");
-//              auto uniforms = std::vector<std::string> {
-//                "g_sampler", "g_scale", "g_translation", "g_rotation",
-//                "g_perspective", "g_viewMatrix", "g_ambient_brightness",
-//                "g_camera_position",
-//            };
-//
-//            for (int i = 0; i < NR_POINT_LIGHTS; i++) {
-//                std::ostringstream light_position;
-//                std::ostringstream light_color;
-//                std::ostringstream light_attenuation;
-//
-//                light_position << "g_light_position[" << i << "]";
-//                light_color << "g_light_color[" << i << "]";
-//                light_attenuation << "g_light_attenuation[" << i << "]";
-//
-//                uniforms.push_back(light_position.str());
-//                uniforms.push_back(light_color.str());
-//                uniforms.push_back(light_attenuation.str());
-//            }
 
             shader = Constructors::Shader::construct(
                 std::vector<std::string> { "res/basic_shader.vs", "res/basic_shader.fs" },
@@ -87,18 +69,10 @@ public:
 
         // ---------- initail data to render ----------
 
-        auto parser = ObjParser("res/models/crate/crate.obj");
-        parser.parse();
-
-        texture = Constructors::Texture::construct(Runtime::PNGLoader::load_rgba("res/models/crate/crate.png"), Generic::Texture::Types::TEXTURE_2D);
-
-        vertex_array = Constructors::VertexArray::construct();
-        auto vb = vertex_array->construct_vertex_buffer(parser.vertexes().data(), parser.vertexes().size() * sizeof(Generic::Vertex));
-
-        vb->register_attribute_vec3(position.second, sizeof(Generic::Vertex), 0);
-        vb->register_attribute_vec2(tex_coords.second, sizeof(Generic::Vertex), sizeof(Math::Vector3f));
-        vb->register_attribute_vec3(normal.second, sizeof(Generic::Vertex), sizeof(Math::Vector3f) + sizeof(Math::Vector2f));
-        vertex_array->construct_index_buffer(parser.indeces().data(), parser.indeces().size());
+        m_models.emplace_back("water_tower");
+        m_models.emplace_back("crate");
+        m_models.emplace_back("water_tower");
+        m_models.emplace_back("crate");
     }
 
     void draw_cycle() override
@@ -121,42 +95,39 @@ public:
         renderer->begin();
         renderer->clear();
 
-        texture->bind(0);
         shader->bind();
-        shader->set_uniform("g_sampler", (int)0);
-        shader->set_uniform("g_light_color", Math::Vector3f(1, 1, 1));
-        shader->set_uniform("g_scale", 1.0f);
-        shader->set_uniform("g_translation", Math::Matrix4f::Translation({ distance, distance / 2, 0 }));
-        shader->set_uniform("g_rotation", Math::Matrix4f::RotationAroundZ(rotation));
-        shader->set_uniform("g_perspective", Math::Matrix4f::Perspective(800, 600, 0.01f, 1000.0f, 90));
-        shader->set_uniform("g_viewMatrix", m_camera.view_matrix());
-        shader->set_uniform("g_camera_position", m_camera.position());
-        shader->set_uniform("g_ambient_brightness", 0.3f);
 
-        shader->set_uniform("g_light_position", 0, m_camera.position());
-        shader->set_uniform("g_light_color", 0, {0,0,1});
-        shader->set_uniform("g_light_attenuation", 0, {1,0.09,0.032});
+        float distance = 0;
 
-        shader->set_uniform("g_light_position", 1, {0, 7, 0});
-        shader->set_uniform("g_light_color", 1, {1,0,0});
-        shader->set_uniform("g_light_attenuation", 1,{1,0,0});
+        for (const auto& model : m_models) {
+            // TODO: move all shader logic to the renderer
+            shader->set_uniform("g_sampler", (int)0);
+            shader->set_uniform("g_light_color", Math::Vector3f(1, 1, 1));
+            shader->set_uniform("g_scale", 1.0f);
+            shader->set_uniform("g_translation", Math::Matrix4f::Translation({ distance, 0, 0 }));
+            shader->set_uniform("g_rotation", Math::Matrix4f::RotationAroundZ(rotation));
+            shader->set_uniform("g_perspective", Math::Matrix4f::Perspective(800, 600, 0.01f, 1000.0f, 90));
+            shader->set_uniform("g_viewMatrix", m_camera.view_matrix());
+            shader->set_uniform("g_camera_position", m_camera.position());
+            shader->set_uniform("g_ambient_brightness", 0.3f);
 
-        shader->set_uniform("g_light_position", 2, {7, 0, 0});
-        shader->set_uniform("g_light_color", 2, {0,1,0});
-        shader->set_uniform("g_light_attenuation", 2, {1,0,0});
+            shader->set_uniform("g_light_position", 0, m_camera.position());
+            shader->set_uniform("g_light_color", 0, { 0, 0, 1 });
+            shader->set_uniform("g_light_attenuation", 0, { 1, 0.09, 0.032 });
 
-        renderer->draw_indexed(vertex_array);
+            shader->set_uniform("g_light_position", 1, { 0, 7, 0 });
+            shader->set_uniform("g_light_color", 1, { 1, 0, 0 });
+            shader->set_uniform("g_light_attenuation", 1, { 1, 0, 0 });
+
+            shader->set_uniform("g_light_position", 2, { 7, 0, 0 });
+            shader->set_uniform("g_light_color", 2, { 0, 1, 0 });
+            shader->set_uniform("g_light_attenuation", 2, { 1, 0, 0 });
+
+            renderer->draw_model(model);
+            distance += 10;
+        }
+
         renderer->end();
-
-        //        distance += step;
-        //        if (distance >= 1 || distance <= -1) {
-        //            step *= -1;
-        //        }
-        //
-        //        rotation += 0.05f;
-        //        if (rotation > Math::Numbers::pi_v<float> * 2) {
-        //            rotation = 0;
-        //        }
     }
 
     void on_event(const Event& event) override
@@ -217,6 +188,9 @@ private:
     std::shared_ptr<Generic::Display> display;
     std::shared_ptr<Generic::Renderer> renderer;
     std::shared_ptr<Generic::VertexArray> vertex_array;
+
+    std::vector<Model> m_models;
+
     std::shared_ptr<Generic::Texture> texture;
 
     bool w;
@@ -225,13 +199,12 @@ private:
     bool d;
 
     float rotation = 0;
-    float distance = 0;
     float step = 0.05;
 };
 
 int main(int argc, char* argv[])
 {
-    Ctx.set_grahics_api_type(Generic::GraphicsAPIType::Metal);
+    Ctx.set_grahics_api_type(Generic::GraphicsAPIType::OpenGL);
 
     ExampleApplication example;
     example.run();
