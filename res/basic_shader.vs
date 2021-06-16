@@ -1,10 +1,10 @@
-#version 120
+#version 330
 
 #define NR_POINT_LIGHTS 4
 
-attribute vec3 position;
-attribute vec2 tex_coord;
-attribute vec3 normal;
+in vec3 position;
+in vec2 tex_coord;
+in vec3 normal;
 
 uniform float g_scale;
 uniform mat4 g_translation;
@@ -15,10 +15,10 @@ uniform mat4 g_viewMatrix;
 uniform vec3 g_light_position[NR_POINT_LIGHTS];
 uniform vec3 g_camera_position;
 
-varying vec2 v_tex_coords0;
-varying vec3 world_normal;
-varying vec3 world_position_to_light_vec[NR_POINT_LIGHTS];
-varying vec3 world_position_to_camera_position;
+out vec2 v_tex_coords0;
+out vec3 world_normal;
+out vec3 world_position_to_light_vec[NR_POINT_LIGHTS];
+out vec3 world_position_to_camera_position;
 
 void main()
 {

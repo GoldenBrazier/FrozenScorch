@@ -1,11 +1,13 @@
-#version 120
+#version 330
 
 #define NR_POINT_LIGHTS 4
 
-varying vec2 v_tex_coords0;
-varying vec3 world_normal;
-varying vec3 world_position_to_light_vec[NR_POINT_LIGHTS];
-varying vec3 world_position_to_camera_position;
+in vec2 v_tex_coords0;
+in vec3 world_normal;
+in vec3 world_position_to_light_vec[NR_POINT_LIGHTS];
+in vec3 world_position_to_camera_position;
+
+out vec4 color;
 
 uniform sampler2D g_sampler;
 uniform float g_ambient_brightness;
@@ -37,5 +39,5 @@ void main()
     }
 
     // set output color
-	gl_FragColor = vec4(all_light_color,  1.0) * texture2D(g_sampler, v_tex_coords0.st);
+	color = vec4(all_light_color,  1.0) * texture(g_sampler, v_tex_coords0.st);
 }
