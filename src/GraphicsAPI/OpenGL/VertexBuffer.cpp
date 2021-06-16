@@ -2,7 +2,7 @@
 #include <GL/glew.h>
 #include <GraphicsAPI/OpenGL/VertexArray.h>
 #include <memory>
-#include <stdint.h>
+#include <cstdint>
 
 namespace GL {
 
