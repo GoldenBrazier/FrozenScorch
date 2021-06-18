@@ -6,9 +6,7 @@ in vec3 position;
 in vec2 tex_coord;
 in vec3 normal;
 
-uniform float g_scale;
-uniform mat4 g_translation;
-uniform mat4 g_rotation;
+uniform mat4 g_transform;
 uniform mat4 g_perspective;
 uniform mat4 g_viewMatrix;
 
@@ -22,14 +20,11 @@ out vec3 world_position_to_camera_position;
 
 void main()
 {
-    // calculate transformation matrix for a vertex
-    mat4 world_transformation = g_translation * g_rotation;
-
     // calculate position of the vertex in the world
-    vec4 world_position = world_transformation * vec4(position * g_scale, 1.0);
+    vec4 world_position = g_transform * vec4(position, 1.0);
 
     // calculate position of the vertex normal in the world
-    world_normal = (world_transformation * vec4(normal, 0.0)).xyz;
+    world_normal = (g_transform * vec4(normal, 0.0)).xyz;
 
     // calculate to light vector for each light
     for (int i = 0; i < NR_POINT_LIGHTS; i++) {
