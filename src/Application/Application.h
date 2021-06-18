@@ -16,6 +16,9 @@ public:
     virtual void draw_cycle() = 0;
     virtual void on_event(const Event& event) = 0;
 
+private:
+    static void compile_shaders();
+
 protected:
     std::shared_ptr<Generic::Display> m_display;
     bool m_running { true };
