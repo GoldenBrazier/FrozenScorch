@@ -2,6 +2,7 @@
 #include <Application/Application.h>
 #include <GraphicsAPI/Metal/Context.h>
 #include <GraphicsAPI/OpenGL/Context.h>
+#include <GraphicsAPI/Generic/Shader.h>
 #include <memory>
 
 namespace Generic {
@@ -28,11 +29,14 @@ public:
     inline void set_application(Application* app) { m_application = app; }
     inline Application* application() { return m_application; }
 
+    inline ShaderStorage& shader_storage() { return m_shader_storage; }
+
 private:
     GraphicsAPIType m_graphics_api_type;
     std::shared_ptr<GL::Context> m_opengl_context { nullptr };
     std::shared_ptr<Metal::Context> m_metal_context { nullptr };
     Application* m_application { nullptr };
+    ShaderStorage m_shader_storage {};
 };
 
 }
