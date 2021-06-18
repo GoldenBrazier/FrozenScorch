@@ -4,29 +4,12 @@
 #include <Application/Events/MouseEvent.h>
 #include <Application/KeyCodes.h>
 #include <GraphicsAPI/Generic/Constructors.h>
-#include <GraphicsAPI/Generic/Uniform.h>
-#include <GraphicsAPI/Generic/Var.h>
-#include <GraphicsAPI/Generic/Vertex.h>
 #include <Math/Matrix4f.h>
 #include <Math/Numbers.h>
-#include <Math/Vector3f.h>
-#include <Mesh.h>
 #include <Model.h>
-#include <Parsers/ObjParser.h>
 #include <Renderer/Renderer.h>
-#include <Runtime/PNGLoader/PNGLoader.h>
-#include <Runtime/Utils/DrawLoop.h>
-#include <Runtime/Utils/SizeOfData.h>
-#include <Support/MacOS/Window.h>
-#include <array>
-#include <basic_data.h>
-#include <cstddef>
-#include <iostream>
 #include <memory>
-#include <sstream>
 #include <vector>
-
-#define NR_POINT_LIGHTS 4
 
 class ExampleApplication : public Application {
 public:
@@ -35,44 +18,24 @@ public:
     {
         renderer = Constructors::Renderer::construct();
 
-        std::pair<std::string, int> position = { "position", 0 };
-        std::pair<std::string, int> tex_coords = { "tex_coords", 1 };
-        std::pair<std::string, int> normal = { "normal", 2 };
+        m_shader = Ctx.shader_storage().get("basic_shader");
 
-        auto uniform_builder = Generic::UniformBuilder();
-        uniform_builder.add_var("g_scale", offsetof(BasicShader::Uniforms, scale));
-        uniform_builder.add_var("g_rotation", offsetof(BasicShader::Uniforms, rot));
-        uniform_builder.add_var("g_translation", offsetof(BasicShader::Uniforms, trans));
-        uniform_builder.add_var("g_perspective", offsetof(BasicShader::Uniforms, perspective));
-        uniform_builder.add_var("g_viewMatrix", offsetof(BasicShader::Uniforms, view_matrix));
-        uniform_builder.add_var("g_ambient_brightness", offsetof(BasicShader::Uniforms, ambient_brightness));
-        uniform_builder.add_var("g_camera_position", offsetof(BasicShader::Uniforms, camera_position));
-        uniform_builder.add_array<NR_POINT_LIGHTS, sizeof(Math::Vector3f)>("g_light_position", offsetof(BasicShader::Uniforms, light_position));
-        uniform_builder.add_array<NR_POINT_LIGHTS, sizeof(Math::Vector3f)>("g_light_color", offsetof(BasicShader::Uniforms, light_color));
-        uniform_builder.add_array<NR_POINT_LIGHTS, sizeof(Math::Vector3f)>("g_light_attenuation", offsetof(BasicShader::Uniforms, light_attenuation));
+        m_models.emplace_back("water_tower");
+        m_models.emplace_back("crate");
+        m_models.emplace_back("water_tower");
+        m_models.emplace_back("crate");
 
-        if (Ctx.graphics_api_type() == Generic::GraphicsAPIType::Metal) {
-            shader = Constructors::Shader::construct(
-                "res/basic.metal",
-                "vert_func",
-                "frag_func",
-                uniform_builder.data(),
-                sizeof(BasicShader::Uniforms));
-        } else {
-            uniform_builder.add_var("g_sampler");
+        float distance = 0;
 
-            shader = Constructors::Shader::construct(
-                std::vector<std::string> { "res/basic_shader.vs", "res/basic_shader.fs" },
-                std::vector<std::pair<std::string, int>> { position, tex_coords, normal },
-                uniform_builder.data());
+        for (int i = 0; i < m_models.size(); i++) {
+            auto translation = Math::Matrix4f::Translation({ distance, 0, 0 });
+            auto rotation = Math::Matrix4f::RotationAroundZ(0);
+            auto scale = Math::Matrix4f::Scaling(1);
+
+            m_models_transforms.emplace_back(translation * rotation * scale);
+
+            distance += 10;
         }
-
-        // ---------- initail data to render ----------
-
-        m_models.emplace_back("water_tower");
-        m_models.emplace_back("crate");
-        m_models.emplace_back("water_tower");
-        m_models.emplace_back("crate");
     }
 
     void draw_cycle() override
@@ -92,47 +55,20 @@ public:
 
         renderer->set_clear_color(0, 0.15f, 0.3f, 1.0f);
 
-        renderer->begin();
+        renderer->begin_scene(m_camera);
         renderer->clear();
 
-        shader->bind();
-
-        float distance = 0;
+        int transform_at = 0;
 
         for (const auto& model : m_models) {
-            // TODO: move all shader logic to the renderer
-            shader->set_uniform("g_sampler", (int)0);
-            shader->set_uniform("g_light_color", Math::Vector3f(1, 1, 1));
-            shader->set_uniform("g_scale", 1.0f);
-            shader->set_uniform("g_translation", Math::Matrix4f::Translation({ distance, 0, 0 }));
-            shader->set_uniform("g_rotation", Math::Matrix4f::RotationAroundZ(rotation));
-            shader->set_uniform("g_perspective", Math::Matrix4f::Perspective(800, 600, 0.01f, 1000.0f, 90));
-            shader->set_uniform("g_viewMatrix", m_camera.view_matrix());
-            shader->set_uniform("g_camera_position", m_camera.position());
-            shader->set_uniform("g_ambient_brightness", 0.3f);
-
-            shader->set_uniform("g_light_position", 0, m_camera.position());
-            shader->set_uniform("g_light_color", 0, { 0, 0, 1 });
-            shader->set_uniform("g_light_attenuation", 0, { 1, 0.09, 0.032 });
-
-            shader->set_uniform("g_light_position", 1, { 0, 7, 0 });
-            shader->set_uniform("g_light_color", 1, { 1, 0, 0 });
-            shader->set_uniform("g_light_attenuation", 1, { 1, 0, 0 });
-
-            shader->set_uniform("g_light_position", 2, { 7, 0, 0 });
-            shader->set_uniform("g_light_color", 2, { 0, 1, 0 });
-            shader->set_uniform("g_light_attenuation", 2, { 1, 0, 0 });
-
-            renderer->draw_model(model);
-            distance += 10;
+            renderer->draw_model(model, m_shader, m_models_transforms[transform_at++]);
         }
 
-        renderer->end();
+        renderer->end_scene();
     }
 
     void on_event(const Event& event) override
     {
-        // Camera camera({ 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 });
         if (event.type() == EventType::WindowClose) {
             shutdown();
         }
@@ -171,7 +107,6 @@ public:
 
         if (event.type() == EventType::MouseMove) {
             auto& mouse_event = (MouseMoveEvent&)(event);
-            std::cout << mouse_event.x() << " " << mouse_event.y() << "\n";
 
             float horizontal_turn = -Math::Numbers::pi_v<float> * mouse_event.x() / 800;
             float vertical_turn = -Math::Numbers::pi_v<float> * mouse_event.y() / 600;
@@ -182,24 +117,21 @@ public:
     }
 
 private:
+    std::shared_ptr<Generic::Renderer> renderer;
+
     Camera m_camera { Camera({ 0, 0, 0 }, { 0, 1, 0 }) };
 
-    std::shared_ptr<Generic::Shader> shader;
-    std::shared_ptr<Generic::Display> display;
-    std::shared_ptr<Generic::Renderer> renderer;
-    std::shared_ptr<Generic::VertexArray> vertex_array;
-
+    std::shared_ptr<Generic::Shader> m_shader;
     std::vector<Model> m_models;
 
-    std::shared_ptr<Generic::Texture> texture;
+    // For now, we store transforms for each model in a vector because Model shouldn't contain such information.
+    // In the feature, there will be a transform component for an entity.
+    std::vector<Math::Matrix4f> m_models_transforms;
 
-    bool w;
-    bool a;
-    bool s;
-    bool d;
-
-    float rotation = 0;
-    float step = 0.05;
+    bool w {};
+    bool a {};
+    bool s {};
+    bool d {};
 };
 
 int main(int argc, char* argv[])
