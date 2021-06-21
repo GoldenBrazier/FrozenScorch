@@ -57,10 +57,8 @@ void Application::compile_shaders()
     } else {
         uniform_builder.add_var("g_sampler");
 
-        basic_shader = Constructors::Shader::construct(
-            std::vector<std::string> { "res/basic_shader.vs", "res/basic_shader.fs" },
-            std::vector<std::pair<std::string, int>> { position, tex_coords, normal },
-            uniform_builder.data());
+        basic_shader = Constructors::Shader::construct(std::vector<std::string> { "res/basic_shader.vs", "res/basic_shader.fs" });
+
     }
 
     shader_storage.add("basic_shader", basic_shader);

@@ -1,14 +1,17 @@
 #include <GraphicsAPI/OpenGL/Shader.h>
+#include <GraphicsAPI/OpenGL/ShaderParser.h>
 #include <fstream>
 #include <iostream>
 #include <string>
 
 namespace GL {
 
-Shader::Shader(const std::vector<std::string>& files, const std::vector<std::pair<std::string, int>>& attributes, const Generic::UniformList& uniforms)
+Shader::Shader(const std::vector<std::string>& files)
     : Generic::Shader()
 {
-    prepare_program(files, attributes, uniforms);
+    auto parser = ShaderParser(files);
+    parser.parse();
+    prepare_program(files, parser.attributes(), parser.uniforms());
 }
 
 void Shader::prepare_program(const std::vector<std::string>& file_paths, const std::vector<std::pair<std::string, int>>& attributes, const Generic::UniformList& uniforms)

@@ -45,6 +45,16 @@ public:
         }
     }
 
+    // FIXME: After metal parser is implemented we don't need this function.
+    void add_gl_array(const std::string& name, size_t len)
+    {
+        for (int i = 0; i < len; i++) {
+            std::ostringstream name_of_element;
+            name_of_element << name << "[" << i << "]";
+            m_data.emplace_back(name_of_element.str(), 0);
+        }
+    }
+
     const UniformList& data() const { return m_data; }
 
 private:
