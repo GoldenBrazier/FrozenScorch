@@ -14,7 +14,7 @@ namespace GL {
 
 class Shader : public Generic::Shader {
 public:
-    Shader(const std::vector<std::string>& files, const std::vector<std::pair<std::string, int>>& attributes, const Generic::UniformList& uniforms);
+    Shader(const std::vector<std::string>& files);
     ~Shader();
 
     // Metal Constructor, which won't be called

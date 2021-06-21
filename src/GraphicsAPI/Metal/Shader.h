@@ -18,7 +18,7 @@ public:
     ~Shader();
 
     // OpenGL Constructor, which won't be called
-    Shader(const std::vector<std::string>& files, const std::vector<std::pair<std::string, int>>& attributes, const Generic::UniformList& uniforms) { std::abort(); }
+    Shader(const std::vector<std::string>& files) { std::abort(); }
 
     inline void compile() const override { }
     inline void bind() const override
