@@ -1,0 +1,32 @@
+cmake_minimum_required(VERSION 3.17)
+project(OpenRenderer)
+
+enable_language(OBJC)
+
+set(CMAKE_OBJC_FLAGS "-mmacosx-version-min=10.12")
+set(CMAKE_CXX_FLAGS "-std=c++2a -Isrc -Ires -IDependencies/Code -ggdb")
+set(CMAKE_EXE_LINKER_FLAGS "-framework ServiceManagement -framework Foundation -framework Cocoa -framework Metal -framework MetalKit -framework Cocoa -framework CoreFoundation -fobjc-link-runtime")
+
+add_subdirectory(Dependencies/Libraries/SDL)
+add_subdirectory(Dependencies/Libraries/glew)
+
+include_directories(src)
+include_directories(Dependencies/Code)
+include_directories(res)
+include_directories(Dependencies/Libraries/SDL/include)
+include_directories(Dependencies/Libraries/glew/include)
+
+add_executable(OpenRenderer {files})
+
+target_link_libraries (
+    OpenRenderer
+    SDL2main SDL2-static
+    libglew_static
+)
+
+file (
+    COPY
+    res
+    DESTINATION
+    ${{CMAKE_CURRENT_BINARY_DIR}}/
+)
