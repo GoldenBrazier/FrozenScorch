@@ -11,6 +11,36 @@
 #include <memory>
 #include <vector>
 
+#include <ECS/ECS.h>
+
+static constexpr size_t ComponentCount = 32;
+static constexpr size_t SystemCount = 8;
+
+struct Position : public Component<Position> {
+    float x {};
+    float y {};
+};
+
+class MoveSystem : public System<ComponentCount, SystemCount> {
+public:
+    explicit MoveSystem(ECS<ComponentCount, SystemCount>* ecs)
+        : System<ComponentCount, SystemCount>(ecs)
+    {
+        set_required_components<Position>();
+    }
+
+    void update()
+    {
+        for (auto& entity : m_managed_entities) {
+            auto& position = ecs().get_component<Position>(entity);
+            position.x += 10;
+            position.y += 10;
+
+            std::cout << position.x << " " << position.y << std::endl;
+        }
+    }
+};
+
 class ExampleApplication : public Application {
 public:
     ExampleApplication()
@@ -36,10 +66,19 @@ public:
 
             distance += 10;
         }
+
+        // ECS
+        ecs.register_component<Position>();
+        m_move_system = ecs.create_system<MoveSystem>();
+
+        auto entity_id = ecs.create_entity();
+        ecs.add_component<Position>(entity_id);
     }
 
     void draw_cycle() override
     {
+        m_move_system->update();
+
         if (w) {
             m_camera.move_forward();
         }
@@ -132,6 +171,10 @@ private:
     bool a {};
     bool s {};
     bool d {};
+
+    // ECS
+    ECS<ComponentCount, SystemCount> ecs;
+    MoveSystem* m_move_system;
 };
 
 int main(int argc, char* argv[])
