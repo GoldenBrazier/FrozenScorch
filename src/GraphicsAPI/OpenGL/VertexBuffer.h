@@ -1,6 +1,6 @@
 #pragma once
 #include <GL/glew.h>
-#include <GraphicsAPI/Generic/Var.h>
+#include <GraphicsAPI/Generic/ShaderVars.h>
 #include <GraphicsAPI/Generic/VertexBuffer.h>
 #include <GraphicsAPI/OpenGL/VarTypes.h>
 #include <Utils.h>

@@ -98,6 +98,6 @@ void ShaderParser::interpret_attribute(LineStreamer& streamer)
     streamer.eat("in");
     streamer.eat(); // Eating var type
     auto attribute_var_name = streamer.token();
-    m_attributes.emplace_back(std::string(attribute_var_name), m_attributes.size());
+    m_attribute_builder.add_var(std::string(attribute_var_name), m_attribute_builder.data().size());
 }
 }

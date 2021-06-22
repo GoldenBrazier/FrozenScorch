@@ -1,8 +1,7 @@
 #pragma once
 #include <GL/glew.h>
 #include <GraphicsAPI/Generic/Shader.h>
-#include <GraphicsAPI/Generic/Var.h>
-#include <GraphicsAPI/Generic/Uniform.h>
+#include <GraphicsAPI/Generic/ShaderVars.h>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -76,7 +75,7 @@ public:
     ~ShaderParser() = default;
 
     void parse();
-    const std::vector<std::pair<std::string, int>>& attributes() const { return m_attributes; }
+    const Generic::AttributeList& attributes() const { return m_attribute_builder.data(); }
     const Generic::UniformList& uniforms() const { return m_uniform_builder.data(); }
 
 private:
@@ -92,7 +91,7 @@ private:
     std::vector<std::string> m_filenames;
     std::unordered_map<std::string, std::string> m_defines;
     Generic::UniformBuilder m_uniform_builder;
-    std::vector<std::pair<std::string, int>> m_attributes; // TODO: Replace with builder.
+    Generic::AttributeBuilder m_attribute_builder;
 
 };
 

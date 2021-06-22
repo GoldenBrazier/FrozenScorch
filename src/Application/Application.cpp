@@ -1,7 +1,6 @@
 #include "Application.h"
 #include <GraphicsAPI/Generic/Constructors.h>
 #include <GraphicsAPI/Generic/Context.h>
-#include <GraphicsAPI/Generic/Uniform.h>
 #include <GraphicsAPI/OpenGL/Shader.h>
 #include <basic_data.h>
 #include <memory>
