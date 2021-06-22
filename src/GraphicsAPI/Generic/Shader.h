@@ -1,5 +1,5 @@
 #pragma once
-#include <GraphicsAPI/Generic/Var.h>
+#include <GraphicsAPI/Generic/ShaderVars.h>
 #include <Math/Matrix4f.h>
 #include <Math/Vector3f.h>
 #include <Utils.h>

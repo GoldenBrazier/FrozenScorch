@@ -1,8 +1,7 @@
 #pragma once
 #include <GL/glew.h>
 #include <GraphicsAPI/Generic/Shader.h>
-#include <GraphicsAPI/Generic/Var.h>
-#include <GraphicsAPI/Generic/Uniform.h>
+#include <GraphicsAPI/Generic/ShaderVars.h>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -34,7 +33,7 @@ public:
     inline void set_uniform(const std::string& var_name, size_t index, const Math::Matrix4f& mat4) override;
 
 private:
-    void prepare_program(const std::vector<std::string>& file_paths, const std::vector<std::pair<std::string, int>>& attributes, const Generic::UniformList& uniforms);
+    void prepare_program(const std::vector<std::string>& file_paths, const Generic::AttributeList& attributes, const Generic::UniformList& uniforms);
     void attach_shader(const std::string& text);
     GLuint get_shader_type(const std::string& path);
     GLuint create_shader(const std::string& path, GLenum shader_type);

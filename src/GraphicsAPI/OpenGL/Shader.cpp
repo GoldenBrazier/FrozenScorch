@@ -14,7 +14,7 @@ Shader::Shader(const std::vector<std::string>& files)
     prepare_program(files, parser.attributes(), parser.uniforms());
 }
 
-void Shader::prepare_program(const std::vector<std::string>& file_paths, const std::vector<std::pair<std::string, int>>& attributes, const Generic::UniformList& uniforms)
+void Shader::prepare_program(const std::vector<std::string>& file_paths, const Generic::AttributeList& attributes, const Generic::UniformList& uniforms)
 {
     m_gl_program_id = glCreateProgram();
 
@@ -23,14 +23,14 @@ void Shader::prepare_program(const std::vector<std::string>& file_paths, const s
     }
 
     for (auto& attr : attributes) {
-        glBindAttribLocation(m_gl_program_id, attr.second, attr.first.c_str());
+        glBindAttribLocation(m_gl_program_id, attr.gl_index(), attr.name().c_str());
     }
 
     glLinkProgram(m_gl_program_id);
     check_shader_error(m_gl_program_id, GL_LINK_STATUS, true, "Error linking shader program");
 
     for (auto& attr : attributes) {
-        glBindAttribLocation(m_gl_program_id, attr.second, attr.first.c_str());
+        glBindAttribLocation(m_gl_program_id, attr.gl_index(), attr.name().c_str());
     }
 
     for (auto& unfs : uniforms) {

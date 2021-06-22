@@ -1,7 +1,6 @@
 #pragma once
 #include <GraphicsAPI/Generic/Shader.h>
-#include <GraphicsAPI/Generic/Uniform.h>
-#include <GraphicsAPI/Generic/Var.h>
+#include <GraphicsAPI/Generic/ShaderVars.h>
 #include <iostream>
 #include <memory>
 #include <mtlpp/mtlpp.hpp>
