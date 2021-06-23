@@ -16,7 +16,14 @@ include_directories(res)
 include_directories(Dependencies/Libraries/SDL/include)
 include_directories(Dependencies/Libraries/glew/include)
 
-add_executable(OpenRenderer ./Dependencies/Code/mtlpp/src/texture.mm
+add_executable(OpenRenderer ./Dependencies/Code/imgui/imgui_widgets.cpp
+./Dependencies/Code/imgui/imgui.cpp
+./Dependencies/Code/imgui/imgui_impl_opengl3.cpp
+./Dependencies/Code/imgui/imgui_tables.cpp
+./Dependencies/Code/imgui/imgui_demo.cpp
+./Dependencies/Code/imgui/imgui_impl_sdl.cpp
+./Dependencies/Code/imgui/imgui_draw.cpp
+./Dependencies/Code/mtlpp/src/texture.mm
 ./Dependencies/Code/mtlpp/src/stage_input_output_descriptor.mm
 ./Dependencies/Code/mtlpp/src/buffer.mm
 ./Dependencies/Code/mtlpp/src/compute_command_encoder.mm
@@ -54,6 +61,7 @@ add_executable(OpenRenderer ./Dependencies/Code/mtlpp/src/texture.mm
 ./src/Support/MacOS/Window.mm
 ./src/Application/Camera.cpp
 ./src/Application/Application.cpp
+./src/Scene/Scene.cpp
 ./src/GraphicsAPI/Metal/VertexBuffer.cpp
 ./src/GraphicsAPI/Metal/VertexArray.cpp
 ./src/GraphicsAPI/Metal/Texture.cpp
@@ -68,10 +76,8 @@ add_executable(OpenRenderer ./Dependencies/Code/mtlpp/src/texture.mm
 ./src/GraphicsAPI/OpenGL/Shader.cpp
 ./src/GraphicsAPI/OpenGL/ShaderParser.cpp
 ./src/GraphicsAPI/OpenGL/IndexBuffer.cpp
-./src/Scene/Scene.h
-./src/Scene/Components/Components.h
-./src/Scene/Systems/RenderSystem.h
-./src/Scene/Scene.cpp)
+./src/Editor/Editor.cpp
+        src/Editor/OpenGL/Editor.h)
 
 target_link_libraries (
     OpenRenderer
