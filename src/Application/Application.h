@@ -8,6 +8,7 @@
 class Application {
 public:
     Application();
+    virtual ~Application() = default;
 
 public:
     void run();
@@ -19,14 +20,15 @@ public:
 
 protected:
     Scene& scene() { return m_scene; }
+    std::shared_ptr<Generic::Display>& display() { return m_display; }
 
 private:
     static void compile_shaders();
 
 protected:
-    std::shared_ptr<Generic::Display> m_display;
     bool m_running { true };
 
 private:
+    std::shared_ptr<Generic::Display> m_display;
     Scene m_scene {};
 };

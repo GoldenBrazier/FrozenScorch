@@ -32,7 +32,8 @@ Display::Display(size_t width, size_t height, const std::string& name)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-    SDL_SetRelativeMouseMode(SDL_TRUE);
+    // Commented in purpose to work with imgui
+//    SDL_SetRelativeMouseMode(SDL_TRUE);
 
     m_window = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL);
     Ctx.set_opengl_context(GL::Context::construct(SDL_GL_CreateContext(m_window)));
