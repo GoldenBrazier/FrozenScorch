@@ -68,7 +68,10 @@ add_executable(OpenRenderer ./Dependencies/Code/mtlpp/src/texture.mm
 ./src/GraphicsAPI/OpenGL/Shader.cpp
 ./src/GraphicsAPI/OpenGL/ShaderParser.cpp
 ./src/GraphicsAPI/OpenGL/IndexBuffer.cpp
-)
+./src/Scene/Scene.h
+./src/Scene/Components/Components.h
+./src/Scene/Systems/RenderSystem.h
+./src/Scene/Scene.cpp)
 
 target_link_libraries (
     OpenRenderer

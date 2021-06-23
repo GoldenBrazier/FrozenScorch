@@ -7,6 +7,7 @@
 class BaseSystem {
 public:
     virtual ~BaseSystem() = default;
+    virtual void update() = 0;
 };
 
 template <size_t ComponentCount, size_t SystemCount>

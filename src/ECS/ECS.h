@@ -65,13 +65,20 @@ public:
     // -------------------------------------------------
 
     // ------------------- System -------------------
-    template <typename System>
-    System* create_system()
+    template <typename System, typename... Args>
+    System* create_system(Args&&... args)
     {
-        m_systems.push_back(std::make_unique<System>(this));
+        m_systems.push_back(std::make_unique<System>(this, std::forward<Args>(args)...));
         return static_cast<System*>(m_systems.back().get());
     }
     // ----------------------------------------------
+
+    void update_systems()
+    {
+        for (auto& system : m_systems) {
+            system->update();
+        }
+    }
 
 private:
     template <typename ComponentType>

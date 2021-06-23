@@ -63,20 +63,20 @@ void Display::swap_buffers()
 
         switch (event.type) {
         case SDL_QUIT: {
-            Ctx.application()->on_event(WindowCloseEvent());
+            Ctx.application()->on_event_base(WindowCloseEvent());
             break;
         }
         case SDL_KEYUP: {
-            Ctx.application()->on_event(KeyboardReleasedEvent(OpenRenderer::keycode_from_sdl(event.key.keysym.scancode)));
+            Ctx.application()->on_event_base(KeyboardReleasedEvent(OpenRenderer::keycode_from_sdl(event.key.keysym.scancode)));
             break;
         }
         case SDL_KEYDOWN: {
-            Ctx.application()->on_event(KeyboardPressedEvent(OpenRenderer::keycode_from_sdl(event.key.keysym.scancode)));
+            Ctx.application()->on_event_base(KeyboardPressedEvent(OpenRenderer::keycode_from_sdl(event.key.keysym.scancode)));
             break;
         }
 
         case SDL_MOUSEMOTION: {
-            Ctx.application()->on_event(MouseMoveEvent(event.motion.xrel, event.motion.yrel));
+            Ctx.application()->on_event_base(MouseMoveEvent(event.motion.xrel, event.motion.yrel));
             break;
         }
 
