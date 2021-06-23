@@ -1,4 +1,5 @@
 #pragma once
+#include <GraphicsAPI/Generic/Context.h>
 #include <GraphicsAPI/Generic/Display.h>
 #include <GraphicsAPI/Generic/IndexBuffer.h>
 #include <GraphicsAPI/Generic/MainLoop.h>

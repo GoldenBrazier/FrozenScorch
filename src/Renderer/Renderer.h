@@ -6,7 +6,7 @@
 #include <memory>
 #include <string>
 
-#include <Application/Camera.h>
+class Camera;
 
 namespace Generic {
 

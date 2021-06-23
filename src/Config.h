@@ -4,6 +4,9 @@
 
 namespace Config {
 
-const char* ModelsFolder = "res/models";
+static const char* ModelsFolder = "res/models";
+
+constexpr size_t ComponentCount = 32;
+constexpr size_t SystemCount = 8;
 
 }

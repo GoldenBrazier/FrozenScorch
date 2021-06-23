@@ -29,19 +29,19 @@ void Display::draw_cycle_callback()
 void Display::key_up_callback(int symbol, int keycode)
 {
     auto application = Ctx.application();
-    Ctx.application()->on_event(KeyboardReleasedEvent(OpenRenderer::keycode_from_cocoa(keycode)));
+    Ctx.application()->on_event_base(KeyboardReleasedEvent(OpenRenderer::keycode_from_cocoa(keycode)));
 }
 
 void Display::key_down_callback(int symbol, int keycode)
 {
     auto application = Ctx.application();
-    Ctx.application()->on_event(KeyboardPressedEvent(OpenRenderer::keycode_from_cocoa(keycode)));
+    Ctx.application()->on_event_base(KeyboardPressedEvent(OpenRenderer::keycode_from_cocoa(keycode)));
 }
 
 void Display::mouse_move_callback(int x, int y)
 {
     auto application = Ctx.application();
-    Ctx.application()->on_event(MouseMoveEvent(x, y));
+    Ctx.application()->on_event_base(MouseMoveEvent(x, y));
 }
 
 void Display::mouse_down_callback(int a, int b)

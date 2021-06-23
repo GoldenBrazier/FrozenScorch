@@ -11,6 +11,7 @@ Application::Application()
     Ctx.set_application(this);
 
     compile_shaders();
+    m_scene.initialize();
 }
 
 void Application::run()
@@ -19,10 +20,17 @@ void Application::run()
         Support::MacOS::Window::Run();
     } else {
         while (m_running) {
+            m_scene.update();
             draw_cycle();
             m_display->swap_buffers();
         }
     }
+}
+
+void Application::on_event_base(const Event& event)
+{
+    m_scene.on_event(event);
+    on_event(event);
 }
 
 void Application::compile_shaders()

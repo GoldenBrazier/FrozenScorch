@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include <Math/Matrix4f.h>
 #include <Model.h>
+#include <Application/Camera.h>
 
 namespace Generic {
 

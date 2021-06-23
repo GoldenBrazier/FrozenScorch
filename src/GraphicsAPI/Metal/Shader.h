@@ -8,6 +8,7 @@
 #include <type_traits>
 #include <unordered_map>
 #include <vector>
+#include <GraphicsAPI/Generic/Context.h>
 
 namespace Metal {
 
