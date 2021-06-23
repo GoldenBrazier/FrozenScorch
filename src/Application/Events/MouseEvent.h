@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Event.h"
-#include <stdint.h>
+#include <cstdint>
 
 class MouseScrollEvent : public Event {
 public:
@@ -37,7 +37,11 @@ private:
     int m_y;
 };
 
-enum class MouseCode {};
+enum MouseCode {
+    LeftButton = 1,
+    MidButton = 2,
+    RightButton = 3,
+};
 
 template <EventType T>
 class MouseButtonEvent : public Event {

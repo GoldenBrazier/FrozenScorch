@@ -33,7 +33,7 @@ Display::Display(size_t width, size_t height, const std::string& name)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
     // Commented in purpose to work with imgui
-//    SDL_SetRelativeMouseMode(SDL_TRUE);
+    //    SDL_SetRelativeMouseMode(SDL_TRUE);
 
     m_window = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL);
     Ctx.set_opengl_context(GL::Context::construct(SDL_GL_CreateContext(m_window)));
@@ -78,6 +78,16 @@ void Display::swap_buffers()
 
         case SDL_MOUSEMOTION: {
             Ctx.application()->on_event_base(MouseMoveEvent(event.motion.xrel, event.motion.yrel));
+            break;
+        }
+
+        case SDL_MOUSEBUTTONDOWN: {
+            Ctx.application()->on_event_base(MouseButtonPressedEvent(MouseCode(event.button.button)));
+            break;
+        }
+
+        case SDL_MOUSEBUTTONUP: {
+            Ctx.application()->on_event_base(MouseButtonReleasedEvent(MouseCode(event.button.button)));
             break;
         }
 

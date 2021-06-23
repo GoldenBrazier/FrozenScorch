@@ -2,10 +2,10 @@
 #include "Components/Components.h"
 #include "Systems/RenderSystem.h"
 #include <Application/Events/Event.h>
-#include <Renderer/Renderer.h>
-#include <GraphicsAPI/Generic/Constructors.h>
 #include <Application/Events/KeyboardEvent.h>
 #include <Application/Events/MouseEvent.h>
+#include <GraphicsAPI/Generic/Constructors.h>
+#include <Renderer/Renderer.h>
 
 void Scene::initialize()
 {
@@ -89,6 +89,10 @@ void Scene::on_event(const Event& event)
     }
 
     if (event.type() == EventType::MouseMove) {
+        if (!m_mouse_right_button_pressed) {
+            return;
+        }
+
         auto& mouse_event = (MouseMoveEvent&)(event);
 
         float horizontal_turn = -Math::Numbers::pi_v<float> * mouse_event.x() / 800;
@@ -96,5 +100,19 @@ void Scene::on_event(const Event& event)
 
         m_camera.turn_horizontally(horizontal_turn);
         m_camera.turn_vertically(vertical_turn);
+    }
+
+    if (event.type() == EventType::MouseButtonReleased) {
+        auto& mouse_event = (MouseButtonReleasedEvent&)(event);
+        if (mouse_event.button() == MouseCode::RightButton) {
+            m_mouse_right_button_pressed = false;
+        }
+    }
+
+    if (event.type() == EventType::MouseButtonPressed) {
+        auto& mouse_event = (MouseButtonPressedEvent&)(event);
+        if (mouse_event.button() == MouseCode::RightButton) {
+            m_mouse_right_button_pressed = true;
+        }
     }
 }
