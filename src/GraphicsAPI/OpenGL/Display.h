@@ -13,6 +13,8 @@ public:
     void swap_buffers() override;
     bool closed() const override { return m_closed; }
 
+    inline SDL_Window* window() { return m_window; }
+
 private:
     bool m_closed {};
     SDL_Window* m_window;

@@ -77,7 +77,7 @@ add_executable(OpenRenderer ./Dependencies/Code/imgui/imgui_widgets.cpp
 ./src/GraphicsAPI/OpenGL/ShaderParser.cpp
 ./src/GraphicsAPI/OpenGL/IndexBuffer.cpp
 ./src/Editor/Editor.cpp
-        src/Editor/OpenGL/Editor.h)
+)
 
 target_link_libraries (
     OpenRenderer
