@@ -2,9 +2,11 @@
 
 #include "Component.h"
 #include "Entity.h"
+#include "Event.h"
 #include "System.h"
 #include <array>
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 template <size_t ComponentCount, size_t SystemCount>
@@ -80,6 +82,31 @@ public:
         }
     }
 
+    // ------------------- Events -------------------
+    template <typename Event>
+    void subscribe_for_events(std::function<void(std::unique_ptr<BaseEvent>)> callback)
+    {
+        m_event_callbacks[EventEnumerator<Event>::ID].push_back(callback);
+    }
+
+    template <typename Event, typename... Args>
+    void post_event(Args&&... args)
+    {
+        m_event_queue.push_back(std::make_unique<Event>(std::forward<Args>(args)...));
+    }
+
+    void dispatch_events()
+    {
+        std::vector<std::unique_ptr<BaseEvent>> events_to_dispatch(std::move(m_event_queue));
+        m_event_queue.clear();
+        for (auto& event_ptr : events_to_dispatch) {
+            for (const auto& callback : m_event_callbacks[event_ptr->id()]) {
+                callback(std::move(event_ptr));
+            }
+        }
+    }
+    // ----------------------------------------------
+
 private:
     template <typename ComponentType>
     auto& get_component_container()
@@ -91,4 +118,6 @@ private:
     EntityContainer<ComponentCount, SystemCount> m_entity_container;
     std::array<std::unique_ptr<ComponentContainerBase>, ComponentCount> m_component_containers;
     std::vector<std::unique_ptr<BaseSystem>> m_systems;
+    std::vector<std::unique_ptr<BaseEvent>> m_event_queue;
+    std::unordered_map<size_t, std::vector<std::function<void(std::unique_ptr<BaseEvent>)>>> m_event_callbacks;
 };
