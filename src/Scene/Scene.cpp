@@ -1,12 +1,14 @@
 #include "Scene.h"
 #include "Components/Components.h"
+#include "Events/KeyboardInput.h"
+#include "Systems/CameraSystem.h"
 #include "Systems/RenderSystem.h"
 #include <Application/Events/Event.h>
 #include <Application/Events/KeyboardEvent.h>
 #include <Application/Events/MouseEvent.h>
+#include <Config.h>
 #include <GraphicsAPI/Generic/Constructors.h>
 #include <Renderer/Renderer.h>
-#include <Config.h>
 
 void Scene::initialize()
 {
@@ -16,8 +18,14 @@ void Scene::initialize()
     m_ecs.register_component<TransformComponent>();
     m_ecs.register_component<ModelComponent>();
     m_ecs.register_component<ShaderComponent>();
+    m_ecs.register_component<CameraComponent>();
 
-    m_ecs.create_system<RenderSystem>(renderer, m_camera);
+    m_ecs.create_system<CameraSystem>();
+
+    // FIXME: Now we can't create systems after entities.
+    auto camera_entity = m_ecs.create_entity();
+    m_ecs.add_component<CameraComponent>(camera_entity, Math::Vector3f({ 0, 0, 0 }), Math::Vector3f({ 0, 1, 0 }), 0.0f, 0.0f);
+    m_ecs.create_system<RenderSystem>(renderer, camera_entity);
 
     // --------------- Demo entities ---------------
     float distance = 0;
@@ -39,54 +47,16 @@ void Scene::initialize()
 
 void Scene::update()
 {
-    if (w) {
-        m_camera.move_forward();
-    }
-    if (a) {
-        m_camera.move_left();
-    }
-    if (s) {
-        m_camera.move_backward();
-    }
-    if (d) {
-        m_camera.move_right();
-    }
-
+    m_ecs.dispatch_events();
     m_ecs.update_systems();
 }
 
 void Scene::on_event(const Event& event)
 {
-    if (event.type() == EventType::KeyboardPressed) {
-        auto& keyboard_event = (KeyboardPressedEvent&)(event);
-        if (keyboard_event.key() == OpenRenderer::KEYCODE_W) {
-            w = true;
-        }
-        if (keyboard_event.key() == OpenRenderer::KEYCODE_S) {
-            s = true;
-        }
-        if (keyboard_event.key() == OpenRenderer::KEYCODE_A) {
-            a = true;
-        }
-        if (keyboard_event.key() == OpenRenderer::KEYCODE_D) {
-            d = true;
-        }
-    }
-
-    if (event.type() == EventType::KeyboardReleased) {
-        auto& keyboard_event = (KeyboardPressedEvent&)(event);
-        if (keyboard_event.key() == OpenRenderer::KEYCODE_W) {
-            w = false;
-        }
-        if (keyboard_event.key() == OpenRenderer::KEYCODE_S) {
-            s = false;
-        }
-        if (keyboard_event.key() == OpenRenderer::KEYCODE_A) {
-            a = false;
-        }
-        if (keyboard_event.key() == OpenRenderer::KEYCODE_D) {
-            d = false;
-        }
+    if (event.type() == EventType::KeyboardPressed || event.type() == EventType::KeyboardReleased || event.type() == EventType::KeyboardRepeate) {
+        auto& keyboard_event = (BaseKeyboardEvent&)(event);
+        m_ecs.post_event<KeyboardInputEvent>(keyboard_event);
+        return;
     }
 
     if (event.type() == EventType::MouseMove) {

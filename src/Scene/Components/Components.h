@@ -65,3 +65,19 @@ struct ShaderComponent : public Component<ShaderComponent> {
     }
     std::shared_ptr<Generic::Shader> shader;
 };
+
+struct CameraComponent : public Component<CameraComponent> {
+    explicit CameraComponent(const Math::Vector3f& position, const Math::Vector3f& up, float yaw, float pitch)
+        : position(position)
+        , up(up)
+        , yaw(yaw)
+        , pitch(pitch)
+    {
+    }
+
+    Math::Vector3f position;
+    Math::Vector3f up;
+    Math::Vector3f target {};
+    float yaw;
+    float pitch;
+};

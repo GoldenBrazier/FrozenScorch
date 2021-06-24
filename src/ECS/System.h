@@ -21,9 +21,9 @@ public:
     {
     }
 
-    inline void on_entity_updated(EntityID entity_id, const std::bitset<ComponentCount>& required_components)
+    inline void on_entity_updated(EntityID entity_id, const std::bitset<ComponentCount>& entity_components)
     {
-        auto satisfied = (m_required_components & required_components) == m_required_components && m_required_components.any();
+        auto satisfied = (m_required_components & entity_components) == m_required_components && m_required_components.any();
 
         if (satisfied) {
             add_managed_entity(entity_id);
