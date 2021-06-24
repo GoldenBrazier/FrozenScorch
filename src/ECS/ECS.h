@@ -13,14 +13,24 @@ template <size_t ComponentCount, size_t SystemCount>
 class ECS {
 public:
     // ------------------- Entity -------------------
-    EntityID create_entity()
+    EntityID create_entity(const std::string& name = "")
     {
-        return m_entity_container.create();
+        return m_entity_container.create(name);
     }
 
     void remove_entity(EntityID entity_id)
     {
         m_entity_container.remove(entity_id);
+    }
+
+    inline size_t entity_count()
+    {
+        return m_entity_container.count();
+    }
+
+    inline const auto& entity_name(EntityID entity_id) const
+    {
+        return m_entity_container.entity_name(entity_id);
     }
 
     template <typename ComponentType>

@@ -4,10 +4,11 @@
 #include <GraphicsAPI/OpenGL/Shader.h>
 #include <basic_data.h>
 #include <memory>
+#include <Config.h>
 
 Application::Application()
 {
-    m_display = Constructors::Display::construct(800, 600, "OpenRenderer");
+    m_display = Constructors::Display::construct(Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT, "OpenRenderer");
     Ctx.set_application(this);
 
     compile_shaders();

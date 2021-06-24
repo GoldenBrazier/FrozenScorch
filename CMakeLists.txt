@@ -76,6 +76,7 @@ add_executable(OpenRenderer ./Dependencies/Code/imgui/imgui_widgets.cpp
 ./src/GraphicsAPI/OpenGL/Shader.cpp
 ./src/GraphicsAPI/OpenGL/ShaderParser.cpp
 ./src/GraphicsAPI/OpenGL/IndexBuffer.cpp
+./src/Editor/ScenePanel.cpp
 ./src/Editor/Editor.cpp
 )
 

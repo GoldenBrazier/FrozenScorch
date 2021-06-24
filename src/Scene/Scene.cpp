@@ -6,6 +6,7 @@
 #include <Application/Events/MouseEvent.h>
 #include <GraphicsAPI/Generic/Constructors.h>
 #include <Renderer/Renderer.h>
+#include <Config.h>
 
 void Scene::initialize()
 {
@@ -21,7 +22,7 @@ void Scene::initialize()
     // --------------- Demo entities ---------------
     float distance = 0;
     for (size_t i = 0; i < 4; i++) {
-        auto entity = m_ecs.create_entity();
+        auto entity = m_ecs.create_entity(i % 2 ? "water_tower " : "crate ");
 
         auto translation = Math::Matrix4f::Translation({ distance, 0, 0 });
         auto rotation = Math::Matrix4f::RotationAroundZ(0);
@@ -95,8 +96,8 @@ void Scene::on_event(const Event& event)
 
         auto& mouse_event = (MouseMoveEvent&)(event);
 
-        float horizontal_turn = -Math::Numbers::pi_v<float> * mouse_event.x() / 800;
-        float vertical_turn = -Math::Numbers::pi_v<float> * mouse_event.y() / 600;
+        float horizontal_turn = -Math::Numbers::pi_v<float> * mouse_event.x() / Config::SCREEN_WIDTH;
+        float vertical_turn = -Math::Numbers::pi_v<float> * mouse_event.y() / Config::SCREEN_HEIGHT;
 
         m_camera.turn_horizontally(horizontal_turn);
         m_camera.turn_vertically(vertical_turn);
