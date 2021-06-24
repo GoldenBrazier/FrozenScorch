@@ -49,6 +49,18 @@ private:
     Math::Matrix4f m_transform {};
 };
 
+struct PureTransformComponent : public Component<PureTransformComponent> {
+    PureTransformComponent(const Math::Vector3f& position, const Math::Vector3f& rotation, const Math::Vector3f& scale)
+        : position(position)
+        , rotation(rotation)
+        , scale(scale)
+    {
+    }
+    Math::Vector3f position {};
+    Math::Vector3f rotation {};
+    Math::Vector3f scale {};
+};
+
 struct ModelComponent : public Component<ModelComponent> {
     explicit ModelComponent(const std::string& name)
         : model(name)

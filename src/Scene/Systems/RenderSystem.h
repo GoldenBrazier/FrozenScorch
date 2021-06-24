@@ -19,7 +19,7 @@ public:
         , m_camera_entity_id(camera_entity_id)
         , m_camera({ 0, 0, 0 }, { 0, 1, 0 })
     {
-        set_required_components<TransformComponent, ModelComponent, ShaderComponent>();
+        set_required_components<PureTransformComponent, ModelComponent, ShaderComponent>();
     }
 
     inline void update_camera()
@@ -43,8 +43,15 @@ public:
         for (auto entity_id : m_managed_entities) {
             auto& model = ecs().get_component<ModelComponent>(entity_id).model;
             auto& shader = ecs().get_component<ShaderComponent>(entity_id).shader;
-            auto& transform = ecs().get_component<TransformComponent>(entity_id).transform();
-            m_renderer->draw_model(model, shader, transform);
+            auto& transform = ecs().get_component<PureTransformComponent>(entity_id);
+
+            auto transform_matrix = Math::Matrix4f::Translation(transform.position) *
+                Math::Matrix4f::RotationAroundX(transform.rotation.x()) *
+                Math::Matrix4f::RotationAroundX(transform.rotation.y()) *
+                Math::Matrix4f::RotationAroundX(transform.rotation.z()) *
+                Math::Matrix4f::Scaling(transform.scale);
+
+            m_renderer->draw_model(model, shader, transform_matrix);
         }
 
         m_renderer->end_scene();

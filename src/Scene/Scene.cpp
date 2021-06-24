@@ -15,7 +15,7 @@ void Scene::initialize()
     renderer = Constructors::Renderer::construct();
     m_shader = Ctx.shader_storage().get("basic_shader");
 
-    m_ecs.register_component<TransformComponent>();
+    m_ecs.register_component<PureTransformComponent>();
     m_ecs.register_component<ModelComponent>();
     m_ecs.register_component<ShaderComponent>();
     m_ecs.register_component<CameraComponent>();
@@ -23,7 +23,7 @@ void Scene::initialize()
     m_ecs.create_system<CameraSystem>();
 
     // FIXME: Now we can't create systems after entities.
-    auto camera_entity = m_ecs.create_entity();
+    auto camera_entity = m_ecs.create_entity("camera");
     m_ecs.add_component<CameraComponent>(camera_entity, Math::Vector3f({ 0, 0, 0 }), Math::Vector3f({ 0, 1, 0 }), 0.0f, 0.0f);
     m_ecs.create_system<RenderSystem>(renderer, camera_entity);
 
@@ -32,11 +32,11 @@ void Scene::initialize()
     for (size_t i = 0; i < 4; i++) {
         auto entity = m_ecs.create_entity(i % 2 ? "water_tower " : "crate ");
 
-        auto translation = Math::Matrix4f::Translation({ distance, 0, 0 });
-        auto rotation = Math::Matrix4f::RotationAroundZ(0);
-        auto scale = Math::Matrix4f::Scaling(1);
+        auto position = Math::Vector3f(distance, 0, 0);
+        auto rotation = Math::Vector3f(0, 0, 0);
+        auto scale = Math::Vector3f(1, 1, 1);
 
-        m_ecs.add_component<TransformComponent>(entity, translation, rotation, scale);
+        m_ecs.add_component<PureTransformComponent>(entity, position, rotation, scale);
         m_ecs.add_component<ModelComponent>(entity, i % 2 ? "water_tower" : "crate");
         m_ecs.add_component<ShaderComponent>(entity, m_shader);
 

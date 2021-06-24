@@ -3,7 +3,6 @@
 #include <Scene/Scene.h>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
-#include <iostream>
 
 class ScenePanel {
 public:
@@ -15,8 +14,14 @@ public:
     void draw();
 
 private:
+    void draw_entity_picker();
+    void draw_components();
+
     inline Scene& scene() { return *scene_ptr; }
 
 private:
     Scene* scene_ptr {};
+
+    size_t m_cur_entity {};
+    Math::Vector3f m_position {};
 };

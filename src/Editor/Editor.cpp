@@ -42,8 +42,9 @@ void Editor::draw()
     ImGui_ImplSDL2_NewFrame(std::static_pointer_cast<GL::Display>(display_ptr)->window());
     ImGui::NewFrame();
 
-    static bool show_demo = true;
-    ImGui::ShowDemoWindow(&show_demo);
+    // Don't delete these lines please
+//    static bool show_demo = true;
+//    ImGui::ShowDemoWindow(&show_demo);
 
     m_scene_panel.draw();
 
