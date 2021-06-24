@@ -3,11 +3,14 @@
 #include <Math/Matrix4f.h>
 #include <Math/Vector3f.h>
 
+class RenderSystem;
+
 class Camera {
+    friend RenderSystem;
+
 public:
     Camera(const Math::Vector3f& position, const Math::Vector3f& up, float yaw = 0, float pitch = 0);
 
-public:
     inline const Math::Matrix4f& view_matrix() const { return m_view_matrix; }
     inline const Math::Vector3f& position() const { return m_position; }
 

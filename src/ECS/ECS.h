@@ -99,10 +99,10 @@ public:
         m_event_callbacks[EventEnumerator<Event>::ID].push_back(callback);
     }
 
-    template <typename Event, typename... Args>
+    template <typename EventT, typename... Args>
     void post_event(Args&&... args)
     {
-        m_event_queue.push_back(std::make_unique<Event>(std::forward<Args>(args)...));
+        m_event_queue.push_back(std::make_unique<EventT>(std::forward<Args>(args)...));
     }
 
     void dispatch_events()

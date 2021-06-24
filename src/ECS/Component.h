@@ -2,6 +2,7 @@
 
 #include "Entity.h"
 #include <cstdint>
+#include <iostream>
 #include <unordered_map>
 #include <vector>
 

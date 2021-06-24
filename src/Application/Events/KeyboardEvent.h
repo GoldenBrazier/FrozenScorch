@@ -3,11 +3,10 @@
 #include "Event.h"
 #include <Application/KeyCodes.h>
 
-template <EventType T>
-class KeyboardEvent : public Event {
+class BaseKeyboardEvent : public Event {
 public:
-    KeyboardEvent(OpenRenderer::KeyCode key)
-        : Event(T)
+    BaseKeyboardEvent(EventType type, OpenRenderer::KeyCode key)
+        : Event(type)
         , m_key(key)
     {
     }
@@ -16,6 +15,15 @@ public:
 
 private:
     OpenRenderer::KeyCode m_key;
+};
+
+template <EventType T>
+class KeyboardEvent : public BaseKeyboardEvent {
+public:
+    KeyboardEvent(OpenRenderer::KeyCode key)
+        : BaseKeyboardEvent(T, key)
+    {
+    }
 };
 
 using KeyboardPressedEvent = KeyboardEvent<EventType::KeyboardPressed>;

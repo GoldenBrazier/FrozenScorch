@@ -25,6 +25,6 @@ private:
     ECS<Config::ComponentCount, Config::SystemCount> m_ecs;
     Camera m_camera { Camera({ 0, 0, 0 }, { 0, 1, 0 }) };
 
-    bool w, a, s, d;
-    bool m_mouse_right_button_pressed { false };
+    bool w, a, s, d; // input system
+    bool m_mouse_right_button_pressed { false }; // input system
 };
