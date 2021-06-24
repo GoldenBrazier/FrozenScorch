@@ -2,6 +2,7 @@
 
 #include "Entity.h"
 #include <cstdint>
+#include <unordered_map>
 #include <vector>
 
 template <typename T>
@@ -46,11 +47,11 @@ public:
     template <typename... Args>
     inline ComponentType& add_component(EntityID entity_id, Args&&... args)
     {
-        auto component_index = m_components.size();
-
+        size_t component_index = m_components.size();
         m_components.emplace_back(std::forward<Args>(args)...);
-        m_component_to_entity_id.emplace_back(entity_id);
-        m_entity_id_to_component.emplace_back(component_index);
+
+        m_component_to_entity_id[component_index] = entity_id;
+        m_entity_id_to_component[entity_id] = component_index;
         m_entity_components[entity_id][ComponentType::ID] = true;
 
         return m_components[component_index];
@@ -58,23 +59,32 @@ public:
 
     inline void remove_component(EntityID entity_id)
     {
-        auto component_index = m_entity_id_to_component[entity_id];
+        if (!m_entity_components[entity_id][ComponentType::ID]) {
+            return;
+        }
 
-        m_entity_components[entity_id][ComponentType::ID] = false;
+        const size_t component_index = m_entity_id_to_component[entity_id];
 
-        m_components[component_index] = std::move(m_components.back());
+        if (m_components.size() > 1 && m_components.size() - 1 != component_index) {
+            size_t last_component_index = m_components.size() - 1;
+            size_t last_enitity_id = m_component_to_entity_id[last_component_index];
+            m_components[component_index] = std::move(m_components.back());
+            m_component_to_entity_id[component_index] = last_enitity_id;
+            m_entity_id_to_component[last_enitity_id] = component_index;
+            m_entity_id_to_component.erase(last_component_index);
+            m_entity_id_to_component.erase(entity_id);
+        } else {
+            m_component_to_entity_id.erase(component_index);
+            m_entity_id_to_component.erase(entity_id);
+        }
+
         m_components.pop_back();
-
-        m_component_to_entity_id[component_index] = m_component_to_entity_id.back();
-        m_component_to_entity_id.pop_back();
-
-        m_entity_id_to_component[entity_id] = m_entity_id_to_component.back();
-        m_entity_id_to_component.pop_back();
+        m_entity_components[entity_id][ComponentType::ID] = false;
     }
 
 private:
     std::vector<ComponentType> m_components;
-    std::vector<EntityID> m_component_to_entity_id;
-    std::vector<size_t> m_entity_id_to_component;
+    std::unordered_map<size_t, EntityID> m_component_to_entity_id;
+    std::unordered_map<EntityID, size_t> m_entity_id_to_component;
     std::vector<std::bitset<ComponentCount>>& m_entity_components;
 };
