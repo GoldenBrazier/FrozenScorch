@@ -34,7 +34,7 @@ public:
     static inline Matrix4f RotationAroundX(float radians);
     static inline Matrix4f RotationAroundY(float radians);
     static inline Matrix4f RotationAroundZ(float radians);
-    static inline Matrix4f Scaling(float scale);
+    static inline Matrix4f Scaling(const Vector3f& vec);
     static inline Matrix4f Perspective(float width, float height, float zNear, float zFar, float angle);
     static inline Matrix4f LookAt(const Vector3f& position, const Vector3f& target, const Vector3f& up);
 
@@ -97,12 +97,12 @@ Matrix4f Matrix4f::RotationAroundZ(float radians)
     });
 }
 
-Matrix4f Matrix4f::Scaling(float scale)
+Matrix4f Matrix4f::Scaling(const Vector3f& vec)
 {
     return Matrix4f({
-        scale, 0, 0, 0,
-        0, scale, 0, 0,
-        0, 0, scale, 0,
+        vec.x(), 0, 0, 0,
+        0, vec.y(), 0, 0,
+        0, 0, vec.z(), 0,
         0, 0, 0, 1,
     });
 }

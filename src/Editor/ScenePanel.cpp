@@ -1,4 +1,5 @@
 #include "ScenePanel.h"
+#include <Scene/Components/Components.h>
 
 void ScenePanel::draw()
 {
@@ -38,25 +39,60 @@ void ScenePanel::draw()
             ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
 
             auto dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.2f, nullptr, &dockspace_id);
+            auto dock_id_right = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 0.3f, nullptr, &dockspace_id);
             auto dock_id_down = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 0.25f, nullptr, &dockspace_id);
 
             ImGui::DockBuilderDockWindow("Console", dock_id_down);
             ImGui::DockBuilderDockWindow("Scene", dock_id_left);
+            ImGui::DockBuilderDockWindow("Components", dock_id_right);
             ImGui::DockBuilderFinish(dockspace_id);
         }
     }
 
     ImGui::End();
 
-    ImGui::Begin("Scene");
-    for (size_t entity_id = 0; entity_id < scene().ecs().entity_count(); entity_id++) {
-        ImGui::Text("%s", scene().ecs().entity_name(entity_id).c_str());
-    }
-    ImGui::End();
+    draw_entity_picker();
 
     ImGui::Begin("Console");
     ImGui::Text("LOG");
     ImGui::Text("LOG");
     ImGui::Text("LOG");
+    ImGui::End();
+
+    draw_components();
+}
+
+void ScenePanel::draw_entity_picker()
+{
+    ImGui::Begin("Scene");
+
+    // TODO: check for deleted entities
+    for (size_t entity_id = 0; entity_id < scene().ecs().entity_count(); entity_id++) {
+        auto tree_node_id = scene().ecs().entity_name(entity_id) + "###" + std::to_string(entity_id);
+
+        if (ImGui::Button(tree_node_id.c_str())) {
+            m_cur_entity = entity_id;
+        }
+    }
+
+    ImGui::End();
+}
+
+void ScenePanel::draw_components()
+{
+    ImGui::Begin("Components");
+
+    if (scene().ecs().entity_has_component<PureTransformComponent>(m_cur_entity)) {
+        auto& transform_component = scene().ecs().get_component<PureTransformComponent>(m_cur_entity);
+
+        if (ImGui::TreeNode("Transform")) {
+            ImGui::DragFloat3("Position", (float*)transform_component.position.data(), .1f);
+            ImGui::DragFloat3("Rotation", (float*)transform_component.rotation.data(), .1f);
+            ImGui::DragFloat3("Scale", (float*)transform_component.scale.data(), .1f);
+
+            ImGui::TreePop();
+        }
+    }
+
     ImGui::End();
 }
