@@ -43,11 +43,10 @@ enum MouseCode {
     RightButton = 3,
 };
 
-template <EventType T>
-class MouseButtonEvent : public Event {
+class BaseMouseButtonEvent : public Event {
 public:
-    MouseButtonEvent(MouseCode code)
-        : Event(T)
+    BaseMouseButtonEvent(EventType type, MouseCode code)
+        : Event(type)
         , m_code(code)
     {
     }
@@ -56,6 +55,15 @@ public:
 
 private:
     MouseCode m_code;
+};
+
+template <EventType T>
+class MouseButtonEvent : public BaseMouseButtonEvent {
+public:
+    MouseButtonEvent(MouseCode code)
+        : BaseMouseButtonEvent(T, code)
+    {
+    }
 };
 
 using MouseButtonPressedEvent = MouseButtonEvent<EventType::MouseButtonPressed>;
