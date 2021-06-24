@@ -23,6 +23,10 @@ void Editor::init(const std::shared_ptr<Generic::Display>& display, Scene& scene
     ImGui::StyleColorsDark();
     ImGui_ImplSDL2_InitForOpenGL(window, context);
     ImGui_ImplOpenGL3_Init(Config::GLSL_VERSION);
+
+    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+    m_scene_panel.init(scene);
 }
 
 void Editor::shutdown()
@@ -38,9 +42,10 @@ void Editor::draw()
     ImGui_ImplSDL2_NewFrame(std::static_pointer_cast<GL::Display>(display_ptr)->window());
     ImGui::NewFrame();
 
-    ImGui::Begin("Demo window");
-    ImGui::Button("Hello!");
-    ImGui::End();
+    static bool show_demo = true;
+    ImGui::ShowDemoWindow(&show_demo);
+
+    m_scene_panel.draw();
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

@@ -2,6 +2,7 @@
 #include <Math/Matrix4f.h>
 #include <Model.h>
 #include <Application/Camera.h>
+#include <Config.h>
 
 namespace Generic {
 
@@ -24,7 +25,7 @@ void Renderer::draw_model(const Model& model, const std::shared_ptr<Generic::Sha
     shader->set_uniform("g_sampler", (int)0);
     shader->set_uniform("g_transform", transform);
 
-    shader->set_uniform("g_perspective", Math::Matrix4f::Perspective(800, 600, 0.01f, 1000.0f, 90));
+    shader->set_uniform("g_perspective", Math::Matrix4f::Perspective(Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT, 0.01f, 1000.0f, 90));
     shader->set_uniform("g_viewMatrix", m_camera->view_matrix());
     shader->set_uniform("g_camera_position", m_camera->position());
 

@@ -16,6 +16,8 @@ public:
     void update();
     void on_event(const Event& event);
 
+    inline auto& ecs() { return m_ecs; }
+
 private:
     std::shared_ptr<Generic::Renderer> renderer {};
     std::shared_ptr<Generic::Shader> m_shader {};
