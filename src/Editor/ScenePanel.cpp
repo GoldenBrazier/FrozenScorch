@@ -66,11 +66,22 @@ void ScenePanel::draw_entity_picker()
 {
     ImGui::Begin("Scene");
 
-    // TODO: check for deleted entities
     for (size_t entity_id = 0; entity_id < scene().ecs().entity_count(); entity_id++) {
+        if (!scene().ecs().has_entity(entity_id)) {
+            continue;
+        }
+
         auto tree_node_id = scene().ecs().entity_name(entity_id) + "###" + std::to_string(entity_id);
 
         if (ImGui::Button(tree_node_id.c_str())) {
+            if (scene().ecs().entity_has_component<FocusableComponent>(m_cur_entity)) {
+                auto& focusable_component = scene().ecs().get_component<FocusableComponent>(m_cur_entity);
+                focusable_component.focused = false;
+            }
+            if (scene().ecs().entity_has_component<FocusableComponent>(entity_id)) {
+                auto& focusable_component = scene().ecs().get_component<FocusableComponent>(entity_id);
+                focusable_component.focused = true;
+            }
             m_cur_entity = entity_id;
         }
     }

@@ -28,7 +28,7 @@ public:
 
     virtual void draw_indexed(const std::shared_ptr<Generic::VertexArray>& va) = 0;
 
-    void draw_model(const Model& model, const std::shared_ptr<Generic::Shader>& shader, const Math::Matrix4f& transform);
+    void draw_model(const Model& model, const std::shared_ptr<Generic::Shader>& shader, const Math::Matrix4f& transform, bool focused = false);
 
 private:
     const Camera* m_camera {};

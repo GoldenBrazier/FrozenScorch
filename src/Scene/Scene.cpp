@@ -19,6 +19,7 @@ void Scene::initialize()
     m_ecs.register_component<ModelComponent>();
     m_ecs.register_component<ShaderComponent>();
     m_ecs.register_component<CameraComponent>();
+    m_ecs.register_component<FocusableComponent>();
 
     m_ecs.create_system<CameraSystem>();
 
@@ -39,6 +40,7 @@ void Scene::initialize()
         m_ecs.add_component<PureTransformComponent>(entity, position, rotation, scale);
         m_ecs.add_component<ModelComponent>(entity, i % 2 ? "water_tower" : "crate");
         m_ecs.add_component<ShaderComponent>(entity, m_shader);
+        m_ecs.add_component<FocusableComponent>(entity, false);
 
         distance += 10;
     }

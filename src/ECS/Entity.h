@@ -59,6 +59,11 @@ public:
         return m_entity_names[entity_id];
     }
 
+    inline bool has_entity(EntityID entity_id) const
+    {
+        return entity_id < count() && std::find(m_free_entity_ids.begin(), m_free_entity_ids.end(), entity_id) == m_free_entity_ids.end();
+    }
+
 private:
     std::string unnamed_entity(int id)
     {
