@@ -44,6 +44,10 @@ public:
             auto& model = ecs().get_component<ModelComponent>(entity_id).model;
             auto& shader = ecs().get_component<ShaderComponent>(entity_id).shader;
             auto& transform = ecs().get_component<PureTransformComponent>(entity_id);
+            bool focused = false;
+            if (ecs().entity_has_component<FocusableComponent>(entity_id)) {
+                focused = ecs().get_component<FocusableComponent>(entity_id).focused;
+            }
 
             auto transform_matrix = Math::Matrix4f::Translation(transform.position) *
                 Math::Matrix4f::RotationAroundX(transform.rotation.x()) *
@@ -51,7 +55,7 @@ public:
                 Math::Matrix4f::RotationAroundX(transform.rotation.z()) *
                 Math::Matrix4f::Scaling(transform.scale);
 
-            m_renderer->draw_model(model, shader, transform_matrix);
+            m_renderer->draw_model(model, shader, transform_matrix, focused);
         }
 
         m_renderer->end_scene();

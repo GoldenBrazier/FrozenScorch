@@ -1,8 +1,8 @@
 #include "Renderer.h"
-#include <Math/Matrix4f.h>
-#include <Model.h>
 #include <Application/Camera.h>
 #include <Config.h>
+#include <Math/Matrix4f.h>
+#include <Model.h>
 
 namespace Generic {
 
@@ -18,9 +18,11 @@ void Renderer::end_scene()
     end();
 }
 
-void Renderer::draw_model(const Model& model, const std::shared_ptr<Generic::Shader>& shader, const Math::Matrix4f& transform)
+void Renderer::draw_model(const Model& model, const std::shared_ptr<Generic::Shader>& shader, const Math::Matrix4f& transform, bool focused)
 {
     shader->bind();
+
+    shader->set_uniform("g_debug_focused", (float)focused);
 
     shader->set_uniform("g_sampler", (int)0);
     shader->set_uniform("g_transform", transform);

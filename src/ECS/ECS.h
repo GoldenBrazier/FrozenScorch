@@ -33,6 +33,11 @@ public:
         return m_entity_container.entity_name(entity_id);
     }
 
+    inline bool has_entity(EntityID entity_id) const
+    {
+        return m_entity_container.has_entity(entity_id);
+    }
+
     template <typename ComponentType>
     bool entity_has_component(EntityID entity_id)
     {

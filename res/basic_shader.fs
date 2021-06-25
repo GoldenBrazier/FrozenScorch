@@ -11,6 +11,7 @@ out vec4 color;
 
 uniform sampler2D g_sampler;
 uniform float g_ambient_brightness;
+uniform float g_debug_focused;
 uniform vec3 g_light_color[NR_POINT_LIGHTS];
 uniform vec3 g_light_attenuation[NR_POINT_LIGHTS];
 
@@ -21,6 +22,7 @@ void main()
     vec3 world_position_to_camera_position_normalized = normalize(world_position_to_camera_position);
 
     vec3 all_light_color = g_ambient_brightness * vec3(1.0, 1.0, 1.0);
+    all_light_color += g_debug_focused * vec3(0.8, 0.1, 0.5);
 
     for (int i = 0; i < NR_POINT_LIGHTS; i++) {
         // calculate an attenuation

@@ -93,3 +93,11 @@ struct CameraComponent : public Component<CameraComponent> {
     float yaw;
     float pitch;
 };
+
+struct FocusableComponent : public Component<FocusableComponent> {
+    explicit FocusableComponent(bool focused = false)
+        : focused(focused)
+    {
+    }
+    bool focused;
+};
