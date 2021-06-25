@@ -21,11 +21,10 @@ void Scene::initialize()
     m_ecs.register_component<CameraComponent>();
     m_ecs.register_component<FocusableComponent>();
 
-    m_ecs.create_system<CameraSystem>();
-
-    // FIXME: Now we can't create systems after entities.
     auto camera_entity = m_ecs.create_entity("camera");
     m_ecs.add_component<CameraComponent>(camera_entity, Math::Vector3f({ 0, 0, 0 }), Math::Vector3f({ 0, 1, 0 }), 0.0f, 0.0f);
+
+    m_ecs.create_system<CameraSystem>();
     m_ecs.create_system<RenderSystem>(renderer, camera_entity);
 
     // --------------- Demo entities ---------------

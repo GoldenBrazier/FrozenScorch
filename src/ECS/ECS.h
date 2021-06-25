@@ -86,9 +86,16 @@ public:
     System* create_system(Args&&... args)
     {
         m_systems.push_back(std::make_unique<System>(this, std::forward<Args>(args)...));
-        return static_cast<System*>(m_systems.back().get());
+        auto system_ptr = static_cast<System*>(m_systems.back().get());
+        for (int entity_id = 0; entity_id < entity_count(); entity_id++) {
+            if (!has_entity(entity_id)) {
+                continue;
+            }
+            const auto& component_bitset = m_entity_container.entity_components().at(entity_id);
+            system_ptr->on_entity_updated(entity_id, component_bitset);
+        }
+        return system_ptr;
     }
-    // ----------------------------------------------
 
     void update_systems()
     {
@@ -96,6 +103,7 @@ public:
             system->update();
         }
     }
+    // ----------------------------------------------
 
     // ------------------- Events -------------------
     template <typename Event>
