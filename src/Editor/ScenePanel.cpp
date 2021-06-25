@@ -74,15 +74,7 @@ void ScenePanel::draw_entity_picker()
         auto tree_node_id = scene().ecs().entity_name(entity_id) + "###" + std::to_string(entity_id);
 
         if (ImGui::Button(tree_node_id.c_str())) {
-            if (scene().ecs().entity_has_component<FocusableComponent>(m_cur_entity)) {
-                auto& focusable_component = scene().ecs().get_component<FocusableComponent>(m_cur_entity);
-                focusable_component.focused = false;
-            }
-            if (scene().ecs().entity_has_component<FocusableComponent>(entity_id)) {
-                auto& focusable_component = scene().ecs().get_component<FocusableComponent>(entity_id);
-                focusable_component.focused = true;
-            }
-            m_cur_entity = entity_id;
+            set_focus_on_entity(entity_id);
         }
     }
 
@@ -106,4 +98,25 @@ void ScenePanel::draw_components()
     }
 
     ImGui::End();
+}
+
+void ScenePanel::handle_callback(const BaseEvent& ecs_event)
+{
+    if (ecs_event.id() == EventEnumerator<MouseEntityClickEvent>::ID) {
+        EntityID entity_id = ((const MouseEntityClickEvent&)ecs_event).entity_id;
+        set_focus_on_entity(entity_id);
+    }
+}
+
+void ScenePanel::set_focus_on_entity(EntityID entity_id)
+{
+    if (scene().ecs().entity_has_component<FocusableComponent>(m_cur_entity)) {
+        auto& focusable_component = scene().ecs().get_component<FocusableComponent>(m_cur_entity);
+        focusable_component.focused = false;
+    }
+    if (scene().ecs().entity_has_component<FocusableComponent>(entity_id)) {
+        auto& focusable_component = scene().ecs().get_component<FocusableComponent>(entity_id);
+        focusable_component.focused = true;
+    }
+    m_cur_entity = entity_id;
 }

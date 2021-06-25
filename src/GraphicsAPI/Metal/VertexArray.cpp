@@ -4,9 +4,9 @@
 
 namespace Metal {
 
-std::shared_ptr<Generic::VertexBuffer> VertexArray::construct_vertex_buffer(const void* data, size_t size)
+std::shared_ptr<Generic::VertexBuffer> VertexArray::construct_vertex_buffer(std::vector<Generic::Vertex>&& data)
 {
-    m_vertex_buffer = VertexBuffer::construct(data, size);
+    m_vertex_buffer = VertexBuffer::construct(std::move(data));
     return m_vertex_buffer;
 }
 

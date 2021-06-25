@@ -19,14 +19,15 @@ class VertexBuffer : public Generic::VertexBuffer {
 public:
     ~VertexBuffer();
 
-public:
+    inline const std::vector<Generic::Vertex>& verteces() const override { return m_verteces; }
     void register_attribute_vec2(int index, int stride, size_t offset) override;
     void register_attribute_vec3(int index, int stride, size_t offset) override;
     void bind();
 
 private:
-    VertexBuffer(const void* data, uint32_t size, VertexArray* va);
+    VertexBuffer(std::vector<Generic::Vertex>&& data, VertexArray* va);
 
+    std::vector<Generic::Vertex> m_verteces;
     uint32_t m_id;
     VertexArray* m_vertex_array;
 };

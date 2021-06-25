@@ -82,12 +82,12 @@ void Display::swap_buffers()
         }
 
         case SDL_MOUSEBUTTONDOWN: {
-            Ctx.application()->on_event_base(MouseButtonPressedEvent(MouseCode(event.button.button)));
+            Ctx.application()->on_event_base(MouseButtonPressedEvent(MouseCode(event.button.button), event.button.x, event.button.y));
             break;
         }
 
         case SDL_MOUSEBUTTONUP: {
-            Ctx.application()->on_event_base(MouseButtonReleasedEvent(MouseCode(event.button.button)));
+            Ctx.application()->on_event_base(MouseButtonReleasedEvent(MouseCode(event.button.button), event.button.x, event.button.y));
             break;
         }
 

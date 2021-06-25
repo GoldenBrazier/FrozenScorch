@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+// Don't change uint32_t because of convertion in MouseRayCastingSystem!
 using EntityID = uint32_t;
 
 template <size_t ComponentCount, size_t SystemCount>

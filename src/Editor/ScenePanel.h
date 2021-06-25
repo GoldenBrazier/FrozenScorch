@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ECS/ECS.h>
+#include <Scene/Events/MouseInput.h>
 #include <Scene/Scene.h>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
@@ -9,6 +11,7 @@ public:
     inline void init(Scene& scene)
     {
         scene_ptr = &scene;
+        scene.ecs().subscribe_for_events<MouseEntityClickEvent>([this](const BaseEvent& event) { handle_callback(event); });
     }
 
     void draw();
@@ -16,12 +19,12 @@ public:
 private:
     void draw_entity_picker();
     void draw_components();
+    void handle_callback(const BaseEvent& event);
+    void set_focus_on_entity(EntityID entity_id);
 
     inline Scene& scene() { return *scene_ptr; }
 
-private:
     Scene* scene_ptr {};
-
     size_t m_cur_entity {};
     Math::Vector3f m_position {};
 };

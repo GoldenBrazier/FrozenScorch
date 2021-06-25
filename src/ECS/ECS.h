@@ -107,7 +107,7 @@ public:
 
     // ------------------- Events -------------------
     template <typename Event>
-    void subscribe_for_events(std::function<void(std::unique_ptr<BaseEvent>)> callback)
+    void subscribe_for_events(std::function<void(const BaseEvent&)> callback)
     {
         m_event_callbacks[EventEnumerator<Event>::ID].push_back(callback);
     }
@@ -124,7 +124,7 @@ public:
         m_event_queue.clear();
         for (auto& event_ptr : events_to_dispatch) {
             for (const auto& callback : m_event_callbacks[event_ptr->id()]) {
-                callback(std::move(event_ptr));
+                callback(*event_ptr.get());
             }
         }
     }
@@ -142,5 +142,5 @@ private:
     std::array<std::unique_ptr<ComponentContainerBase>, ComponentCount> m_component_containers;
     std::vector<std::unique_ptr<BaseSystem>> m_systems;
     std::vector<std::unique_ptr<BaseEvent>> m_event_queue;
-    std::unordered_map<size_t, std::vector<std::function<void(std::unique_ptr<BaseEvent>)>>> m_event_callbacks;
+    std::unordered_map<size_t, std::vector<std::function<void(const BaseEvent&)>>> m_event_callbacks;
 };

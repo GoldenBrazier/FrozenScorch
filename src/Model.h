@@ -1,8 +1,8 @@
 #pragma once
 
-#include <string>
-#include <Mesh.h>
 #include <GraphicsAPI/Generic/Texture.h>
+#include <Mesh.h>
+#include <string>
 
 class Model {
 public:
@@ -10,6 +10,7 @@ public:
     explicit Model(const std::string& name);
 
     void draw() const;
+    const Mesh& mesh() const { return m_mesh; }
 
 private:
     // there might be multiple textures for a model

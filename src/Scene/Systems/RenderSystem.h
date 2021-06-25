@@ -36,6 +36,7 @@ public:
     [[gnu::flatten]] void update() override
     {
         update_camera();
+        m_renderer->bind_standard_framebuffer();
         m_renderer->set_clear_color(0, 0.15f, 0.3f, 1.0f);
         m_renderer->begin_scene(m_camera);
         m_renderer->clear();
