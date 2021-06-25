@@ -2,6 +2,7 @@
 
 #include <Config.h>
 #include <ECS/ECS.h>
+#include <Math/Vector3f.h>
 #include <Scene/Events/KeyboardInput.h>
 #include <Scene/Events/MouseInput.h>
 #include <iostream>
@@ -10,38 +11,66 @@
 #include <vector>
 
 class CameraSystem : public System<Config::ComponentCount, Config::SystemCount> {
+    static constexpr auto StepSize = 0.15f;
+
 public:
     explicit CameraSystem(ECS<Config::ComponentCount, Config::SystemCount>* iecs)
         : System<Config::ComponentCount, Config::SystemCount>(iecs)
     {
-        set_required_components<CameraComponent>();
         ecs().subscribe_for_events<KeyboardInputEvent>([this](const BaseEvent& event) { handle_callback(event); });
         ecs().subscribe_for_events<MouseMoveInputEvent>([this](const BaseEvent& event) { handle_callback(event); });
         ecs().subscribe_for_events<MouseButtonInputEvent>([this](const BaseEvent& event) { handle_callback(event); });
+
+        set_required_components<CameraComponent, TransformComponent>();
     }
 
     void update() override
     {
         for (auto entity_id : m_managed_entities) {
-            auto& position_component = ecs().get_component<CameraComponent>(entity_id);
+            auto& transform_component = ecs().get_component<TransformComponent>(entity_id);
+
+            auto& position = transform_component.position;
+
+            float pitch = transform_component.rotation.x();
+            float yaw = transform_component.rotation.y();
+            auto target = transform_component.calc_target_vector();
+            auto up = transform_component.calc_up_vector();
+
             if (m_w) {
-                move_forward(position_component);
-            }
-            if (m_a) {
-                move_left(position_component);
+                // Move forward
+                transform_component.position += (target * StepSize);
             }
             if (m_s) {
-                move_backward(position_component);
+                // Move back
+                transform_component.position -= (target * StepSize);
+            }
+            if (m_a) {
+                // Move left
+                auto left = up.cross_product(target).normilize() * StepSize;
+                transform_component.position += left;
             }
             if (m_d) {
-                move_right(position_component);
+                // Move right
+                auto right = target.cross_product(up).normilize() * StepSize;
+                transform_component.position += right;
             }
             if (m_horizontal_turn) {
-                turn_horizontally(position_component, m_horizontal_turn);
+                // Turn around Y
+                transform_component.rotation.set_y(yaw + m_horizontal_turn);
                 m_horizontal_turn = 0.0f;
             }
             if (m_vertical_turn) {
-                turn_vertically(position_component, m_vertical_turn);
+                // Turn around X
+                auto new_pitch = pitch += m_vertical_turn;
+
+                if (new_pitch > 3.0f / 2.0f) {
+                    new_pitch = 3.0f / 2.0f;
+                }
+                if (new_pitch < -3.0f / 2.0f) {
+                    new_pitch = -3.0f / 2.0f;
+                }
+
+                transform_component.rotation.set_x(new_pitch);
                 m_vertical_turn = 0.0f;
             }
         }
@@ -107,59 +136,6 @@ public:
                 }
             }
         }
-    }
-
-    inline void move_forward(CameraComponent& component, float step_size = 0.15f)
-    {
-        component.position += (component.target * step_size);
-        recalculate_target(component);
-    }
-
-    inline void move_backward(CameraComponent& component, float step_size = 0.15f)
-    {
-        component.position -= (component.target * step_size);
-        recalculate_target(component);
-    }
-
-    inline void move_left(CameraComponent& component, float step_size = 0.15f)
-    {
-        auto left = component.up.cross_product(component.target).normilize() * step_size;
-        component.position += left;
-        recalculate_target(component);
-    }
-
-    inline void move_right(CameraComponent& component, float step_size = 0.15f)
-    {
-        auto right = component.target.cross_product(component.up).normilize() * step_size;
-        component.position += right;
-        recalculate_target(component);
-    }
-
-    inline void turn_horizontally(CameraComponent& component, float angle)
-    {
-        component.yaw += angle;
-        recalculate_target(component);
-    }
-
-    inline void turn_vertically(CameraComponent& component, float angle)
-    {
-        component.pitch += angle;
-
-        if (component.pitch > 3.0f / 2.0f) {
-            component.pitch = 3.0f / 2.0f;
-        }
-        if (component.pitch < -3.0f / 2.0f) {
-            component.pitch = -3.0f / 2.0f;
-        }
-
-        recalculate_target(component);
-    }
-
-    inline void recalculate_target(CameraComponent& component)
-    {
-        component.target.set_z(cosf(component.yaw) * cosf(component.pitch));
-        component.target.set_y(sinf(component.pitch));
-        component.target.set_x(sinf(component.yaw) * cosf(component.pitch));
     }
 
 private:

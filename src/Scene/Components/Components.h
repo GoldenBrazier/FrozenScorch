@@ -5,52 +5,8 @@
 #include <Model.h>
 #include <memory>
 
-class TransformComponent : public Component<TransformComponent> {
-public:
-    TransformComponent(const Math::Matrix4f& translation, const Math::Matrix4f& rotation, const Math::Matrix4f& scale)
-        : m_translation(translation)
-        , m_rotation(rotation)
-        , m_scale(scale)
-    {
-        recalculate_transform_matrix();
-    }
-
-    inline void set_translation(const Math::Matrix4f& translation)
-    {
-        m_translation = translation;
-        recalculate_transform_matrix();
-    }
-
-    inline void set_rotation(const Math::Matrix4f& rotation)
-    {
-        m_rotation = rotation;
-        recalculate_transform_matrix();
-    }
-
-    inline void set_scale(const Math::Matrix4f& scale)
-    {
-        m_scale = scale;
-        recalculate_transform_matrix();
-    }
-
-    inline Math::Matrix4f& transform() { return m_transform; }
-
-private:
-    inline void recalculate_transform_matrix()
-    {
-        m_transform = m_translation * m_rotation * m_scale;
-    }
-
-private:
-    Math::Matrix4f m_translation {};
-    Math::Matrix4f m_rotation {};
-    Math::Matrix4f m_scale {};
-
-    Math::Matrix4f m_transform {};
-};
-
-struct PureTransformComponent : public Component<PureTransformComponent> {
-    PureTransformComponent(const Math::Vector3f& position, const Math::Vector3f& rotation, const Math::Vector3f& scale)
+struct TransformComponent : public Component<TransformComponent> {
+    TransformComponent(const Math::Vector3f& position, const Math::Vector3f& rotation, const Math::Vector3f& scale)
         : position(position)
         , rotation(rotation)
         , scale(scale)
@@ -59,6 +15,23 @@ struct PureTransformComponent : public Component<PureTransformComponent> {
     Math::Vector3f position {};
     Math::Vector3f rotation {};
     Math::Vector3f scale {};
+
+    // Helper functions that do not modify state of the component
+    // They are used to reduce code repetitions
+    inline Math::Vector3f calc_target_vector() const
+    {
+        return Math::Vector3f(sinf(rotation.y()) * cosf(rotation.x()), sinf(rotation.x()), cosf(rotation.y()) * cosf(rotation.x()));
+    }
+
+    inline Math::Vector3f calc_up_vector() const
+    {
+        return Math::Vector3f(sinf(rotation.z()), cosf(rotation.z()), 0);
+    }
+
+    inline Math::Matrix4f calc_view_matrix() const
+    {
+        return Math::Matrix4f::LookAt(position, position + calc_target_vector(), calc_up_vector());
+    }
 };
 
 struct ModelComponent : public Component<ModelComponent> {
@@ -79,19 +52,16 @@ struct ShaderComponent : public Component<ShaderComponent> {
 };
 
 struct CameraComponent : public Component<CameraComponent> {
-    explicit CameraComponent(const Math::Vector3f& position, const Math::Vector3f& up, float yaw, float pitch)
-        : position(position)
-        , up(up)
-        , yaw(yaw)
-        , pitch(pitch)
+    CameraComponent(float field_of_view, float near_clipping, float far_clipping)
+        : field_of_view(field_of_view)
+        , near_clipping(near_clipping)
+        , far_clipping(far_clipping)
     {
     }
 
-    Math::Vector3f position;
-    Math::Vector3f up;
-    Math::Vector3f target {};
-    float yaw;
-    float pitch;
+    float field_of_view;
+    float near_clipping;
+    float far_clipping;
 };
 
 struct FocusableComponent : public Component<FocusableComponent> {

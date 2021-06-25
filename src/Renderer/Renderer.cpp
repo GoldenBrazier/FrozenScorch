@@ -1,20 +1,18 @@
 #include "Renderer.h"
 #include <Application/Camera.h>
-#include <Config.h>
 #include <Math/Matrix4f.h>
 #include <Model.h>
 
 namespace Generic {
 
-void Renderer::begin_scene(const Camera& camera)
+void Renderer::begin_scene(const SceneData& scene_data)
 {
-    m_camera = &camera;
+    m_scene_data = scene_data;
     begin();
 }
 
 void Renderer::end_scene()
 {
-    m_camera = nullptr;
     end();
 }
 
@@ -22,19 +20,16 @@ void Renderer::draw_model(const Model& model, const std::shared_ptr<Generic::Sha
 {
     shader->bind();
 
+    set_scene_data(shader);
+
     shader->set_uniform("g_debug_focused", (float)focused);
 
     shader->set_uniform("g_sampler", (int)0);
     shader->set_uniform("g_transform", transform);
 
-    shader->set_uniform("g_perspective", Math::Matrix4f::Perspective(Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT, 0.01f, 1000.0f, 90));
-    shader->set_uniform("g_viewMatrix", m_camera->view_matrix());
-    shader->set_uniform("g_camera_position", m_camera->position());
-
     shader->set_uniform("g_ambient_brightness", 0.3f);
     shader->set_uniform("g_light_color", Math::Vector3f(1, 1, 1));
 
-    shader->set_uniform("g_light_position", 0, m_camera->position());
     shader->set_uniform("g_light_color", 0, { 0, 0, 1 });
     shader->set_uniform("g_light_attenuation", 0, { 1, 0.09, 0.032 });
 
@@ -49,15 +44,5 @@ void Renderer::draw_model(const Model& model, const std::shared_ptr<Generic::Sha
     model.draw();
 }
 
-void Renderer::draw_model(const Model& model, const std::shared_ptr<Generic::Shader>& shader, const Math::Matrix4f& transform, std::function<void(std::shared_ptr<Generic::Shader>)> uniform_setter)
-{
-    shader->bind();
-    shader->set_uniform("g_transform", transform);
-    shader->set_uniform("g_perspective", Math::Matrix4f::Perspective(Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT, 0.01f, 1000.0f, 90));
-    shader->set_uniform("g_viewMatrix", m_camera->view_matrix());
-    shader->set_uniform("g_camera_position", m_camera->position());
-    uniform_setter(shader);
-    model.draw();
-}
 
 }

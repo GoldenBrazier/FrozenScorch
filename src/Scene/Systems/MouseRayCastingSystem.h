@@ -20,7 +20,7 @@ public:
         , m_camera_entity_id(camera_entity_id)
         , m_camera({ 0, 0, 0 }, { 0, 1, 0 })
     {
-        set_required_components<PureTransformComponent, ModelComponent, ShaderComponent>();
+        set_required_components<TransformComponent, ModelComponent, ShaderComponent>();
         ecs().subscribe_for_events<MouseButtonInputEvent>([this](const BaseEvent& event) { handle_callback(event); });
         m_fb_index = m_renderer->create_framebuffer();
     }
@@ -31,22 +31,26 @@ public:
             return;
         }
 
-        update_camera();
+        auto& camera_transform_component = ecs().get_component<TransformComponent>(m_camera_entity_id);
+        auto& camera_camera_component = ecs().get_component<CameraComponent>(m_camera_entity_id);
+
         m_renderer->bind_framebuffer(m_fb_index);
         m_renderer->set_clear_color(1.0f, 1.0f, 1.0f, 1.0f);
-        m_renderer->begin_scene(m_camera);
+        m_renderer->begin_scene({
+            camera_transform_component.position,
+            camera_transform_component.calc_view_matrix(),
+            camera_camera_component.field_of_view,
+            camera_camera_component.near_clipping,
+            camera_camera_component.far_clipping,
+        });
         m_renderer->clear();
 
         for (auto entity_id : m_managed_entities) {
             m_cur_draw_entity_id = entity_id;
             auto& model = ecs().get_component<ModelComponent>(entity_id).model;
-            auto& transform = ecs().get_component<PureTransformComponent>(entity_id);
+            auto& transform = ecs().get_component<TransformComponent>(entity_id);
 
-            auto transform_matrix = Math::Matrix4f::Translation(transform.position) *
-                Math::Matrix4f::RotationAroundX(transform.rotation.x()) *
-                Math::Matrix4f::RotationAroundX(transform.rotation.y()) *
-                Math::Matrix4f::RotationAroundX(transform.rotation.z()) *
-                Math::Matrix4f::Scaling(transform.scale);
+            auto transform_matrix = Math::Matrix4f::Translation(transform.position) * Math::Matrix4f::RotationAroundX(transform.rotation.x()) * Math::Matrix4f::RotationAroundX(transform.rotation.y()) * Math::Matrix4f::RotationAroundX(transform.rotation.z()) * Math::Matrix4f::Scaling(transform.scale);
 
             m_renderer->draw_model(model, m_mapper2d_shader, transform_matrix, [this](std::shared_ptr<Generic::Shader> shader) {
                 shader->set_uniform("g_model_id", entity_id_to_vec3(m_cur_draw_entity_id));
@@ -82,17 +86,6 @@ public:
     }
 
 private:
-    inline void update_camera()
-    {
-        auto& camera_component = ecs().get_component<CameraComponent>(m_camera_entity_id);
-        m_camera.m_position = camera_component.position;
-        m_camera.m_up = camera_component.up;
-        m_camera.m_yaw = camera_component.yaw;
-        m_camera.m_pitch = camera_component.pitch;
-        m_camera.m_target = camera_component.target;
-        m_camera.recalculate_view_matrix();
-    }
-
     Math::Vector3f entity_id_to_vec3(EntityID entity_id)
     {
         int r = (entity_id / (256 * 256));

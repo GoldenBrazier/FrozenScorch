@@ -85,13 +85,25 @@ void ScenePanel::draw_components()
 {
     ImGui::Begin("Components");
 
-    if (scene().ecs().entity_has_component<PureTransformComponent>(m_cur_entity)) {
-        auto& transform_component = scene().ecs().get_component<PureTransformComponent>(m_cur_entity);
+    if (scene().ecs().entity_has_component<TransformComponent>(m_cur_entity)) {
+        auto& transform_component = scene().ecs().get_component<TransformComponent>(m_cur_entity);
 
         if (ImGui::TreeNode("Transform")) {
             ImGui::DragFloat3("Position", (float*)transform_component.position.data(), .1f);
             ImGui::DragFloat3("Rotation", (float*)transform_component.rotation.data(), .1f);
             ImGui::DragFloat3("Scale", (float*)transform_component.scale.data(), .1f);
+
+            ImGui::TreePop();
+        }
+    }
+
+    if (scene().ecs().entity_has_component<CameraComponent>(m_cur_entity)) {
+        auto& camera_component = scene().ecs().get_component<CameraComponent>(m_cur_entity);
+
+        if (ImGui::TreeNode("Camera")) {
+            ImGui::DragFloat("Field Of View", &camera_component.field_of_view, .1f);
+            ImGui::DragFloat("Near clipping", &camera_component.near_clipping, .1f);
+            ImGui::DragFloat("Far clipping", &camera_component.far_clipping, .1f);
 
             ImGui::TreePop();
         }
