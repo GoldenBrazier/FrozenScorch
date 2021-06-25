@@ -21,6 +21,7 @@ public:
 private:
     std::shared_ptr<Generic::Renderer> renderer {};
     std::shared_ptr<Generic::Shader> m_shader {};
+    std::shared_ptr<Generic::Shader> m_mapper2d_shader {};
 
     ECS<Config::ComponentCount, Config::SystemCount> m_ecs;
     Camera m_camera { Camera({ 0, 0, 0 }, { 0, 1, 0 }) };

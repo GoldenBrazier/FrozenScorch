@@ -2,6 +2,7 @@
 #include "Components/Components.h"
 #include "Events/KeyboardInput.h"
 #include "Systems/CameraSystem.h"
+#include "Systems/MouseRayCastingSystem.h"
 #include "Systems/RenderSystem.h"
 #include <Application/Events/Event.h>
 #include <Application/Events/KeyboardEvent.h>
@@ -14,6 +15,7 @@ void Scene::initialize()
 {
     renderer = Constructors::Renderer::construct();
     m_shader = Ctx.shader_storage().get("basic_shader");
+    m_mapper2d_shader = Ctx.shader_storage().get("mapper2d_shader");
 
     m_ecs.register_component<PureTransformComponent>();
     m_ecs.register_component<ModelComponent>();
@@ -26,6 +28,7 @@ void Scene::initialize()
 
     m_ecs.create_system<CameraSystem>();
     m_ecs.create_system<RenderSystem>(renderer, camera_entity);
+    m_ecs.create_system<MouseRayCastingSystem>(renderer, m_mapper2d_shader, camera_entity);
 
     // --------------- Demo entities ---------------
     float distance = 0;

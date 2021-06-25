@@ -16,7 +16,7 @@ public:
     VertexArray();
     ~VertexArray();
 
-    std::shared_ptr<Generic::VertexBuffer> construct_vertex_buffer(const void* data, size_t size) override;
+    std::shared_ptr<Generic::VertexBuffer> construct_vertex_buffer(std::vector<Generic::Vertex>&& data) override;
     std::shared_ptr<Generic::IndexBuffer> construct_index_buffer(const void* data, size_t count) override;
 
     std::shared_ptr<Generic::VertexBuffer> vertex_buffer() override { return std::static_pointer_cast<Generic::VertexBuffer>(m_vertex_buffer); }

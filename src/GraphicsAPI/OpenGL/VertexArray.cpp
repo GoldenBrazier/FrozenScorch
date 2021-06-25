@@ -23,11 +23,11 @@ void VertexArray::bind()
     glBindVertexArray(m_id);
 }
 
-std::shared_ptr<Generic::VertexBuffer> VertexArray::construct_vertex_buffer(const void* data, size_t size)
+std::shared_ptr<Generic::VertexBuffer> VertexArray::construct_vertex_buffer(std::vector<Generic::Vertex>&& data)
 {
     glBindVertexArray(m_id);
 
-    m_vertex_buffer = VertexBuffer::construct(data, size, this);
+    m_vertex_buffer = VertexBuffer::construct(std::move(data), this);
     return m_vertex_buffer;
 }
 

@@ -15,9 +15,9 @@ public:
         : System<Config::ComponentCount, Config::SystemCount>(iecs)
     {
         set_required_components<CameraComponent>();
-        ecs().subscribe_for_events<KeyboardInputEvent>([this](std::unique_ptr<BaseEvent> event) { handle_callback(std::move(event)); });
-        ecs().subscribe_for_events<MouseMoveInputEvent>([this](std::unique_ptr<BaseEvent> event) { handle_callback(std::move(event)); });
-        ecs().subscribe_for_events<MouseButtonInputEvent>([this](std::unique_ptr<BaseEvent> event) { handle_callback(std::move(event)); });
+        ecs().subscribe_for_events<KeyboardInputEvent>([this](const BaseEvent& event) { handle_callback(event); });
+        ecs().subscribe_for_events<MouseMoveInputEvent>([this](const BaseEvent& event) { handle_callback(event); });
+        ecs().subscribe_for_events<MouseButtonInputEvent>([this](const BaseEvent& event) { handle_callback(event); });
     }
 
     void update() override
@@ -47,10 +47,10 @@ public:
         }
     }
 
-    void handle_callback(std::unique_ptr<BaseEvent> ecs_event)
+    void handle_callback(const BaseEvent& ecs_event)
     {
-        if (ecs_event->id() == EventEnumerator<KeyboardInputEvent>::ID) {
-            const BaseKeyboardEvent& event = ((KeyboardInputEvent*)(ecs_event.get()))->event;
+        if (ecs_event.id() == EventEnumerator<KeyboardInputEvent>::ID) {
+            const BaseKeyboardEvent& event = ((const KeyboardInputEvent&)ecs_event).event;
             if (event.type() == EventType::KeyboardPressed) {
                 auto& keyboard_event = event;
                 if (keyboard_event.key() == OpenRenderer::KEYCODE_W) {
@@ -84,8 +84,8 @@ public:
             }
         }
 
-        if (ecs_event->id() == EventEnumerator<MouseMoveInputEvent>::ID) {
-            const MouseMoveEvent& mouse_event = ((MouseMoveInputEvent*)(ecs_event.get()))->event;
+        if (ecs_event.id() == EventEnumerator<MouseMoveInputEvent>::ID) {
+            const MouseMoveEvent& mouse_event = ((const MouseMoveInputEvent&)ecs_event).event;
             if (!m_mouse_right_button_pressed) {
                 return;
             }
@@ -94,8 +94,8 @@ public:
             m_vertical_turn = -Math::Numbers::pi_v<float> * mouse_event.y() / Config::SCREEN_HEIGHT;
         }
 
-        if (ecs_event->id() == EventEnumerator<MouseButtonInputEvent>::ID) {
-            const BaseMouseButtonEvent& mouse_event = ((MouseButtonInputEvent*)(ecs_event.get()))->event;
+        if (ecs_event.id() == EventEnumerator<MouseButtonInputEvent>::ID) {
+            const BaseMouseButtonEvent& mouse_event = ((const MouseButtonInputEvent&)ecs_event).event;
             if (mouse_event.type() == EventType::MouseButtonPressed) {
                 if (mouse_event.button() == MouseCode::RightButton) {
                     m_mouse_right_button_pressed = true;

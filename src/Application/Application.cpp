@@ -1,10 +1,10 @@
 #include "Application.h"
+#include <Config.h>
 #include <GraphicsAPI/Generic/Constructors.h>
 #include <GraphicsAPI/Generic/Context.h>
 #include <GraphicsAPI/OpenGL/Shader.h>
 #include <basic_data.h>
 #include <memory>
-#include <Config.h>
 
 Application::Application()
 {
@@ -54,6 +54,7 @@ void Application::compile_shaders()
     uniform_builder.add_array<NR_POINT_LIGHTS, sizeof(Math::Vector3f)>("g_light_attenuation", offsetof(BasicShader::Uniforms, light_attenuation));
 
     std::shared_ptr<Generic::Shader> basic_shader;
+    std::shared_ptr<Generic::Shader> mapper2d_shader;
 
     if (Ctx.graphics_api_type() == Generic::GraphicsAPIType::Metal) {
         basic_shader = Constructors::Shader::construct(
@@ -63,11 +64,10 @@ void Application::compile_shaders()
             uniform_builder.data(),
             sizeof(BasicShader::Uniforms));
     } else {
-        uniform_builder.add_var("g_sampler");
-
         basic_shader = Constructors::Shader::construct(std::vector<std::string> { "res/basic_shader.vs", "res/basic_shader.fs" });
-
+        mapper2d_shader = Constructors::Shader::construct(std::vector<std::string> { "res/mapper2d_shader.vs", "res/mapper2d_shader.fs" });
     }
 
     shader_storage.add("basic_shader", basic_shader);
+    shader_storage.add("mapper2d_shader", mapper2d_shader);
 }

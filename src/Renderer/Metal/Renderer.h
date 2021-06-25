@@ -20,6 +20,10 @@ public:
     // void clear() override;
 
     void draw_indexed(const std::shared_ptr<Generic::VertexArray>& va) override;
+    Generic::FramebufferIndex create_framebuffer() override { return 0; }
+    void bind_framebuffer(Generic::FramebufferIndex) override { }
+    void bind_standard_framebuffer() override { }
+    void read_framebuffer(int x, int y, size_t width, size_t height, void* buffer) override { }
 
 private:
     inline mtlpp::RenderCommandEncoder& command_encoder() { return m_command_encoder; }

@@ -49,4 +49,15 @@ void Renderer::draw_model(const Model& model, const std::shared_ptr<Generic::Sha
     model.draw();
 }
 
+void Renderer::draw_model(const Model& model, const std::shared_ptr<Generic::Shader>& shader, const Math::Matrix4f& transform, std::function<void(std::shared_ptr<Generic::Shader>)> uniform_setter)
+{
+    shader->bind();
+    shader->set_uniform("g_transform", transform);
+    shader->set_uniform("g_perspective", Math::Matrix4f::Perspective(Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT, 0.01f, 1000.0f, 90));
+    shader->set_uniform("g_viewMatrix", m_camera->view_matrix());
+    shader->set_uniform("g_camera_position", m_camera->position());
+    uniform_setter(shader);
+    model.draw();
+}
+
 }

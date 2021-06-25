@@ -24,3 +24,14 @@ struct MouseButtonInputEvent : public BaseEvent {
 
     BaseMouseButtonEvent event;
 };
+
+struct MouseEntityClickEvent : public BaseEvent {
+    MouseEntityClickEvent(EntityID entity_id)
+        : BaseEvent(EventEnumerator<MouseEntityClickEvent>::ID)
+        , entity_id(entity_id)
+    {
+    }
+    ~MouseEntityClickEvent() = default;
+
+    EntityID entity_id;
+};

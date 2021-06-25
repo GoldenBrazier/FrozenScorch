@@ -4,9 +4,11 @@
 #include <Math/Vector3f.h>
 
 class RenderSystem;
+class MouseRayCastingSystem;
 
 class Camera {
     friend RenderSystem;
+    friend MouseRayCastingSystem;
 
 public:
     Camera(const Math::Vector3f& position, const Math::Vector3f& up, float yaw = 0, float pitch = 0);

@@ -43,8 +43,11 @@ public:
         return 0;
     }
 
-    const std::vector<Generic::Vertex>& vertexes() { return m_vertices; }
-    const std::vector<uint32_t>& indeces() { return m_index; }
+    const std::vector<Generic::Vertex>& vertexes() const { return m_vertices; }
+    std::vector<Generic::Vertex>& vertexes() { return m_vertices; }
+
+    const std::vector<uint32_t>& indeces() const { return m_index; }
+    std::vector<uint32_t>& indeces() { return m_index; }
 
 private:
     inline bool starts_with(const std::string& s, const std::string& w) { return s.rfind(w, 0) == 0; }

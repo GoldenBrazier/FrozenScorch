@@ -3,9 +3,11 @@
 
 namespace Metal {
 
-VertexBuffer::VertexBuffer(const void* data, size_t size)
+VertexBuffer::VertexBuffer(std::vector<Generic::Vertex>&& data)
+    : m_verteces(std::move(data))
 {
-    m_buffer = Ctx.metal_context()->device().NewBuffer(data, size, MTL::ResourceOptions::CpuCacheModeDefaultCache);
+    size_t size = sizeof(std::vector<Generic::Vertex>::value_type) * m_verteces.size();
+    m_buffer = Ctx.metal_context()->device().NewBuffer(m_verteces.data(), size, MTL::ResourceOptions::CpuCacheModeDefaultCache);
 }
 
 // void VertexBuffer::bind()

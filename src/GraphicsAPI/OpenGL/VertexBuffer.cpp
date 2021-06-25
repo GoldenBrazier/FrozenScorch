@@ -1,17 +1,19 @@
 #include "VertexBuffer.h"
 #include <GL/glew.h>
 #include <GraphicsAPI/OpenGL/VertexArray.h>
-#include <memory>
 #include <cstdint>
+#include <memory>
 
 namespace GL {
 
-VertexBuffer::VertexBuffer(const void* data, uint32_t size, VertexArray* va)
+VertexBuffer::VertexBuffer(std::vector<Generic::Vertex>&& data, VertexArray* va)
     : m_vertex_array(va)
+    , m_verteces(std::move(data))
 {
+    size_t size = sizeof(std::vector<Generic::Vertex>::value_type) * m_verteces.size();
     glGenBuffers(1, &m_id);
     glBindBuffer(GL_ARRAY_BUFFER, m_id);
-    glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, size, m_verteces.data(), GL_STATIC_DRAW);
 }
 
 VertexBuffer::~VertexBuffer()

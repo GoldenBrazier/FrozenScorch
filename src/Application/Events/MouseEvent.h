@@ -45,23 +45,29 @@ enum MouseCode {
 
 class BaseMouseButtonEvent : public Event {
 public:
-    BaseMouseButtonEvent(EventType type, MouseCode code)
+    BaseMouseButtonEvent(EventType type, MouseCode code, int x, int y)
         : Event(type)
         , m_code(code)
+        , m_x(x)
+        , m_y(y)
     {
     }
 
     MouseCode button() const { return m_code; }
+    int x() const { return m_x; }
+    int y() const { return m_y; }
 
 private:
     MouseCode m_code;
+    int m_x;
+    int m_y;
 };
 
 template <EventType T>
 class MouseButtonEvent : public BaseMouseButtonEvent {
 public:
-    MouseButtonEvent(MouseCode code)
-        : BaseMouseButtonEvent(T, code)
+    MouseButtonEvent(MouseCode code, int x, int y)
+        : BaseMouseButtonEvent(T, code, x, y)
     {
     }
 };

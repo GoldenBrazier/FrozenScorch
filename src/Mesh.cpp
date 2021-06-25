@@ -12,7 +12,7 @@ Mesh::Mesh(const std::string& obj_path, int position, int tex_coords, int normal
 
     m_vertex_array = Constructors::VertexArray::construct();
 
-    auto vb = m_vertex_array->construct_vertex_buffer(parser.vertexes().data(), parser.vertexes().size() * sizeof(Generic::Vertex));
+    auto vb = m_vertex_array->construct_vertex_buffer(std::move(parser.vertexes()));
 
     vb->register_attribute_vec3(position, sizeof(Generic::Vertex), 0);
     vb->register_attribute_vec2(tex_coords, sizeof(Generic::Vertex), sizeof(Math::Vector3f));
