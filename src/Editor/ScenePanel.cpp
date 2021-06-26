@@ -65,6 +65,7 @@ void ScenePanel::draw()
 void ScenePanel::draw_entity_picker()
 {
     ImGui::Begin("Scene");
+    ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
     for (size_t entity_id = 0; entity_id < scene().ecs().entity_count(); entity_id++) {
         if (!scene().ecs().has_entity(entity_id)) {
