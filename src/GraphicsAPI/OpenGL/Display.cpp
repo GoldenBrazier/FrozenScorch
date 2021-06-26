@@ -8,6 +8,13 @@
 #include <cassert>
 #include <iostream>
 
+#define IMGUI_CALLBACK
+#ifdef IMGUI_CALLBACK
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_sdl.h>
+#include <imgui/imgui_impl_opengl3.h>
+#endif
+
 namespace GL {
 
 Display::Display(size_t width, size_t height, const std::string& name)
@@ -61,7 +68,9 @@ void Display::swap_buffers()
     SDL_Event event;
 
     while (SDL_PollEvent(&event)) {
-
+#ifdef IMGUI_CALLBACK
+        ImGui_ImplSDL2_ProcessEvent(&event);
+#endif
         switch (event.type) {
         case SDL_QUIT: {
             Ctx.application()->on_event_base(WindowCloseEvent());
