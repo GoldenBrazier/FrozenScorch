@@ -7,7 +7,8 @@
 #include <string>
 #include <vector>
 
-// Don't change uint32_t because of convertion in MouseRayCastingSystem!
+namespace ECS {
+
 using EntityID = uint32_t;
 
 template <size_t ComponentCount, size_t SystemCount>
@@ -78,3 +79,5 @@ private:
     std::vector<EntityID> m_free_entity_ids {};
     std::vector<std::string> m_entity_names {};
 };
+
+}

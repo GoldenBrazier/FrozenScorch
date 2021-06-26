@@ -11,17 +11,17 @@
 #include <utility>
 #include <vector>
 
-class MouseRayCastingSystem : public System<Config::ComponentCount, Config::SystemCount> {
+class MouseRayCastingSystem : public ECS::System<Config::ComponentCount, Config::SystemCount> {
 public:
-    MouseRayCastingSystem(ECS<Config::ComponentCount, Config::SystemCount>* iecs, std::shared_ptr<Generic::Renderer> renderer, std::shared_ptr<Generic::Shader> shader, EntityID camera_entity_id)
-        : System<Config::ComponentCount, Config::SystemCount>(iecs)
+    MouseRayCastingSystem(ECS::ECS<Config::ComponentCount, Config::SystemCount>* iecs, std::shared_ptr<Generic::Renderer> renderer, std::shared_ptr<Generic::Shader> shader, ECS::EntityID camera_entity_id)
+        : ECS::System<Config::ComponentCount, Config::SystemCount>(iecs)
         , m_renderer(std::move(renderer))
         , m_mapper2d_shader(std::move(shader))
         , m_camera_entity_id(camera_entity_id)
         , m_camera({ 0, 0, 0 }, { 0, 1, 0 })
     {
         set_required_components<TransformComponent, ModelComponent, ShaderComponent>();
-        ecs().subscribe_for_events<MouseButtonInputEvent>([this](const BaseEvent& event) { handle_callback(event); });
+        ecs().subscribe_for_events<MouseButtonInputEvent>([this](const ECS::BaseEvent& event) { handle_callback(event); });
         m_fb_index = m_renderer->create_framebuffer();
     }
 
@@ -62,7 +62,7 @@ public:
         uint8_t pixel[3];
         m_renderer->read_framebuffer(m_mouse_x, m_mouse_y, 1, 1, &pixel);
 
-        EntityID target;
+        ECS::EntityID target;
         if (pixel_to_entity_id(pixel, target)) {
             if (ecs().has_entity(target)) {
                 ecs().post_event<MouseEntityClickEvent>(target);
@@ -71,9 +71,9 @@ public:
         m_mouse_was_clicked = false;
     }
 
-    void handle_callback(const BaseEvent& ecs_event)
+    void handle_callback(const ECS::BaseEvent& ecs_event)
     {
-        if (ecs_event.id() == EventEnumerator<MouseButtonInputEvent>::ID) {
+        if (ecs_event.id() == ECS::EventEnumerator<MouseButtonInputEvent>::ID) {
             const BaseMouseButtonEvent& mouse_event = ((const MouseButtonInputEvent&)ecs_event).event;
             if (mouse_event.type() == EventType::MouseButtonPressed) {
                 if (mouse_event.button() == MouseCode::LeftButton) {
@@ -86,7 +86,7 @@ public:
     }
 
 private:
-    Math::Vector3f entity_id_to_vec3(EntityID entity_id)
+    Math::Vector3f entity_id_to_vec3(ECS::EntityID entity_id)
     {
         int r = (entity_id / (256 * 256));
         int g = (entity_id % (256 * 256)) / 256;
@@ -94,7 +94,7 @@ private:
         return Math::Vector3f(float(r) / 255, float(g) / 255, float(b) / 255);
     }
 
-    bool pixel_to_entity_id(uint8_t* pixel, EntityID& res)
+    bool pixel_to_entity_id(uint8_t* pixel, ECS::EntityID& res)
     {
         if (pixel[0] == 255 && pixel[1] == 255 && pixel[2] == 255) {
             return false;
@@ -104,10 +104,10 @@ private:
     }
 
     Generic::FramebufferIndex m_fb_index;
-    EntityID m_cur_draw_entity_id;
+    ECS::EntityID m_cur_draw_entity_id;
     std::shared_ptr<Generic::Renderer> m_renderer;
     std::shared_ptr<Generic::Shader> m_mapper2d_shader;
-    EntityID m_camera_entity_id;
+    ECS::EntityID m_camera_entity_id;
     Camera m_camera;
 
     int m_mouse_x;

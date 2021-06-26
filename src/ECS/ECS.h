@@ -9,6 +9,8 @@
 #include <unordered_map>
 #include <vector>
 
+namespace ECS {
+
 template <size_t ComponentCount, size_t SystemCount>
 class ECS {
 public:
@@ -144,3 +146,5 @@ private:
     std::vector<std::unique_ptr<BaseEvent>> m_event_queue;
     std::unordered_map<size_t, std::vector<std::function<void(const BaseEvent&)>>> m_event_callbacks;
 };
+
+}

@@ -3,6 +3,8 @@
 #include <cstddef>
 #include <cstdint>
 
+namespace ECS {
+
 template <typename T>
 struct EventEnumerator {
     static const size_t ID;
@@ -29,3 +31,5 @@ public:
 private:
     size_t m_id;
 };
+
+}

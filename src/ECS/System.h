@@ -4,6 +4,8 @@
 #include <bitset>
 #include <unordered_set>
 
+namespace ECS {
+
 class BaseSystem {
 public:
     virtual ~BaseSystem() = default;
@@ -63,3 +65,5 @@ protected:
 private:
     ECS<ComponentCount, SystemCount>* m_ecs;
 };
+
+}

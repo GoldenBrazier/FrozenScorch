@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <vector>
 
+namespace ECS {
+
 template <typename T>
 class Component {
 public:
@@ -89,3 +91,5 @@ private:
     std::unordered_map<EntityID, size_t> m_entity_id_to_component;
     std::vector<std::bitset<ComponentCount>>& m_entity_components;
 };
+
+}

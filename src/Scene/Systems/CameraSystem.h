@@ -10,16 +10,16 @@
 #include <utility>
 #include <vector>
 
-class CameraSystem : public System<Config::ComponentCount, Config::SystemCount> {
+class CameraSystem : public ECS::System<Config::ComponentCount, Config::SystemCount> {
     static constexpr auto StepSize = 0.15f;
 
 public:
-    explicit CameraSystem(ECS<Config::ComponentCount, Config::SystemCount>* iecs)
-        : System<Config::ComponentCount, Config::SystemCount>(iecs)
+    explicit CameraSystem(ECS::ECS<Config::ComponentCount, Config::SystemCount>* iecs)
+        : ECS::System<Config::ComponentCount, Config::SystemCount>(iecs)
     {
-        ecs().subscribe_for_events<KeyboardInputEvent>([this](const BaseEvent& event) { handle_callback(event); });
-        ecs().subscribe_for_events<MouseMoveInputEvent>([this](const BaseEvent& event) { handle_callback(event); });
-        ecs().subscribe_for_events<MouseButtonInputEvent>([this](const BaseEvent& event) { handle_callback(event); });
+        ecs().subscribe_for_events<KeyboardInputEvent>([this](const ECS::BaseEvent& event) { handle_callback(event); });
+        ecs().subscribe_for_events<MouseMoveInputEvent>([this](const ECS::BaseEvent& event) { handle_callback(event); });
+        ecs().subscribe_for_events<MouseButtonInputEvent>([this](const ECS::BaseEvent& event) { handle_callback(event); });
 
         set_required_components<CameraComponent, TransformComponent>();
     }
@@ -76,9 +76,9 @@ public:
         }
     }
 
-    void handle_callback(const BaseEvent& ecs_event)
+    void handle_callback(const ECS::BaseEvent& ecs_event)
     {
-        if (ecs_event.id() == EventEnumerator<KeyboardInputEvent>::ID) {
+        if (ecs_event.id() == ECS::EventEnumerator<KeyboardInputEvent>::ID) {
             const BaseKeyboardEvent& event = ((const KeyboardInputEvent&)ecs_event).event;
             if (event.type() == EventType::KeyboardPressed) {
                 auto& keyboard_event = event;
@@ -113,7 +113,7 @@ public:
             }
         }
 
-        if (ecs_event.id() == EventEnumerator<MouseMoveInputEvent>::ID) {
+        if (ecs_event.id() == ECS::EventEnumerator<MouseMoveInputEvent>::ID) {
             const MouseMoveEvent& mouse_event = ((const MouseMoveInputEvent&)ecs_event).event;
             if (!m_mouse_right_button_pressed) {
                 return;
@@ -123,7 +123,7 @@ public:
             m_vertical_turn = -Math::Numbers::pi_v<float> * mouse_event.y() / Config::SCREEN_HEIGHT;
         }
 
-        if (ecs_event.id() == EventEnumerator<MouseButtonInputEvent>::ID) {
+        if (ecs_event.id() == ECS::EventEnumerator<MouseButtonInputEvent>::ID) {
             const BaseMouseButtonEvent& mouse_event = ((const MouseButtonInputEvent&)ecs_event).event;
             if (mouse_event.type() == EventType::MouseButtonPressed) {
                 if (mouse_event.button() == MouseCode::RightButton) {

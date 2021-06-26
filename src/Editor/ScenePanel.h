@@ -11,7 +11,7 @@ public:
     inline void init(Scene& scene)
     {
         scene_ptr = &scene;
-        scene.ecs().subscribe_for_events<MouseEntityClickEvent>([this](const BaseEvent& event) { handle_callback(event); });
+        scene.ecs().subscribe_for_events<MouseEntityClickEvent>([this](const ECS::BaseEvent& event) { handle_callback(event); });
     }
 
     void draw();
@@ -19,8 +19,8 @@ public:
 private:
     void draw_entity_picker();
     void draw_components();
-    void handle_callback(const BaseEvent& event);
-    void set_focus_on_entity(EntityID entity_id);
+    void handle_callback(const ECS::BaseEvent& event);
+    void set_focus_on_entity(ECS::EntityID entity_id);
 
     inline Scene& scene() { return *scene_ptr; }
 

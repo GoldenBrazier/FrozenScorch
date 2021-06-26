@@ -112,15 +112,15 @@ void ScenePanel::draw_components()
     ImGui::End();
 }
 
-void ScenePanel::handle_callback(const BaseEvent& ecs_event)
+void ScenePanel::handle_callback(const ECS::BaseEvent& ecs_event)
 {
-    if (ecs_event.id() == EventEnumerator<MouseEntityClickEvent>::ID) {
-        EntityID entity_id = ((const MouseEntityClickEvent&)ecs_event).entity_id;
+    if (ecs_event.id() == ECS::EventEnumerator<MouseEntityClickEvent>::ID) {
+        ECS::EntityID entity_id = ((const MouseEntityClickEvent&)ecs_event).entity_id;
         set_focus_on_entity(entity_id);
     }
 }
 
-void ScenePanel::set_focus_on_entity(EntityID entity_id)
+void ScenePanel::set_focus_on_entity(ECS::EntityID entity_id)
 {
     if (scene().ecs().entity_has_component<FocusableComponent>(m_cur_entity)) {
         auto& focusable_component = scene().ecs().get_component<FocusableComponent>(m_cur_entity);

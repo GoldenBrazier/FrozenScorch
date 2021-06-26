@@ -5,7 +5,7 @@
 #include <Model.h>
 #include <memory>
 
-struct TransformComponent : public Component<TransformComponent> {
+struct TransformComponent : public ECS::Component<TransformComponent> {
     TransformComponent(const Math::Vector3f& position, const Math::Vector3f& rotation, const Math::Vector3f& scale)
         : position(position)
         , rotation(rotation)
@@ -34,7 +34,7 @@ struct TransformComponent : public Component<TransformComponent> {
     }
 };
 
-struct ModelComponent : public Component<ModelComponent> {
+struct ModelComponent : public ECS::Component<ModelComponent> {
     explicit ModelComponent(const std::string& name)
         : model(name)
     {
@@ -43,7 +43,7 @@ struct ModelComponent : public Component<ModelComponent> {
     Model model;
 };
 
-struct ShaderComponent : public Component<ShaderComponent> {
+struct ShaderComponent : public ECS::Component<ShaderComponent> {
     explicit ShaderComponent(const std::shared_ptr<Generic::Shader>& shader)
         : shader(shader)
     {
@@ -51,7 +51,7 @@ struct ShaderComponent : public Component<ShaderComponent> {
     std::shared_ptr<Generic::Shader> shader;
 };
 
-struct CameraComponent : public Component<CameraComponent> {
+struct CameraComponent : public ECS::Component<CameraComponent> {
     CameraComponent(float field_of_view, float near_clipping, float far_clipping)
         : field_of_view(field_of_view)
         , near_clipping(near_clipping)
@@ -64,7 +64,7 @@ struct CameraComponent : public Component<CameraComponent> {
     float far_clipping;
 };
 
-struct FocusableComponent : public Component<FocusableComponent> {
+struct FocusableComponent : public ECS::Component<FocusableComponent> {
     explicit FocusableComponent(bool focused = false)
         : focused(focused)
     {
