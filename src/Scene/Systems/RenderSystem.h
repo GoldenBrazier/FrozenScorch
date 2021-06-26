@@ -12,10 +12,10 @@
 #include <utility>
 #include <vector>
 
-class RenderSystem : public System<Config::ComponentCount, Config::SystemCount> {
+class RenderSystem : public ECS::System<Config::ComponentCount, Config::SystemCount> {
 public:
-    RenderSystem(ECS<Config::ComponentCount, Config::SystemCount>* ecs, std::shared_ptr<Generic::Renderer> renderer, EntityID camera_entity_id)
-        : System<Config::ComponentCount, Config::SystemCount>(ecs)
+    RenderSystem(ECS::ECS<Config::ComponentCount, Config::SystemCount>* ecs, std::shared_ptr<Generic::Renderer> renderer, ECS::EntityID camera_entity_id)
+        : ECS::System<Config::ComponentCount, Config::SystemCount>(ecs)
         , m_renderer(std::move(renderer))
         , m_camera_entity_id(camera_entity_id)
     {
@@ -58,5 +58,5 @@ public:
 
 private:
     std::shared_ptr<Generic::Renderer> m_renderer;
-    EntityID m_camera_entity_id;
+    ECS::EntityID m_camera_entity_id;
 };

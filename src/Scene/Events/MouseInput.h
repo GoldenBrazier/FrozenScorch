@@ -3,9 +3,9 @@
 #include <Application/Events/MouseEvent.h>
 #include <ECS/ECS.h>
 
-struct MouseMoveInputEvent : public BaseEvent {
+struct MouseMoveInputEvent : public ECS::BaseEvent {
     MouseMoveInputEvent(const MouseMoveEvent& event)
-        : BaseEvent(EventEnumerator<MouseMoveInputEvent>::ID)
+        : ECS::BaseEvent(ECS::EventEnumerator<MouseMoveInputEvent>::ID)
         , event(event)
     {
     }
@@ -14,9 +14,9 @@ struct MouseMoveInputEvent : public BaseEvent {
     MouseMoveEvent event;
 };
 
-struct MouseButtonInputEvent : public BaseEvent {
+struct MouseButtonInputEvent : public ECS::BaseEvent {
     MouseButtonInputEvent(const BaseMouseButtonEvent& event)
-        : BaseEvent(EventEnumerator<MouseButtonInputEvent>::ID)
+        : ECS::BaseEvent(ECS::EventEnumerator<MouseButtonInputEvent>::ID)
         , event(event)
     {
     }
@@ -25,13 +25,13 @@ struct MouseButtonInputEvent : public BaseEvent {
     BaseMouseButtonEvent event;
 };
 
-struct MouseEntityClickEvent : public BaseEvent {
-    MouseEntityClickEvent(EntityID entity_id)
-        : BaseEvent(EventEnumerator<MouseEntityClickEvent>::ID)
+struct MouseEntityClickEvent : public ECS::BaseEvent {
+    MouseEntityClickEvent(ECS::EntityID entity_id)
+        : ECS::BaseEvent(ECS::EventEnumerator<MouseEntityClickEvent>::ID)
         , entity_id(entity_id)
     {
     }
     ~MouseEntityClickEvent() = default;
 
-    EntityID entity_id;
+    ECS::EntityID entity_id;
 };
