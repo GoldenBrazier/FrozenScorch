@@ -1,5 +1,9 @@
 #include "ScenePanel.h"
+#include <GraphicsAPI/Generic/Constructors.h>
 #include <Scene/Components/Components.h>
+
+static char model_path[256];
+static char model_texture_path[256]; // TODO: Temprary
 
 void ScenePanel::draw()
 {
@@ -105,6 +109,26 @@ void ScenePanel::draw_components()
             ImGui::DragFloat("Field Of View", &camera_component.field_of_view, .1f);
             ImGui::DragFloat("Near clipping", &camera_component.near_clipping, .1f);
             ImGui::DragFloat("Far clipping", &camera_component.far_clipping, .1f);
+
+            ImGui::TreePop();
+        }
+    }
+
+    if (scene().ecs().entity_has_component<ModelComponent>(m_cur_entity)) {
+        auto& model_component = scene().ecs().get_component<ModelComponent>(m_cur_entity);
+
+        if (ImGui::TreeNode("Model")) {
+            memcpy(model_path, model_component.model.mesh().object_path().c_str(), model_component.model.mesh().object_path().size());
+            if (ImGui::InputText("Mesh", model_path, sizeof(model_path), ImGuiInputTextFlags_EnterReturnsTrue)) {
+                model_component.model.set_mesh(Mesh(model_path));
+            }
+
+            if (model_component.model.texture()) {
+                memcpy(model_texture_path, model_component.model.texture()->path().c_str(), model_component.model.texture()->path().size());
+                if (ImGui::InputText("Texture", model_texture_path, sizeof(model_texture_path), ImGuiInputTextFlags_EnterReturnsTrue)) {
+                    model_component.model.set_texture(Constructors::Texture::construct(model_texture_path, Generic::Texture::Types::TEXTURE_2D));
+                }
+            }
 
             ImGui::TreePop();
         }

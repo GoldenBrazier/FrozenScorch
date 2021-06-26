@@ -6,6 +6,7 @@
 #include <Parsers/ObjParser.h>
 
 Mesh::Mesh(const std::string& obj_path, int position, int tex_coords, int normal)
+    : m_obj_path(obj_path)
 {
     auto parser = ObjParser(obj_path);
     parser.parse();

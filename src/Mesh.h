@@ -16,6 +16,9 @@ public:
     void draw() const;
     std::shared_ptr<Generic::VertexArray> vertex_array() const { return m_vertex_array; }
 
+    const std::string& object_path() const { return m_obj_path; }
+
 private:
+    std::string m_obj_path {};
     std::shared_ptr<Generic::VertexArray> m_vertex_array {};
 };

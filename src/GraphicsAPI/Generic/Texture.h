@@ -1,5 +1,6 @@
 #pragma once
 #include <cstddef>
+#include <string>
 
 namespace Generic {
 
@@ -13,6 +14,7 @@ public:
 
     virtual ~Texture() = default;
     virtual void bind(int texture_unit) {};
+    virtual const std::string& path() const = 0;
 };
 
 }
