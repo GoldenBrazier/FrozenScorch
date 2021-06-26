@@ -1,4 +1,5 @@
 #pragma once
+#include <GraphicsAPI/Generic/Context.h>
 #include <GraphicsAPI/Generic/Shader.h>
 #include <GraphicsAPI/Generic/ShaderVars.h>
 #include <iostream>
@@ -8,7 +9,6 @@
 #include <type_traits>
 #include <unordered_map>
 #include <vector>
-#include <GraphicsAPI/Generic/Context.h>
 
 namespace Metal {
 
@@ -40,14 +40,17 @@ public:
     inline void set_uniform(const std::string& var_name, size_t index, const Math::Vector3f& vec3) override;
     inline void set_uniform(const std::string& var_name, size_t index, const Math::Matrix4f& mat4) override;
 
+    const std::string& name() const override { return m_name; }
+
+protected:
+    void set_name(const std::string& name) override { m_name = name; }
+
 private:
     void prepare_program(const std::string& file, const std::string& vert_func, const std::string& frag_func, const Generic::UniformList& uniforms, size_t uniforms_size);
     std::string load_shader(const std::string& filename);
     void register_uniform_var(const Generic::Uniform& uniform);
-
     std::string array_access_name(const std::string& name, size_t index) { return name + "[" + std::to_string(index) + "]"; }
 
-private:
     MTL::RenderPipelineState m_render_pipeline_state;
     MTL::DepthStencilState m_depth_state;
     std::unordered_map<std::string, size_t> m_uniform_vars;
@@ -56,6 +59,7 @@ private:
     MTL::DepthStencilDescriptor m_depth_desc;
     MTL::Function m_vert_func;
     MTL::Function m_frag_func;
+    std::string m_name;
 };
 
 void Shader::set_uniform(const std::string& var_name, float fl)

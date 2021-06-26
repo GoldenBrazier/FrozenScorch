@@ -1,9 +1,12 @@
 #include "ScenePanel.h"
 #include <GraphicsAPI/Generic/Constructors.h>
+#include <GraphicsAPI/Generic/Context.h>
 #include <Scene/Components/Components.h>
+#include <string>
 
 static char model_path[256];
 static char model_texture_path[256]; // TODO: Temprary
+static char entity_name_path[256];
 
 void ScenePanel::draw()
 {
@@ -71,6 +74,24 @@ void ScenePanel::draw_entity_picker()
     ImGui::Begin("Scene");
     ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
+    if (ImGui::BeginPopup("AddEntityPopup")) {
+        ImGui::InputText("Name", entity_name_path, sizeof(entity_name_path));
+        if (ImGui::Button("Add")) {
+            auto ent_id = scene().ecs().create_entity(entity_name_path);
+
+            // FIXME: Adding a component of focus right here might be not the best idea.
+            scene().ecs().add_component<FocusableComponent>(ent_id);
+            entity_name_path[0] = '\0';
+        }
+        ImGui::EndPopup();
+    }
+
+    if (ImGui::Button("Add entity")) {
+        ImGui::OpenPopup("AddEntityPopup");
+    }
+
+    ImGui::Spacing();
+
     for (size_t entity_id = 0; entity_id < scene().ecs().entity_count(); entity_id++) {
         if (!scene().ecs().has_entity(entity_id)) {
             continue;
@@ -86,9 +107,32 @@ void ScenePanel::draw_entity_picker()
     ImGui::End();
 }
 
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+#define POPUP_COMPONENTS_LIST_ENTRY(name, ...)                                                                       \
+    do {                                                                                                             \
+        if (ImGui::Button(TOSTRING(name))) {                                                                         \
+            if (scene().ecs().has_entity(m_cur_entity) && !scene().ecs().entity_has_component<name>(m_cur_entity)) { \
+                scene().ecs().add_component<name>(m_cur_entity, ##__VA_ARGS__);                                      \
+            }                                                                                                        \
+        }                                                                                                            \
+    } while (false);
+
 void ScenePanel::draw_components()
 {
     ImGui::Begin("Components");
+    if (ImGui::BeginPopup("ComponentListPopup")) {
+        POPUP_COMPONENTS_LIST_ENTRY(TransformComponent, Math::Vector3f(0, 0, 0), Math::Vector3f(0, 0, 0), Math::Vector3f(1, 1, 1));
+        POPUP_COMPONENTS_LIST_ENTRY(ModelComponent, "crate");
+        POPUP_COMPONENTS_LIST_ENTRY(ShaderComponent, Ctx.shader_storage().get("basic_shader"));
+        ImGui::EndPopup();
+    }
+
+    if (ImGui::Button("Add component")) {
+        ImGui::OpenPopup("ComponentListPopup");
+    }
+
+    ImGui::Spacing();
 
     if (scene().ecs().entity_has_component<TransformComponent>(m_cur_entity)) {
         auto& transform_component = scene().ecs().get_component<TransformComponent>(m_cur_entity);
@@ -127,6 +171,39 @@ void ScenePanel::draw_components()
                 memcpy(model_texture_path, model_component.model.texture()->path().c_str(), model_component.model.texture()->path().size());
                 if (ImGui::InputText("Texture", model_texture_path, sizeof(model_texture_path), ImGuiInputTextFlags_EnterReturnsTrue)) {
                     model_component.model.set_texture(Constructors::Texture::construct(model_texture_path, Generic::Texture::Types::TEXTURE_2D));
+                }
+            }
+
+            ImGui::TreePop();
+        }
+    }
+
+    if (scene().ecs().entity_has_component<ShaderComponent>(m_cur_entity)) {
+        auto& shader_component = scene().ecs().get_component<ShaderComponent>(m_cur_entity);
+
+        if (ImGui::TreeNode("Shader")) {
+            const auto names = Ctx.shader_storage().names();
+            if (!names.empty()) {
+                static int current_item = 0;
+                for (int i = 0; i < names.size(); i++) {
+                    if (names[i] == shader_component.shader->name()) {
+                        current_item = i;
+                        break;
+                    }
+                }
+
+                if (ImGui::BeginCombo("ShaderList", names[current_item].c_str())) {
+                    for (int i = 0; i < names.size(); i++) {
+                        bool is_selected = (current_item == i); // You can store your selection however you want, outside or inside your objects
+                        if (ImGui::Selectable(names[i].c_str(), is_selected)) {
+                            current_item = i;
+                            shader_component.shader = Ctx.shader_storage().get(names[i]);
+                        }
+                        if (is_selected) {
+                            ImGui::SetItemDefaultFocus(); // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
+                        }
+                    }
+                    ImGui::EndCombo();
                 }
             }
 
