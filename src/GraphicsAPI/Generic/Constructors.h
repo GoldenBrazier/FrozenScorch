@@ -7,13 +7,13 @@
 #include <GraphicsAPI/Generic/Texture.h>
 #include <GraphicsAPI/Generic/VertexArray.h>
 #include <GraphicsAPI/Generic/VertexBuffer.h>
-#include <GraphicsAPI/Metal/Display.h>
-#include <GraphicsAPI/Metal/IndexBuffer.h>
-#include <GraphicsAPI/Metal/MainLoop.h>
-#include <GraphicsAPI/Metal/Shader.h>
-#include <GraphicsAPI/Metal/Texture.h>
-#include <GraphicsAPI/Metal/VertexArray.h>
-#include <GraphicsAPI/Metal/VertexBuffer.h>
+// #include <GraphicsAPI/Metal/Display.h>
+// #include <GraphicsAPI/Metal/IndexBuffer.h>
+// #include <GraphicsAPI/Metal/MainLoop.h>
+// #include <GraphicsAPI/Metal/Shader.h>
+// #include <GraphicsAPI/Metal/Texture.h>
+// #include <GraphicsAPI/Metal/VertexArray.h>
+// #include <GraphicsAPI/Metal/VertexBuffer.h>
 #include <GraphicsAPI/OpenGL/Display.h>
 #include <GraphicsAPI/OpenGL/IndexBuffer.h>
 #include <GraphicsAPI/OpenGL/MainLoop.h>
@@ -21,22 +21,33 @@
 #include <GraphicsAPI/OpenGL/Texture.h>
 #include <GraphicsAPI/OpenGL/VertexArray.h>
 #include <GraphicsAPI/OpenGL/VertexBuffer.h>
-#include <Renderer/Metal/Renderer.h>
+// #include <Renderer/Metal/Renderer.h>
 #include <Renderer/OpenGL/Renderer.h>
 #include <cassert>
 
 // #define METAL true
 
+// #define CONSTRUCTIBLE_API_DEPENDENT(class_name)                                                              \
+//     namespace class_name {                                                                                   \
+//     template <class... Args>                                                                                 \
+//     inline std::shared_ptr<Generic::class_name> construct(Args&&... args)                                    \
+//     {                                                                                                        \
+//         if (Ctx.graphics_api_type() == Generic::GraphicsAPIType::Metal) {                                    \
+//             return std::shared_ptr<Generic::class_name>(new Metal::class_name(std::forward<Args>(args)...)); \
+//         } else {                                                                                             \
+//             return std::shared_ptr<Generic::class_name>(new GL::class_name(std::forward<Args>(args)...));    \
+//         }                                                                                                    \
+//         assert(false);                                                                                       \
+//     }                                                                                                        \
+//     }
+
 #define CONSTRUCTIBLE_API_DEPENDENT(class_name)                                                              \
     namespace class_name {                                                                                   \
     template <class... Args>                                                                                 \
     inline std::shared_ptr<Generic::class_name> construct(Args&&... args)                                    \
-    {                                                                                                        \
-        if (Ctx.graphics_api_type() == Generic::GraphicsAPIType::Metal) {                                    \
-            return std::shared_ptr<Generic::class_name>(new Metal::class_name(std::forward<Args>(args)...)); \
-        } else {                                                                                             \
-            return std::shared_ptr<Generic::class_name>(new GL::class_name(std::forward<Args>(args)...));    \
-        }                                                                                                    \
+    {                                                                                                        \                                                                                          
+        return std::shared_ptr<Generic::class_name>(new GL::class_name(std::forward<Args>(args)...));    \
+                                                                                                   \
         assert(false);                                                                                       \
     }                                                                                                        \
     }
