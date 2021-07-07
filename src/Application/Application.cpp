@@ -3,8 +3,11 @@
 #include <GraphicsAPI/Generic/Constructors.h>
 #include <GraphicsAPI/Generic/Context.h>
 #include <GraphicsAPI/OpenGL/Shader.h>
-#include <basic_data.h>
 #include <memory>
+
+#ifdef __APPLE__
+#include <basic_data.h>
+#endif
 
 Application::Application()
 {
@@ -17,6 +20,8 @@ Application::Application()
 
 void Application::run()
 {
+    // Apple devices are able to choose its GraphicsAPI
+#ifdef __APPLE__
     if (Ctx.graphics_api_type() == Generic::GraphicsAPIType::Metal) {
         Support::MacOS::Window::Run();
     } else {
@@ -26,6 +31,14 @@ void Application::run()
             m_display->swap_buffers();
         }
     }
+#else
+    // And others are not
+    while (m_running) {
+        m_scene.update();
+        draw_cycle();
+        m_display->swap_buffers();
+    }
+#endif
 }
 
 void Application::on_event_base(const Event& event)
@@ -39,6 +52,10 @@ void Application::compile_shaders()
     // TODO: automate this part
     auto& shader_storage = Ctx.shader_storage();
 
+    std::shared_ptr<Generic::Shader> basic_shader;
+    std::shared_ptr<Generic::Shader> mapper2d_shader;
+
+#ifdef __APPLE__
     std::pair<std::string, int> position = { "position", 0 };
     std::pair<std::string, int> tex_coords = { "tex_coords", 1 };
     std::pair<std::string, int> normal = { "normal", 2 };
@@ -53,9 +70,6 @@ void Application::compile_shaders()
     uniform_builder.add_array<NR_POINT_LIGHTS, sizeof(Math::Vector3f)>("g_light_color", offsetof(BasicShader::Uniforms, light_color));
     uniform_builder.add_array<NR_POINT_LIGHTS, sizeof(Math::Vector3f)>("g_light_attenuation", offsetof(BasicShader::Uniforms, light_attenuation));
 
-    std::shared_ptr<Generic::Shader> basic_shader;
-    std::shared_ptr<Generic::Shader> mapper2d_shader;
-
     if (Ctx.graphics_api_type() == Generic::GraphicsAPIType::Metal) {
         basic_shader = Constructors::Shader::construct(
             "res/basic.metal",
@@ -67,6 +81,10 @@ void Application::compile_shaders()
         basic_shader = Constructors::Shader::construct(std::vector<std::string> { "res/basic_shader.vs", "res/basic_shader.fs" });
         mapper2d_shader = Constructors::Shader::construct(std::vector<std::string> { "res/mapper2d_shader.vs", "res/mapper2d_shader.fs" });
     }
+#else
+    basic_shader = Constructors::Shader::construct(std::vector<std::string> { "res/basic_shader.vs", "res/basic_shader.fs" });
+    mapper2d_shader = Constructors::Shader::construct(std::vector<std::string> { "res/mapper2d_shader.vs", "res/mapper2d_shader.fs" });
+#endif
 
     shader_storage.add("basic_shader", basic_shader);
     shader_storage.add("mapper2d_shader", mapper2d_shader);

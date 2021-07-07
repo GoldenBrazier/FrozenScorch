@@ -9,6 +9,8 @@
 #include <type_traits>
 #include <unordered_map>
 #include <vector>
+#include <cassert>
+#include <string_view>
 
 namespace GL {
 
