@@ -37,6 +37,15 @@ private:
 public:
 #endif
 
+    bool is_supporting_metal_api() const
+    {
+#ifdef __APPLE__
+        return true;
+#else
+        return false;
+#endif
+    }
+
     inline void set_grahics_api_type(GraphicsAPIType api)
     {
         m_graphics_api_type = api;

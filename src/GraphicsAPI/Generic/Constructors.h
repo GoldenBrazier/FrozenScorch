@@ -28,13 +28,12 @@
 #include <Renderer/Metal/Renderer.h>
 #endif
 
-#ifdef __APPLE__
 #define CONSTRUCTIBLE_API_DEPENDENT(class_name)                                                              \
     namespace class_name {                                                                                   \
     template <class... Args>                                                                                 \
     inline std::shared_ptr<Generic::class_name> construct(Args&&... args)                                    \
     {                                                                                                        \
-        if (Ctx.graphics_api_type() == Generic::GraphicsAPIType::Metal) {                                    \
+        if (Ctx.is_supporting_metal_api() && Ctx.graphics_api_type() == Generic::GraphicsAPIType::Metal) {   \
             return std::shared_ptr<Generic::class_name>(new Metal::class_name(std::forward<Args>(args)...)); \
         } else {                                                                                             \
             return std::shared_ptr<Generic::class_name>(new GL::class_name(std::forward<Args>(args)...));    \
@@ -42,17 +41,6 @@
         assert(false);                                                                                       \
     }                                                                                                        \
     }
-#else
-#define CONSTRUCTIBLE_API_DEPENDENT(class_name)                                                       \
-    namespace class_name {                                                                            \
-    template <class... Args>                                                                          \
-    inline std::shared_ptr<Generic::class_name> construct(Args&&... args)                             \
-    {                                                                                                 \
-        return std::shared_ptr<Generic::class_name>(new GL::class_name(std::forward<Args>(args)...)); \
-        assert(false);                                                                                \
-    }                                                                                                 \
-    }
-#endif
 
 namespace Constructors {
 
